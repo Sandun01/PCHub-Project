@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start":"node server.js",
+    "start": "node ./server",
+    "dev": "nodemon ./server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "2021S2_REG_WE_09",
@@ -18,6 +20,7 @@
     "mongoose": "^5.13.7"
   },
   "devDependencies": {
+    "concurrently": "^6.2.1",
     "nodemon": "^2.0.12"
   }
 }
