@@ -32,10 +32,11 @@ class App extends Component{
     render() {
         return(
             <Router>
+                <Header />
                
-                <main style={{ marginTop: '60px', }}>
+                <main style={{ marginTop: '10px', }}>
 
-                    <Header />
+                    
 
                     <Switch>
                         {/* Guest user Routes */}
