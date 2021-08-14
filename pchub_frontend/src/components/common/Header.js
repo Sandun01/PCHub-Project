@@ -16,7 +16,6 @@ export default class Header extends Component {
                 <NavDropdown title='Dropdown' id='basic-nav-dropdown'>
                   <NavDropdown.Item href='#action/3.1'>Action</NavDropdown.Item>
                   <NavDropdown.Item href='#action/3.2'>
-                    Action 01
                   </NavDropdown.Item>
                   <NavDropdown.Item href='#action/3.3'>
                    Action 02
