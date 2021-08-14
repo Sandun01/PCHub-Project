@@ -34,9 +34,7 @@ class App extends Component{
             <Router>
                 <Header />
                
-                <main style={{ marginTop: '10px', }}>
-
-                    
+                <main style={{ marginTop: '60px', }}>
 
                     <Switch>
                         {/* Guest user Routes */}
