@@ -1,8 +1,11 @@
 .App {
   text-align: center;
+  /* background-image: url('/pchub_frontend/public/images/background.jpg'); */
+  position: fixed;
+  background-color: blue;
 }
 
-.App-logo {
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
@@ -21,7 +24,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
 }
 
 .App-link {
@@ -35,4 +38,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
