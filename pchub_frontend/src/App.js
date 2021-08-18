@@ -1,72 +1,74 @@
-  
-import React, { Component, Fragment } from "react";
-import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import React, { Component, Fragment } from 'react';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
+import './App.css';
 
 //routes
-import { UserRoutes, AdminRoutes } from "./routes/Routes";
+import { UserRoutes, AdminRoutes } from './routes/Routes';
 
 // guest user components
-import Home from './components/user/Home'
+import Home from './components/user/Home';
 
 //admin components
-import AdminDashboard from './components/admin/AdminDashboard'
+import AdminDashboard from './components/admin/AdminDashboard';
 
 //common components
-import Header from './components/common/Header'
-import Footer from './components/common/Footer'
+import Header from './components/common/Header';
+import Footer from './components/common/Footer';
+import LeftNavigation from './components/common/LeftNavigation';
+
+//public components
+import Login from './components/public/Login';
 
 //session components
-import NotAuthorized from './components/sessions/NotAuthorized'
-import NotFound from './components/sessions/NotFound'
-import TokenExpired from './components/sessions/TokenExpired'
+import NotAuthorized from './components/sessions/NotAuthorized';
+import NotFound from './components/sessions/NotFound';
+import TokenExpired from './components/sessions/TokenExpired';
 
-class App extends Component{
+class App extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-    constructor(props) {
-      super(props);
-    }
+  componentDidMount() {}
 
-    componentDidMount(){
-    }
+  render() {
+    return (
+      <Router>
+        <Header />
+        <main style={{ display: 'flex' }}>
+          <LeftNavigation />
+          <Login />
+          <Switch>
+            {/* Guest user Routes */}
+            <Route exact path="/" component={Home} />
 
-    render() {
-        return(
-            <Router>
-                <Header />
-               
-                <main style={{ marginTop: '60px', }}>
+            {/* Registered User Routes */}
+            {/* <UserRoutes exact path="/" /> */}
 
-                    <Switch>
-                        {/* Guest user Routes */}
-                        <Route exact path="/" component={Home} />
+            {/* Admin User Routes */}
+            <AdminRoutes exact path="/admin" component={AdminDashboard} />
 
-                        {/* Registered User Routes */}
-                        {/* <UserRoutes exact path="/" /> */}
+            {/* Session Routes */}
 
-                        {/* Admin User Routes */}
-                        <AdminRoutes exact path="/admin" component={AdminDashboard} />
+            {/* User login and registration routes here*/}
 
-                        
-                        {/* Session Routes */}
-                          
-                          {/* User login and registration routes here*/}
+            <Route exact path="/session/401" component={NotAuthorized} />
+            <Route exact path="/session/404" component={NotFound} />
+            <Route exact path="/session/expired" component={TokenExpired} />
 
-                        <Route exact path="/session/401" component={NotAuthorized} />
-                        <Route exact path="/session/404" component={NotFound} />
-                        <Route exact path="/session/expired" component={TokenExpired} />
-                        
-                        <Route path="*" component={ () => <Redirect to="/session/404"/> } />
+            <Route path="*" component={() => <Redirect to="/session/404" />} />
+          </Switch>
+        </main>
 
-                        
-                    </Switch>
-                </main>
-                
-                <Footer />
-
-            </Router>
-        )
-    }
-
+        <Footer />
+      </Router>
+    );
+  }
 }
 
 export default App;
