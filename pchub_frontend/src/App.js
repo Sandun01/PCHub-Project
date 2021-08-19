@@ -19,7 +19,6 @@ import AdminDashboard from './components/admin/AdminDashboard';
 //common components
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
-import LeftNavigation from './components/common/LeftNavigation';
 
 //public components
 import Login from './components/public/Login';
@@ -39,29 +38,32 @@ class App extends Component {
   render() {
     return (
       <Router>
+        
         <Header />
-        <main style={{ display: 'flex' }}>
-          <LeftNavigation />
-          <Login />
+
+        <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)" }}>
+          
           <Switch>
+            
+            {/* <Login /> */}
             {/* Guest user Routes */}
-            <Route exact path="/" component={Home} />
+            {/* <Route exact path="/" component={Home} /> */}
 
             {/* Registered User Routes */}
             {/* <UserRoutes exact path="/" /> */}
 
             {/* Admin User Routes */}
-            <AdminRoutes exact path="/admin" component={AdminDashboard} />
+            {/* <AdminRoutes exact path="/admin" component={AdminDashboard} /> */}
 
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
 
-            <Route exact path="/session/401" component={NotAuthorized} />
-            <Route exact path="/session/404" component={NotFound} />
-            <Route exact path="/session/expired" component={TokenExpired} />
+            {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
+            {/* <Route exact path="/session/404" component={NotFound} /> */}
+            {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
 
-            <Route path="*" component={() => <Redirect to="/session/404" />} />
+            {/* <Route path="*" component={() => <Redirect to="/session/404" />} /> */}
           </Switch>
         </main>
 
