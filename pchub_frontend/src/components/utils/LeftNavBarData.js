@@ -3,7 +3,7 @@ import React from 'react'
 export const LeftNavBarData = [
     {
         title: 'Laptop',
-        path: '/',
+        path: '/Laptop',
         icon: <img width="25px" height="25px" src="/images/laptop.png" alt="laptop" />,
         cName: 'nav-text'
     },

@@ -1,13 +1,5 @@
 import React, { Component, useState } from "react";
 import { alpha, withStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
-import Badge from "@material-ui/core/Badge";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -17,10 +9,13 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { Button } from "@material-ui/core";
 import {Link } from 'react-router-dom'
-import { AiOutlineClose } from 'react-icons/ai'
+
+import {
+  AppBar, Toolbar, IconButton, Typography, InputBase, Badge,
+  List, MenuItem, Menu, ListItem,SwipeableDrawer,
+} from "@material-ui/core";
 
 import { LeftNavBarData } from '../utils/LeftNavBarData'
-import '../../css/LeftNavBar.css'
 
 const styles = (theme) => ({
   grow: {
@@ -109,6 +104,23 @@ const styles = (theme) => ({
         color: '#1a83ff',
     }
   },
+  
+  MuiDrawer: {
+    backgroundColor: "#0A1F35",
+    color: '#fff',
+  },
+
+  sidebarItem:{
+    textDecoration:'none',
+    color: '#fff',
+  },
+  sidebarListItem:{
+    textDecoration:'none',
+    '&:hover':{
+      backgroundColor: "#1a83ff",
+      color: '#fff',
+    }
+  },
 
 });
 
@@ -127,6 +139,7 @@ class UserHeader extends Component {
       menuId: "primary-search-account-menu",
 
       isLargeScreen: true,
+      drawer: false,
       
     };
   }
@@ -162,9 +175,8 @@ class UserHeader extends Component {
   };
 
   showSidebar = () => {
-    var resLeftBar = this.state.sidebar;
     this.setState({
-        sidebar: !resLeftBar,
+        drawer: true,
     })
   }
 
@@ -198,14 +210,17 @@ class UserHeader extends Component {
         <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar className={classes.navbar}>
+            
             <IconButton
               edge="start"
               className={classes.menuButton}
               color="inherit"
               aria-label="open drawer"
+              onClick={this.showSidebar}
             >
-              <MenuIcon onClick={this.showSidebar} />
+              <MenuIcon />
             </IconButton>
+
             <Typography className={classes.title} variant="h6" noWrap>
               <a className={classes.headerlink} href="#">
                 PCHub
@@ -306,22 +321,22 @@ class UserHeader extends Component {
                 PCHub
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h7" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap>
               <a className={classes.headerlink} href="#">
                 About
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h7" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap>
               <a className={classes.headerlink} href="#">
                 Services
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h7" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap>
               <a className={classes.headerlink} href="#">
                 Contact Us
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h7" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap>
               <a className={classes.headerlink} href="#">
                 +9471234567
               </a>
@@ -386,46 +401,68 @@ class UserHeader extends Component {
     );
   }
 
+  //Small Screens
+  createDrawer() {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <SwipeableDrawer
+          open={this.state.drawer}
+          onClose={() => {
+            this.setState({ drawer: false });
+          }}
+          onOpen={() => {
+            this.setState({ drawer: true });
+          }}
+          classes={{paper: classes.MuiDrawer}}
+        >
+          <Typography variant="h5" style={{ fontWeight: "bold", padding: '20px'}}>
+            PCHub
+          </Typography>
+
+          <div tabIndex={0} role="button">
+
+            <List className={this.props.classes.list}>
+
+              {
+                  LeftNavBarData.map((item, key) => {
+                      return(
+                        <Link to={item.path} className={classes.sidebarItem} key={item.title}>
+                          <ListItem button divider className={classes.sidebarListItem} >
+                            
+                            <div style={{ paddingRight: '10px' }}>
+                              {item.icon}
+                            </div>
+                            <div>
+                              {item.title}
+                            </div>
+
+                          </ListItem>
+                        </Link>
+                      )
+                  })
+              }
+
+            </List>
+
+          </div>
+
+        </SwipeableDrawer>
+
+      </div>
+    );
+  }
+
   render() {
     return (
         <>
-        
             {
                 this.state.isLargeScreen ? this.largeScreen() : this.smallScreen()
             }
-
-            {/* <div className="navbar">
-                <Link to="#" className="menu-bars">
-                    <FaBars onClick={this.showSidebar} style={{color: '#fff'}}/>
-                </Link>
-            </div> */}
-            
-            <nav className={this.state.sidebar == false ? 'nav-menu active': 'nav-menu'} >
-            {/* <nav className={'nav-menu active'} > */}
-                <ul className="nav-menu-items" onClick={this.showSidebar}>
-                    <li className="navbar-toggle">
-                        <Link to="#" className="menu-bars">
-                            <AiOutlineClose style={{color: '#fff'}} />
-                        </Link>
-                    </li>
-                    {
-                        LeftNavBarData.map((item, key) => {
-                            return(
-                                <li key={key} className={item.cName} 
-                                    style={{ height: this.state.isLargeScreen ? '45px' : '35px'}} 
-                                >
-                                    <Link to={item.path}>
-                                        {item.icon}
-                                        <span className="navBarspan">
-                                            {item.title}
-                                        </span>
-                                    </Link>
-                                </li>
-                            )
-                        })
-                    }
-                </ul>
-            </nav>
+            {
+              this.state.drawer && this.createDrawer()
+            }
         </>
         
     );

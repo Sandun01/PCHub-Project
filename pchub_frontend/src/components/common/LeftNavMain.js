@@ -3,7 +3,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { LeftNavBarData } from '../utils/LeftNavBarData'
+import { LeftNavBarData } from '../utils/LeftNavBarData';
+import { Link } from 'react-router-dom';
 
 const styles = (theme) => ({
   root: {
@@ -12,6 +13,7 @@ const styles = (theme) => ({
     borderRadius: '0px',
     backgroundColor: 'transparent',
     borderStyle: 'none',
+    marginTop: '20px',
   },
   menuItem: {
     color: 'white',
@@ -28,6 +30,10 @@ const styles = (theme) => ({
       // padding: '5px',
     },
   },
+  menuItemLink:{
+    textDecoration: 'none'
+  }
+
 });
 
 
@@ -83,10 +89,12 @@ class LeftNavMain extends Component
               {
                   LeftNavBarData.map((item, key) => {
                       return(
-                          <MenuItem className={classes.menuItem}>
-                              <Typography>{item.title}</Typography>
-                              {item.icon}
-                          </MenuItem>
+                          <Link className={classes.menuItemLink} key={item.title} to={item.path}>
+                            <MenuItem className={classes.menuItem}>
+                                <Typography>{item.title}</Typography>
+                                {item.icon}
+                            </MenuItem>
+                          </Link>
                       )
                   })
               }
