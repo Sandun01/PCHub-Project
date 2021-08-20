@@ -161,6 +161,34 @@ class UserHeader extends Component {
     });
   };
 
+  showSidebar = () => {
+    var resLeftBar = this.state.sidebar;
+    this.setState({
+        sidebar: !resLeftBar,
+    })
+  }
+
+  componentDidMount(){
+    
+    if(window.innerWidth <= 1000) {
+        this.setState({
+            isLargeScreen: false,
+        });
+    }
+  
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 1000) {
+          this.setState({
+            isLargeScreen: false,
+          });
+        } 
+        else {
+          this.setState({
+            isLargeScreen: true,
+          });
+        }
+      });
+  }
 
   smallScreen(){
 
@@ -265,14 +293,14 @@ class UserHeader extends Component {
       <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar className={classes.navbar}>
-            <IconButton
+            {/* <IconButton
               edge="start"
               className={classes.menuButton}
               color="inherit"
               aria-label="open drawer"
             >
               <MenuIcon onClick={this.showSidebar} />
-            </IconButton>
+            </IconButton> */}
             <Typography className={classes.title} variant="h6" noWrap>
               <a className={classes.headerlink} href="#">
                 PCHub
@@ -325,16 +353,18 @@ class UserHeader extends Component {
             </div>
 
             <div className={classes.sectionDesktop}>
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={this.state.menuId}
-                aria-haspopup="true"
-                // onClick={openCartPage}
-                color="inherit"
-              >
-                <ShoppingCartIcon className={classes.iconButtons} />
-              </IconButton>
+              <MenuItem>
+                  <IconButton
+                      aria-label="account of current user"
+                      aria-controls="primary-search-account-menu"
+                      aria-haspopup="true"
+                      color="inherit"
+                      >
+                      <Badge badgeContent={11} color="secondary">
+                          <ShoppingCartIcon className={classes.iconButtons}/>
+                      </Badge>
+                  </IconButton>
+                </MenuItem>
             </div>
 
             <div className={classes.sectionDesktop}>
@@ -356,36 +386,6 @@ class UserHeader extends Component {
     );
   }
 
-
-  showSidebar = () => {
-    var resLeftBar = this.state.sidebar;
-    this.setState({
-        sidebar: !resLeftBar,
-    })
-  }
-
-  componentDidMount(){
-    
-    if(window.innerWidth <= 1150) {
-        this.setState({
-            isLargeScreen: false,
-        });
-    }
-  
-      window.addEventListener("resize", () => {
-        if (window.innerWidth <= 1150) {
-          this.setState({
-            isLargeScreen: false,
-          });
-        } 
-        else {
-          this.setState({
-            isLargeScreen: true,
-          });
-        }
-      });
-  }
-
   render() {
     return (
         <>
@@ -400,7 +400,8 @@ class UserHeader extends Component {
                 </Link>
             </div> */}
             
-            <nav className={this.state.sidebar ? 'nav-menu active': 'nav-menu'} >
+            <nav className={this.state.sidebar == false ? 'nav-menu active': 'nav-menu'} >
+            {/* <nav className={'nav-menu active'} > */}
                 <ul className="nav-menu-items" onClick={this.showSidebar}>
                     <li className="navbar-toggle">
                         <Link to="#" className="menu-bars">
@@ -411,7 +412,7 @@ class UserHeader extends Component {
                         LeftNavBarData.map((item, key) => {
                             return(
                                 <li key={key} className={item.cName} 
-                                    style={{ height: this.state.smallScreen ? '35px' : '45px'}} 
+                                    style={{ height: this.state.isLargeScreen ? '45px' : '35px'}} 
                                 >
                                     <Link to={item.path}>
                                         {item.icon}

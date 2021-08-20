@@ -22,7 +22,7 @@
     background-color:#0A1F35;
     width: 250px;
     height: 100vh;
-    display: flex;
+    display: block;
     justify-content: center;
     position: fixed;
     top: 0;
