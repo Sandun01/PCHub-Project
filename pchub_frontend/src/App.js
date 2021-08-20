@@ -10,10 +10,17 @@ import './App.css';
 //routes
 import { UserRoutes, AdminRoutes } from './routes/Routes';
 
-// guest user components
+//user components
 import Home from './components/user/Home';
-import PrivacyPolicy from './components/user/PrivacyPolicy';
-import AboutUs from './components/user/AboutUs';
+import LeftNavMain from './components/user/LeftNavMain';
+import ProductSingleView from './components/user/ProductSingleView';
+import AllProducts from './components/user/AllProducts';
+import Cart from './components/user/Cart';
+
+import PrivacyPolicy from './components/user/static/PrivacyPolicy';
+import AboutUs from './components/user/static/AboutUs';
+import ContactUs from './components/user/static/ContactUs';
+import Services from './components/user/static/Services';
 
 //admin components
 import AdminDashboard from './components/admin/AdminDashboard';
@@ -21,7 +28,6 @@ import AdminDashboard from './components/admin/AdminDashboard';
 //common components
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
-import LeftNavMain from './components/common/LeftNavMain';
 
 //public components
 import Login from './components/public/Login';
@@ -32,8 +38,10 @@ import NotFound from './components/sessions/NotFound';
 import TokenExpired from './components/sessions/TokenExpired';
 
 class App extends Component {
+
   constructor(props) {
     super(props);
+
   }
 
   componentDidMount() {}
@@ -45,16 +53,23 @@ class App extends Component {
 
         <Header />
 
-        <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}>
+        {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
+        <main style={{ display: 'flex',}} >
           
           <LeftNavMain />
           
           <Switch>
-            {/* <Login /> */}
             {/* Guest user Routes */}
             <Route exact path="/" component={Home} />
-            <Route exact path="/a" component={PrivacyPolicy} />
-            <Route exact path="/b" component={AboutUs} />
+            <Route exact path="/aboutUs" component={PrivacyPolicy} />
+            <Route exact path="/contactUs" component={ContactUs} />
+            <Route exact path="/services" component={Services} />
+            <Route exact path="/privacyPolicy" component={AboutUs} />
+
+            <Route exact path="/products/:name" component={AllProducts} />
+            <Route exact path="/product/:id" component={ProductSingleView} />
+
+            <Route exact path="/cart/" component={Cart} />
 
             {/* Registered User Routes */}
             {/* <UserRoutes exact path="/" /> */}

@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import { alpha, withStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
@@ -100,6 +100,8 @@ const styles = (theme) => ({
   },
 
   iconButtons: {
+    textDecoration: 'none',
+    color: '#fff',
     '&:hover':{
         color: '#1a83ff',
     }
@@ -222,7 +224,7 @@ class UserHeader extends Component {
             </IconButton>
 
             <Typography className={classes.title} variant="h6" noWrap>
-              <a className={classes.headerlink} href="#">
+              <a className={classes.headerlink} href="/">
                 PCHub
               </a>
             </Typography>
@@ -274,9 +276,9 @@ class UserHeader extends Component {
                     aria-haspopup="true"
                     color="inherit"
                     >
-                    <Badge badgeContent={11} color="secondary">
+                    {/* <Badge badgeContent={11} color="secondary"> */}
                         <ShoppingCartIcon />
-                    </Badge>
+                    {/* </Badge> */}
                 </IconButton>
                 <p>Cart</p>
             </MenuItem>
@@ -317,29 +319,27 @@ class UserHeader extends Component {
               <MenuIcon onClick={this.showSidebar} />
             </IconButton> */}
             <Typography className={classes.title} variant="h6" noWrap>
-              <a className={classes.headerlink} href="#">
+              <a className={classes.headerlink} href="/">
                 PCHub
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h6" noWrap>
-              <a className={classes.headerlink} href="#">
+            <Typography className={classes.title} noWrap>
+              <a className={classes.headerlink} href="/aboutUs">
                 About
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h6" noWrap>
-              <a className={classes.headerlink} href="#">
+            <Typography className={classes.title}  noWrap>
+              <a className={classes.headerlink} href="/services">
                 Services
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h6" noWrap>
-              <a className={classes.headerlink} href="#">
+            <Typography className={classes.title}  noWrap>
+              <a className={classes.headerlink} href="/contactUs">
                 Contact Us
               </a>
             </Typography>
-            <Typography className={classes.title} variant="h6" noWrap>
-              <a className={classes.headerlink} href="#">
+            <Typography className={classes.title}  noWrap>
                 +9471234567
-              </a>
             </Typography>
             <div className={classes.grow} />
                 <div className={classes.search}>
@@ -367,21 +367,25 @@ class UserHeader extends Component {
                 </Button>
             </div>
 
+            {/* Cart */}
             <div className={classes.sectionDesktop}>
-              <MenuItem>
-                  <IconButton
-                      aria-label="account of current user"
-                      aria-controls="primary-search-account-menu"
-                      aria-haspopup="true"
-                      color="inherit"
-                      >
-                      <Badge badgeContent={11} color="secondary">
-                          <ShoppingCartIcon className={classes.iconButtons}/>
-                      </Badge>
-                  </IconButton>
+              <Link to="/cart">
+                <MenuItem>
+                    <IconButton
+                        aria-label="account of current user"
+                        aria-controls="primary-search-account-menu"
+                        aria-haspopup="true"
+                        color="inherit"
+                        >
+                        {/* <Badge badgeContent={11} color="secondary"> */}
+                            <ShoppingCartIcon className={classes.iconButtons}/>
+                        {/* </Badge> */}
+                    </IconButton>
                 </MenuItem>
+              </Link>
             </div>
 
+            {/* Profile  */}
             <div className={classes.sectionDesktop}>
               <IconButton
                 edge="end"
