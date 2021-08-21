@@ -25,6 +25,7 @@ import Services from './components/user/static/Services';
 //admin components
 import AdminDashboard from './components/admin/AdminDashboard';
 import AddNewItem from './components/admin/addNewItem';
+import UserProfile from './components/user/UserProfile';
 
 //common components
 import Header from './components/common/Header';
@@ -50,14 +51,25 @@ class App extends Component {
   render() {
     return (
       <Router>
+<<<<<<< HEAD
         
         <Header />
 
         {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
         <main style={{ display: 'flex',}} >
           
+=======
+        <Header />
+
+        <main
+          style={{
+            display: 'flex',
+            backgroundImage: 'url(images/background.jpg)',
+          }}
+        >
+>>>>>>> origin/ayodhya_UserProfile
           <LeftNavMain />
-          
+
           <Switch>
             {/* Guest user Routes */}
             <Route exact path="/" component={Home} />
@@ -81,7 +93,14 @@ class App extends Component {
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
+<<<<<<< HEAD
             
+=======
+            <Route exact path="/login" component={Login} />
+
+            <Route exact path="/account" component={UserProfile} />
+
+>>>>>>> origin/ayodhya_UserProfile
             {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
             {/* <Route exact path="/session/404" component={NotFound} /> */}
             {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
