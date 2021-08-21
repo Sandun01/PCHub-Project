@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import UserHeader from './UserHeader';
+import UserHeader from '../user/UserHeader';
 export default class Header extends Component {
   constructor(props){
     super(props);

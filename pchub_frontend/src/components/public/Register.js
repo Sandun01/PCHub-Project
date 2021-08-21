@@ -32,7 +32,6 @@ const styles = (theme) => ({
   input: {
     backgroundColor: '#17A2B8',
     borderRadius: '5px',
-    color: 'white',
   },
   submit: {
     backgroundColor: '#007BFF',
@@ -69,10 +68,10 @@ class Login extends Component {
             Sign in and start managing your candidates!
           </Typography>
 
-          <form className={classes.form} noValidate method="post">
+          <form className={classes.form} noValidate>
             <TextField
               className={classes.input}
-              variant="filled"
+              variant="outlined"
               margin="normal"
               required
               fullWidth
@@ -84,7 +83,7 @@ class Login extends Component {
             />
             <TextField
               className={classes.input}
-              variant="filled"
+              variant="outlined"
               margin="normal"
               required
               fullWidth

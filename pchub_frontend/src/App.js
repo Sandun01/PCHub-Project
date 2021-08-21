@@ -10,12 +10,22 @@ import './App.css';
 //routes
 import { UserRoutes, AdminRoutes } from './routes/Routes';
 
-// guest user components
+//user components
 import Home from './components/user/Home';
+import LeftNavMain from './components/user/LeftNavMain';
+import ProductSingleView from './components/user/ProductSingleView';
+import AllProducts from './components/user/AllProducts';
+import Cart from './components/user/Cart';
+
+import PrivacyPolicy from './components/user/static/PrivacyPolicy';
+import AboutUs from './components/user/static/AboutUs';
+import ContactUs from './components/user/static/ContactUs';
+import Services from './components/user/static/Services';
 
 //admin components
 import AdminDashboard from './components/admin/AdminDashboard';
 import AddNewItem from './components/admin/addNewItem';
+import UserProfile from './components/user/UserProfile';
 
 //common components
 import Header from './components/common/Header';
@@ -30,8 +40,10 @@ import NotFound from './components/sessions/NotFound';
 import TokenExpired from './components/sessions/TokenExpired';
 
 class App extends Component {
+
   constructor(props) {
     super(props);
+
   }
 
   componentDidMount() {}
@@ -42,13 +54,23 @@ class App extends Component {
         
         <Header />
 
-        <main style={{ display: 'flex' }}>
+        {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
+        <main style={{ display: 'flex',}} >
           
+          <LeftNavMain />
+
           <Switch>
-            
-            {/* <Login /> */}
             {/* Guest user Routes */}
-            {/* <Route exact path="/" component={Home} /> */}
+            <Route exact path="/" component={Home} />
+            <Route exact path="/aboutUs" component={PrivacyPolicy} />
+            <Route exact path="/contactUs" component={ContactUs} />
+            <Route exact path="/services" component={Services} />
+            <Route exact path="/privacyPolicy" component={AboutUs} />
+
+            <Route exact path="/products/:name" component={AllProducts} />
+            <Route exact path="/product/:id" component={ProductSingleView} />
+
+            <Route exact path="/cart/" component={Cart} />
 
             {/* Registered User Routes */}
             {/* <UserRoutes exact path="/" /> */}
@@ -60,7 +82,10 @@ class App extends Component {
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
-            
+            <Route exact path="/login" component={Login} />
+
+            <Route exact path="/account" component={UserProfile} />
+
             {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
             {/* <Route exact path="/session/404" component={NotFound} /> */}
             {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
