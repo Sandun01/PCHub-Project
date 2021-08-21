@@ -51,23 +51,12 @@ class App extends Component {
   render() {
     return (
       <Router>
-<<<<<<< HEAD
         
         <Header />
 
         {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
         <main style={{ display: 'flex',}} >
           
-=======
-        <Header />
-
-        <main
-          style={{
-            display: 'flex',
-            backgroundImage: 'url(images/background.jpg)',
-          }}
-        >
->>>>>>> origin/ayodhya_UserProfile
           <LeftNavMain />
 
           <Switch>
@@ -93,14 +82,10 @@ class App extends Component {
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
-<<<<<<< HEAD
-            
-=======
             <Route exact path="/login" component={Login} />
 
             <Route exact path="/account" component={UserProfile} />
 
->>>>>>> origin/ayodhya_UserProfile
             {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
             {/* <Route exact path="/session/404" component={NotFound} /> */}
             {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
