@@ -1,8 +1,8 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import colors from 'colors'
-import connectDB from './config/db.js'
-import { notFound, errorHandler } from './middleware/errorMiddleware.js'
+import cors from 'cors'
+import WishlistRouts from './src/routes/WishlistRouts.js'
+import ProductRouts from './src/routes/ProductRouts.js'
 
 import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
@@ -10,6 +10,15 @@ import orderRoutes from './routes/orderRoutes.js'
 
 dotenv.config()
 
+const app = express()
+app.use(cors())
+app.use(bodyParser.json())
+
+
+app.use('/wishlist', WishlistRouts)
+app.use('/product', ProductRouts)
+
+//connect to the database
 connectDB()
 
 const app = express()
@@ -37,4 +46,13 @@ app.listen(
   console.log(
     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow
   )
+<<<<<<< HEAD
 )
+=======
+)
+
+
+
+
+
+>>>>>>> 2d183e3f0482682e62ad8e5472e8974476471888
