@@ -11,7 +11,20 @@ import { homeProductItemCardData, } from '../utils/HomePageData'
 
 const styles = (theme) =>({
 
-    paginationContainer: {
+    root:{
+        display: 'block',
+        width: '100%',
+        // position: 'relative',
+    },
+    header:{
+        textAlign: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    itemContainer:{
+        margin: 20,
+    },
+    paginationStyles: {
         backgroundColor: 'rgba(213, 213, 213, 0.5)',
         borderRadius: '25px',
         
@@ -20,9 +33,10 @@ const styles = (theme) =>({
             color:'#fff',
         },
     },
-
-    header:{
-        textAlign: 'center',
+    paginationContainer: {
+        // position: 'absolute',
+        // bottom: 0,
+        margin: 20,
     },
 
 })
@@ -45,26 +59,16 @@ class AllProducts extends Component {
         const { classes } = this.props;
         
         return (
-            <>
+
+            <div className={classes.root}>
+
                 {/* All items */}
-                <Grid container justifyContent="center" alignItems="center" direction="row" >
-
-                    <Grid item>
-                        <Typography variant="h4">Laptops</Typography>
-                    </Grid>
-
-                    <Grid item xs={12} sm={12}>
-                        <Grid container justifyContent="center" alignItems="center" direction="row">
-                            {
-                                homeProductItemCardData.map((itm, key) => (
-                                    <Grid item key={itm.title}>
-                                        <ItemCard data={itm}/>
-                                    </Grid>
-                                ))
-                            }
-                        </Grid>
-                    </Grid>
+                <Grid container>
                     
+                    <Grid item xs={12} sm={12} className={classes.header}>
+                        <Typography variant="h4" className="pt-3">Laptops</Typography>
+                    </Grid>
+
                     <Grid item xs={12} sm={12}>
                         <Grid container justifyContent="center" alignItems="center" direction="row">
                             {
@@ -77,23 +81,30 @@ class AllProducts extends Component {
                         </Grid>
                     </Grid>
 
-
-                    {/* Pagination */}
-                    <Grid item xs={12} sm={12}>
-                        <Grid container justifyContent="center" alignItems="center" direction="row">
-                            <Grid item style={{ marginBottom: '20px', }}>
-                                <Pagination 
-                                    className={classes.paginationContainer}
-                                    count={10}
-                                    // variant="outlined" 
-                                    color="primary" 
-                                />
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                    {/* <Grid item xs={12} sm={12} style={{ textAlign: 'center'}}>
+                        <Typography variant="h4" className="pt-3">Item Not Found!</Typography>
+                    </Grid> */}
 
                 </Grid>
-            </>
+
+                {/* Pagination */}
+                <Grid container 
+                    justifyContent="center" 
+                    alignItems="center" 
+                    direction="row" 
+                    className={classes.paginationContainer}
+                >
+                    <Grid item style={{ marginBottom: '20px', }}>
+                        <Pagination 
+                            className={classes.paginationStyles}
+                            count={10}
+                            // variant="outlined" 
+                            color="primary" 
+                        />
+                    </Grid>
+                </Grid>
+
+            </div>
         )
     }
 }

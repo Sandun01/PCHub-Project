@@ -190,18 +190,19 @@ class UserHeader extends Component {
         });
     }
   
-      window.addEventListener("resize", () => {
-        if (window.innerWidth <= 1000) {
-          this.setState({
-            isLargeScreen: false,
-          });
-        } 
-        else {
-          this.setState({
-            isLargeScreen: true,
-          });
-        }
-      });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth <= 1000) {
+        this.setState({
+          isLargeScreen: false,
+        });
+      } 
+      else {
+        this.setState({
+          isLargeScreen: true,
+        });
+      }
+    });
+    
   }
 
   smallScreen(){

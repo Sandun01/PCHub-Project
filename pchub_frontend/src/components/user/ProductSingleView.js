@@ -5,13 +5,21 @@ import {
     Grid, Typography, 
 } from '@material-ui/core'
 
-import Carousel from "react-material-ui-carousel";
+import Carousel from "react-material-ui-carousel"
+import { Link } from 'react-router-dom'
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
+import BookmarksIcon from '@material-ui/icons/Bookmarks'
 
 const styles = (theme) => ({
 
     header:{
         paddingTop: 20,
         paddingLeft: 40,
+    },
+    imageIcon:{
+        marginLeft: 10,
+        width:'40px',
+        height:'40px',
     },
     image:{
         // maxHeight:"500px",
@@ -63,6 +71,12 @@ const styles = (theme) => ({
             // color: 'white',
         }
     },
+    linkStyles:{
+        textDecoration: 'none',
+    },
+    iconButtonStyles:{
+        marginLeft: 5,
+    },
 
 })
 
@@ -76,6 +90,10 @@ class ProductSingleView extends Component {
             qty: 3,
             src: [],
             description: null,
+            category: 'laptop',
+
+            userLoggedIn: false,
+
         }
 
     }
@@ -90,7 +108,8 @@ class ProductSingleView extends Component {
         return (
             <div>
                 <Typography variant="h3" className={classes.header}>
-                    Asus ROG Strix G17{this.state.title}
+                    Asus ROG Strix G17 
+                    {/* {this.state.title} */}
                 </Typography>
 
                 <Grid container alignItems="center" justifyContent="center" direction="row"> 
@@ -139,28 +158,41 @@ class ProductSingleView extends Component {
                             Rs.{this.state.price}
                         </Typography>
 
-                        {
-                            this.state.qty !== 0 ?
-                            <div className={classes.inStockText}>
-                                In Stock
-                            </div>
-                            :
-                            <div className={classes.outStockText}>
-                                Out of Stock
-                            </div>
-                        }
+                        <Grid container>
+                            <Grid item sm={3}>
+                            {
+                                this.state.qty !== 0 ?
+                                <div className={classes.inStockText}>
+                                    In Stock
+                                </div>
+                                :
+                                <div className={classes.outStockText}>
+                                    Out of Stock
+                                </div>
+                            }
+                            </Grid>
+                        </Grid>
+
 
                         <Grid container alignItems="center" justifyContent="center" direction="row">
-                            <Grid item sm={4}>
-                                <div className={classes.buttonStyles}>
-                                    Add to Quote
-                                </div>
-                            </Grid>
-                            <Grid item sm={4}>
-                                <div className={classes.buttonStyles}>
-                                    Add to Whishlist
-                                </div>
-                            </Grid>
+                                <Grid item sm={5}>
+                                    <Link to="/cart" className={classes.linkStyles}>
+                                        <div className={classes.buttonStyles}>
+                                            Add to Cart <ShoppingCartIcon className={classes.iconButtonStyles}/>
+                                        </div>
+                                    </Link>
+                                </Grid>
+                            {
+                                this.state.userLoggedIn === false &&
+                                    <Grid item sm={5}>
+                                        <Link to="/wishlist" className={classes.linkStyles}>
+                                            <div className={classes.buttonStyles}>
+                                                Add to Wishlist <BookmarksIcon className={classes.iconButtonStyles}/>
+                                            </div>
+                                        </Link>
+                                    </Grid>
+                            }
+
                         </Grid>
 
                     </Grid>
