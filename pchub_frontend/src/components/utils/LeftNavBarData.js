@@ -1,88 +1,115 @@
-import React from 'react'
-
 export const LeftNavBarData = [
     {
         title: 'Laptop',
-        path: '/Laptop',
+        path: '/products/laptop',
+        category:'laptop',
+        iconPath:'/images/laptop.png',
         icon: <img width="25px" height="25px" src="/images/laptop.png" alt="laptop" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Desktop Workstations',
-        path: '/',
+        path: '/products/desktop_workstations',
+        category:'desktop_workstations',
+        iconPath:'/images/workstation.png',
         icon: <img width="25px" height="25px" src="/images/workstation.png" alt="workstation" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Gaming PCs',
-        path: '/',
+        path: '/products/gaming_pcs',
+        category: '/products/gaming_pcs',
+        iconPath:'/images/gamingPC.png',
         icon: <img width="25px" height="25px" src="/images/gamingPC.png" alt="gamingPC" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Budget PCs',
-        path: '/',
+        path: '/products/budget_pcs',
+        category: '/products/budget_pcs',
+        iconPath:'/images/pc.png',
         icon: <img width="25px" height="25px" src="/images/pc.png" alt="pc" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Processors',
-        path: '/',
+        path: '/products/processors',
+        category: '/products/processors',
+        iconPath:'/images/processor.png',
         icon: <img width="25px" height="25px" src="/images/processor.png" alt="processor" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'MotherBoards',
-        path: '/',
+        path: '/products/motherBoards',
+        category: '/products/motherBoards',
+        iconPath:'/images/motherboard.png',
         icon: <img width="25px" height="25px" src="/images/motherboard.png" alt="motherboard" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Memory (RAM)s',
-        path: '/',
+        path: '/products/memory',
+        category: '/products/memory',
+        iconPath:'/images/ram.png',
         icon: <img width="25px" height="25px" src="/images/ram.png" alt="ram" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Graphic Cards',
-        path: '/',
+        path: '/products/graphic_cards',
+        category: '/products/graphic_cards',
+        iconPath:'/images/gpu.png',
         icon: <img width="25px" height="25px" src="/images/gpu.png" alt="gpu" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Storages',
-        path: '/',
+        path: '/products/storages',
+        category: '/products/storages',
+        iconPath:'/images/storage.png',
         icon: <img width="25px" height="25px" src="/images/storage.png" alt="storage" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Power Supplies',
-        path: '/',
+        path: '/products/power_supplies',
+        category: '/products/power_supplies',
+        iconPath:'/images/power.png',
         icon: <img width="25px" height="25px" src="/images/power.png" alt="power" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Monitors',
-        path: '/',
+        path: '/products/monitors',
+        category: '/products/monitors',
+        iconPath:'/images/monitor.png',
         icon: <img width="25px" height="25px" src="/images/monitor.png" alt="monitor" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Accessories',
-        path: '/',
+        path: '/products/accessories',
+        category: '/products/accessories',
+        iconPath:'/images/keyboard.png',
         icon: <img width="25px" height="25px" src="/images/keyboard.png" alt="keyboard" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Software',
-        path: '/',
+        path: '/products/software',
+        category: '/products/software',
+        iconPath:'/images/software.png',
         icon: <img width="25px" height="25px" src="/images/software.png" alt="software" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
     {
         title: 'Casings',
-        path: '/',
+        path: '/products/casings',
+        category: '/products/casings',
+        iconPath:'/images/casing.png',
         icon: <img width="25px" height="25px" src="/images/casing.png" alt="casing" />,
-        cName: 'nav-text'
+        cName: 'nav-text',
     },
+    
 ]

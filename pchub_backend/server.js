@@ -1,42 +1,58 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import auth from './src/routes/authRoutes.js';
-import errorHandler from './src/middleware/errorMiddleware.js';
-import privateRoutes from './src/routes/privateRoutes.js';
-import connectDB from './src/config/db.js';
+import express from 'express'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import WishlistRouts from './src/routes/WishlistRouts.js'
+import ProductRouts from './src/routes/ProductRouts.js'
 
-dotenv.config();
+import productRoutes from './routes/productRoutes.js'
+import userRoutes from './routes/userRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+dotenv.config()
+
+const app = express()
+app.use(cors())
+app.use(bodyParser.json())
+
+
+app.use('/wishlist', WishlistRouts)
+app.use('/product', ProductRouts)
 
 //connect to the database
-connectDB();
+connectDB()
 
-app.use(express.json());
+const app = express()
 
-// Connecting Routes
-app.use('/api/auth', auth);
-app.use('/api/private', privateRoutes);
-
-// Error Handler Middleware (should be last piece of middleware)
-app.use(errorHandler);
-
-const PORT = process.env.PORT || 5000;
+//a middleware to accpet json request body through the server 
+app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.send('Api is working');
-});
+  res.send('The API is working')
+})
 
-const server = app.listen(
+//Routing to relavent Roters
+app.use('/api/products', productRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/orders', orderRoutes)
+
+app.use(notFound)
+app.use(errorHandler)
+
+//calling the dotenv file
+const PORT = process.env.PORT || 5000
+
+app.listen(
   PORT,
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
-);
+  console.log(
+    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow
+  )
+<<<<<<< HEAD
+)
+=======
+)
 
-process.on('unhandledRejection', (err, promise) => {
-  console.log(`Logged Error: ${err.message}`);
-  server.close(() => process.exit(1));
-});
+
+
+
+
+>>>>>>> 2d183e3f0482682e62ad8e5472e8974476471888
