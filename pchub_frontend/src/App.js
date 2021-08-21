@@ -24,6 +24,7 @@ import Services from './components/user/static/Services';
 
 //admin components
 import AdminDashboard from './components/admin/AdminDashboard';
+import AddNewItem from './components/admin/addNewItem';
 
 //common components
 import Header from './components/common/Header';
@@ -47,10 +48,9 @@ class App extends Component {
   componentDidMount() {}
 
   render() {
-
     return (
       <Router>
-
+        
         <Header />
 
         {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
@@ -76,11 +76,12 @@ class App extends Component {
 
             {/* Admin User Routes */}
             {/* <AdminRoutes exact path="/admin" component={AdminDashboard} /> */}
+            <Route exact path="/addItem" component={AddNewItem} />
 
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
-
+            
             {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
             {/* <Route exact path="/session/404" component={NotFound} /> */}
             {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
