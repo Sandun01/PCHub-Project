@@ -17,6 +17,7 @@ import AboutUs from './components/user/AboutUs';
 
 //admin components
 import AdminDashboard from './components/admin/AdminDashboard';
+import UserProfile from './components/user/UserProfile';
 
 //common components
 import Header from './components/common/Header';
@@ -39,18 +40,19 @@ class App extends Component {
   componentDidMount() {}
 
   render() {
-
     return (
       <Router>
-
         <Header />
 
-        <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}>
-          
+        <main
+          style={{
+            display: 'flex',
+            backgroundImage: 'url(images/background.jpg)',
+          }}
+        >
           <LeftNavMain />
-          
+
           <Switch>
-            {/* <Login /> */}
             {/* Guest user Routes */}
             <Route exact path="/" component={Home} />
             <Route exact path="/a" component={PrivacyPolicy} />
@@ -65,6 +67,9 @@ class App extends Component {
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
+            <Route exact path="/login" component={Login} />
+
+            <Route exact path="/account" component={UserProfile} />
 
             {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
             {/* <Route exact path="/session/404" component={NotFound} /> */}
