@@ -1,5 +1,6 @@
 import Product from "../models/ProductModel.js"
 
+<<<<<<< HEAD
 // @desc  Create Product
 // @route POST /api/products/
 // @access Admin 
@@ -116,3 +117,23 @@ export default{
     updateProductDetails,
     deleteProductDetails,
 }
+=======
+const createProduct = async (req, res) => {
+    if (req.body) {
+        const product = new Product(req.body)
+        await product.save()
+            .then(data => {
+                res.status(200).send({ Productraz : data })
+            })
+            .catch(error => {
+                res.status(500).send({ error: error.message })
+            })
+        }else{
+            res.status(200).send({ 'message': "No Data Found" })
+        }
+    }
+
+    export default{
+        createProduct
+    }
+>>>>>>> origin/rasitha_wishlist
