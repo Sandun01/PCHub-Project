@@ -3,6 +3,7 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import WishlistRouts from './src/routes/WishlistRouts.js'
+import ProductRouts from './src/routes/ProductRouts.js'
 
 import connectDB from './src/config/db.js'
 
@@ -13,7 +14,8 @@ app.use(cors())
 app.use(bodyParser.json())
 
 
-app.use('/wishlist', WishlistRouts);
+app.use('/wishlist', WishlistRouts)
+app.use('/product', ProductRouts)
 
 //connect to the database
 connectDB()
