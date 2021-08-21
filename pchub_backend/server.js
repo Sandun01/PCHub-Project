@@ -14,8 +14,8 @@ app.use(cors())
 app.use(bodyParser.json())
 
 
-app.use('/wishlist', WishlistRouts)
-app.use('/product', ProductRouts)
+app.use('api/wishlist', WishlistRouts)
+app.use('api/product', ProductRouts)
 
 //connect to the database
 connectDB()
