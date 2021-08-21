@@ -42,7 +42,7 @@ class App extends Component {
         
         <Header />
 
-        <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)" }}>
+        <main style={{ display: 'flex' }}>
           
           <Switch>
             
