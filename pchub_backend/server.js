@@ -46,13 +46,9 @@ app.listen(
   console.log(
     `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow
   )
-<<<<<<< HEAD
-)
-=======
 )
 
 
 
 
 
->>>>>>> 2d183e3f0482682e62ad8e5472e8974476471888
