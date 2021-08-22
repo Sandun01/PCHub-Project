@@ -2,23 +2,28 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import WishlistRouts from './src/routes/WishlistRouts.js'
-import ProductRouts from './src/routes/ProductRoutes.js'
 
 import connectDB from './src/config/db.js'
 
+import WishlistRouts from './src/routes/WishlistRouts.js'
+import ProductRouts from './src/routes/ProductRoutes.js'
+import OrderRouts from './src/routes/OrderRouts.js'
+import authRoutes from './src/routes/authRoutes.js'
+
 dotenv.config()
+
+//connect to the database
+connectDB()
 
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
 
+app.use('/api/users', authRoutes)
 app.use('/api/wishlist', WishlistRouts)
 app.use('/api/product', ProductRouts)
-
-//connect to the database
-connectDB()
+app.use('/api/orders', OrderRouts)
 
 const PORT = process.env.PORT || 5000;
 

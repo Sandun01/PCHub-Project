@@ -4,8 +4,13 @@ const orderSchema = mongoose.Schema({
 
     user:{
         type: mongoose.Schema.Types.ObjectId,
-        required: false,
+        required: true,
         ref: 'User',
+    },
+    isDelivered: {
+        type: Boolean,
+        required: false,
+        default: false,
     },
     orderItems: [
         {
@@ -13,12 +18,16 @@ const orderSchema = mongoose.Schema({
                 type: String,
                 required: true,
             },
-            qyt:{
+            category: {
+                type: String,
+                required: true,
+            },
+            qty:{
                 type: Number,
                 required: true,
             },
             image:{
-                type: Number,
+                type: String,
                 required: false,
             },
             price:{
@@ -28,16 +37,10 @@ const orderSchema = mongoose.Schema({
             product:{
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
-                ref: product,
+                ref: 'products',
             },
         },
     ],
-
-    isDelivered: {
-        type: Boolean,
-        required: true,
-        default: false,
-    },
 
 })
 

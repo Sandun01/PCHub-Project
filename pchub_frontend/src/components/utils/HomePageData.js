@@ -28,7 +28,7 @@ export const homeProductItemCardData = [
     {
         title: 'GeForce RTX™ 3080 Ti',
         src: '/images/products/rtx3080.png',
-        description: 'Asus ROG Strix G17 G712LWS in review: Powerful gaming machine with integrated light show',
+        description: 'New dual axial flow through design delivers the highest possible thermal performance without compromising fan acoustics.',
     },
     {
         title: 'MSI GF75 Thin 10UEK',
