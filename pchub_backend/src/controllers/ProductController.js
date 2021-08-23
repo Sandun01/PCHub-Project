@@ -112,7 +112,7 @@ const deleteProductDetails = async(req, res) => {
 // @desc  Get latest 3 products
 // @route GET /api/products/latest
 // @access User 
-// Home page - Sandun
+// Home page - Sandun.
 
 const getLatestProducts = async(req, res) => {
 
@@ -128,7 +128,7 @@ const getLatestProducts = async(req, res) => {
 // @desc  Get latest 3 products
 // @route GET /api/products/filterProducts
 // @access User 
-// Home page - Sandun
+// Home page - Sandun.
 
 const filterProducts = async(req, res) => {
 
@@ -163,7 +163,7 @@ const filterProducts = async(req, res) => {
 // @desc  Search products
 // @route GET /api/products/search
 // @access User 
-// Home page - Sandun
+// Home page - Sandun.
 
 const searchProductByName = async(req, res) => {
 
