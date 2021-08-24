@@ -10,6 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Component } from 'react';
+import axios from 'axios';
+import Alert from '@material-ui/lab/Alert';
+import Loader from '../common/Loader';
+import AuthService from '../../services/AuthService';
 
 const styles = (theme) => ({
   paper: {
@@ -41,7 +45,95 @@ const styles = (theme) => ({
   },
 });
 
+const initialState = {
+  formData: {
+    email: '',
+    password: '',
+  },
+  variant: '',
+  message: '',
+  loading: false,
+};
+
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = initialState;
+    this.formSubmit = this.formSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  formSubmit = async (e) => {
+    //console.log(this.state.email + this.state.password);
+    e.preventDefault();
+
+    // this.setState({
+    //   loading: true,
+    // });
+
+    // try {
+    //   const { data } = await axios.post(
+    //     '/api/auth/login',
+    //     { email, password },
+    //     config
+    //   );
+
+    //   localStorage.setItem('authToken', data.token);
+
+    //   history.push('/');
+    // } catch (error) {
+    //   setError(error.response.data.error);
+    //   setTimeout(() => {
+    //     setError('');
+    //   }, 5000);
+    // }
+    this.setState({
+      loading: true,
+    });
+
+    // console.log(this.state);
+    var messageRes = null;
+    var variantRes = null;
+
+    axios
+      .post('/api/users/login', this.state.formData)
+      .then((res) => {
+        // console.log(res);
+        var userData = res.data;
+        var token = res.data.token;
+
+        AuthService.setUserDataToLocal(userData, token);
+
+        if (userData.isAdmin) {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/';
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        messageRes = error.message;
+        variantRes = 'error';
+      });
+
+    setTimeout(() => {
+      this.setState({
+        message: messageRes,
+        variant: variantRes,
+        loading: false,
+      });
+    }, 2000);
+  };
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+
+    console.log(name, value);
+    this.setState({
+      [name]: value,
+    });
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -69,7 +161,12 @@ class Login extends Component {
             Sign in and start managing your candidates!
           </Typography>
 
-          <form className={classes.form} noValidate method="post">
+          <form
+            className={classes.form}
+            noValidate
+            method="post"
+            onSubmit={this.formSubmit}
+          >
             <TextField
               className={classes.input}
               variant="filled"
@@ -81,6 +178,8 @@ class Login extends Component {
               name="email"
               autoComplete="email"
               autoFocus
+              value={this.state.email}
+              onChange={this.handleChange}
             />
             <TextField
               className={classes.input}
@@ -93,6 +192,8 @@ class Login extends Component {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={this.state.password}
+              onChange={this.handleChange}
             />
             <FormControlLabel
               style={{ fontWeight: '500', color: 'white' }}
