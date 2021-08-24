@@ -18,7 +18,7 @@ export const LeftNavBarData = [
     {
         title: 'Gaming PCs',
         path: '/products/gaming_pcs',
-        category: '/products/gaming_pcs',
+        category: 'gaming_pcs',
         iconPath:'/images/gamingPC.png',
         icon: <img width="25px" height="25px" src="/images/gamingPC.png" alt="gamingPC" />,
         cName: 'nav-text',
@@ -26,7 +26,7 @@ export const LeftNavBarData = [
     {
         title: 'Budget PCs',
         path: '/products/budget_pcs',
-        category: '/products/budget_pcs',
+        category: 'budget_pcs',
         iconPath:'/images/pc.png',
         icon: <img width="25px" height="25px" src="/images/pc.png" alt="pc" />,
         cName: 'nav-text',
@@ -34,7 +34,7 @@ export const LeftNavBarData = [
     {
         title: 'Processors',
         path: '/products/processors',
-        category: '/products/processors',
+        category: 'processors',
         iconPath:'/images/processor.png',
         icon: <img width="25px" height="25px" src="/images/processor.png" alt="processor" />,
         cName: 'nav-text',
@@ -42,7 +42,7 @@ export const LeftNavBarData = [
     {
         title: 'MotherBoards',
         path: '/products/motherBoards',
-        category: '/products/motherBoards',
+        category: 'motherBoards',
         iconPath:'/images/motherboard.png',
         icon: <img width="25px" height="25px" src="/images/motherboard.png" alt="motherboard" />,
         cName: 'nav-text',
@@ -50,7 +50,7 @@ export const LeftNavBarData = [
     {
         title: 'Memory (RAM)s',
         path: '/products/memory',
-        category: '/products/memory',
+        category: 'memory',
         iconPath:'/images/ram.png',
         icon: <img width="25px" height="25px" src="/images/ram.png" alt="ram" />,
         cName: 'nav-text',
@@ -58,7 +58,7 @@ export const LeftNavBarData = [
     {
         title: 'Graphic Cards',
         path: '/products/graphic_cards',
-        category: '/products/graphic_cards',
+        category: 'graphic_cards',
         iconPath:'/images/gpu.png',
         icon: <img width="25px" height="25px" src="/images/gpu.png" alt="gpu" />,
         cName: 'nav-text',
@@ -66,7 +66,7 @@ export const LeftNavBarData = [
     {
         title: 'Storages',
         path: '/products/storages',
-        category: '/products/storages',
+        category: 'storages',
         iconPath:'/images/storage.png',
         icon: <img width="25px" height="25px" src="/images/storage.png" alt="storage" />,
         cName: 'nav-text',
@@ -74,7 +74,7 @@ export const LeftNavBarData = [
     {
         title: 'Power Supplies',
         path: '/products/power_supplies',
-        category: '/products/power_supplies',
+        category: 'power_supplies',
         iconPath:'/images/power.png',
         icon: <img width="25px" height="25px" src="/images/power.png" alt="power" />,
         cName: 'nav-text',
@@ -82,7 +82,7 @@ export const LeftNavBarData = [
     {
         title: 'Monitors',
         path: '/products/monitors',
-        category: '/products/monitors',
+        category: 'monitors',
         iconPath:'/images/monitor.png',
         icon: <img width="25px" height="25px" src="/images/monitor.png" alt="monitor" />,
         cName: 'nav-text',
@@ -90,7 +90,7 @@ export const LeftNavBarData = [
     {
         title: 'Accessories',
         path: '/products/accessories',
-        category: '/products/accessories',
+        category: 'accessories',
         iconPath:'/images/keyboard.png',
         icon: <img width="25px" height="25px" src="/images/keyboard.png" alt="keyboard" />,
         cName: 'nav-text',
@@ -98,7 +98,7 @@ export const LeftNavBarData = [
     {
         title: 'Software',
         path: '/products/software',
-        category: '/products/software',
+        category: 'software',
         iconPath:'/images/software.png',
         icon: <img width="25px" height="25px" src="/images/software.png" alt="software" />,
         cName: 'nav-text',
@@ -106,7 +106,7 @@ export const LeftNavBarData = [
     {
         title: 'Casings',
         path: '/products/casings',
-        category: '/products/casings',
+        category: 'casings',
         iconPath:'/images/casing.png',
         icon: <img width="25px" height="25px" src="/images/casing.png" alt="casing" />,
         cName: 'nav-text',
