@@ -13,9 +13,12 @@ import { UserRoutes, AdminRoutes } from './routes/Routes';
 //user components
 import Home from './components/user/Home';
 import LeftNavMain from './components/user/LeftNavMain';
-import ProductSingleView from './components/user/ProductSingleView';
-import AllProducts from './components/user/AllProducts';
 import Cart from './components/user/Cart';
+
+//products
+import AllProducts from './components/user/products/AllProducts';
+import ProductSingleView from './components/user/products/ProductSingleView';
+import SearchResults from './components/user/products/SearchResults';
 
 import PrivacyPolicy from './components/user/static/PrivacyPolicy';
 import AboutUs from './components/user/static/AboutUs';
@@ -67,10 +70,11 @@ class App extends Component {
             <Route exact path="/services" component={Services} />
             <Route exact path="/privacyPolicy" component={AboutUs} />
 
-            <Route exact path="/products/:name" component={AllProducts} />
+            <Route exact path="/products/search/:name" component={SearchResults} />
+            <Route exact path="/products/:category" component={AllProducts} />
             <Route exact path="/product/:id" component={ProductSingleView} />
 
-            <Route exact path="/cart/" component={Cart} />
+            <Route exact path="/cart" component={Cart} />
 
             {/* Registered User Routes */}
             {/* <UserRoutes exact path="/" /> */}

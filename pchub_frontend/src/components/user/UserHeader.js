@@ -25,6 +25,8 @@ import {
 } from '@material-ui/core';
 
 import { LeftNavBarData } from '../utils/LeftNavBarData';
+import { BackendApi_URL } from "../utils/AppConst";
+import OrderServices from "../../services/OrderServices";
 
 const styles = (theme) => ({
   grow: {
@@ -107,6 +109,10 @@ const styles = (theme) => ({
       color: 'black',
     },
   },
+  
+  disabledSearchButton: {
+    backgroundColor: 'rgba(210, 210, 210, 0.3)',
+  },
 
   iconButtons: {
     textDecoration: 'none',
@@ -152,6 +158,13 @@ class UserHeader extends Component {
       drawer: false,
 
       loggedIn: false,
+
+      //search button
+      searchName: "",
+
+      //cart item count
+      cartCount: 0,
+
     };
   }
 
@@ -191,19 +204,47 @@ class UserHeader extends Component {
     });
   };
 
+  //search text change
+  handleChange = (e) => {
+
+    var sTxt = e.target.value;
+
+    this.setState({
+        searchName: sTxt,
+    })
+
+  }
+
+  //load search results page
+  searchText = () =>{
+    window.location.href = "/products/search/"+this.state.searchName;
+  }
+
+  //get cart items count
+  getCartItemsCount(){
+     var count = OrderServices.getNumberOfItemsInCart_Local();
+
+     this.setState({
+       cartCount: count,
+     })
+
+  }
+
+  //mobile view open page
+  openPageMobileView(url){
+    window.location.href = url;
+  }
+
   componentDidMount() {
+
+    //get cart items count
+    this.getCartItemsCount();
+
     if (window.innerWidth <= 1000) {
       this.setState({
         isLargeScreen: false,
       });
     }
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth <= 1000) {
-        this.setState({
-          isLargeScreen: false,
-        });
-    }})
   
     window.addEventListener("resize", () => {
       if (window.innerWidth <= 1000) {
@@ -269,7 +310,7 @@ class UserHeader extends Component {
             open={this.state.isMobileMenuOpen}
             onClose={this.handleMobileMenuClose}
             >
-            <MenuItem onClick={this.handleMobileMenuClose} >
+            <MenuItem onClick={() => this.openPageMobileView("/messages")} >
                 <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="secondary">
                     <MailIcon />
@@ -277,7 +318,7 @@ class UserHeader extends Component {
                 </IconButton>
                 <p>Messages</p>
             </MenuItem>
-            <MenuItem onClick={this.handleMobileMenuClose}>
+            <MenuItem onClick={() => this.openPageMobileView("/notifications")}>
                 <IconButton aria-label="show 11 new notifications" color="inherit">
                 <Badge badgeContent={11} color="secondary">
                     <NotificationsIcon />
@@ -285,16 +326,16 @@ class UserHeader extends Component {
                 </IconButton>
                 <p>Notifications</p>
             </MenuItem>
-            <MenuItem onClick={this.handleMobileMenuClose}>
+            <MenuItem onClick={() => this.openPageMobileView("/cart")}>
                 <IconButton
                     aria-label="account of current user"
                     aria-controls="primary-search-account-menu"
                     aria-haspopup="true"
                     color="inherit"
                     >
-                    {/* <Badge badgeContent={11} color="secondary"> */}
+                    <Badge badgeContent={this.state.cartCount} color="secondary">
                         <ShoppingCartIcon />
-                    {/* </Badge> */}
+                    </Badge>
                 </IconButton>
                 <p>Cart</p>
             </MenuItem>
@@ -368,25 +409,27 @@ class UserHeader extends Component {
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
+                value={this.state.searchName}
+                onChange={(e) => this.handleChange(e) }
                 inputProps={{ 'aria-label': 'search' }}
               />
             </div>
 
             <div className={classes.sectionDesktop}>
-              <Link style={{ textDecoration: 'none' }} to="/account">
                 <Button
-                  className={classes.searchButton}
+                  className={this.state.searchName === "" ? classes.disabledSearchButton : classes.searchButton}
                   variant="outlined"
                   color="primary"
                   size="medium"
+                  disabled={this.state.searchName === "" ? true : false}
+                  onClick={this.searchText}
                 >
                   Search
                 </Button>
-              </Link>
             </div>
 
             {/* Cart */}
-            <div className={classes.sectionDesktop}>
+            <a href="/cart" className={classes.sectionDesktop}>
               <MenuItem>
                 <IconButton
                   aria-label="account of current user"
@@ -394,12 +437,12 @@ class UserHeader extends Component {
                   aria-haspopup="true"
                   color="inherit"
                 >
-                  <Badge badgeContent={11} color="secondary">
+                  <Badge badgeContent={this.state.cartCount} color="secondary">
                     <ShoppingCartIcon className={classes.iconButtons} />
                   </Badge>
                 </IconButton>
               </MenuItem>
-            </div>
+            </a>
 
             {this.state.loggedIn ? (
               <div className={classes.sectionDesktop}>

@@ -50,7 +50,7 @@ const getProductByID = async(req, res) => {
             res.status(200).send({ success: true, 'product': data })
         })
         .catch( (error) => {
-            res.status(500).send({ success: false, 'message': error })
+            res.status(400).send({ success: false, 'message': error })
         } )
     }
     else{
@@ -121,12 +121,12 @@ const getLatestProducts = async(req, res) => {
         res.status(200).send({ success: true, 'products': data })
     })
     .catch( (error) => {
-        res.status(500).send({ success: false, 'message': error })
+        res.status(400).send({ success: false, 'message': error })
     } )
 }
 
 // @desc  Get latest 3 products
-// @route GET /api/products/filterProducts
+// @route POST /api/products/filterProducts
 // @access User 
 // Home page - Sandun.
 
@@ -151,11 +151,11 @@ const filterProducts = async(req, res) => {
             res.status(200).send({ success: true, 'totResults': totalCount, 'products': data, })
         })
         .catch( (error) => {
-            res.status(500).send({ success: false, 'message': error })
+            res.status(400).send({ success: false, 'message': error })
         } )
     }
     else{
-        res.status(200).send({ success: true, 'totResults': 0, 'message': 'Not Found!', })
+        res.status(200).send({ success: false, 'totResults': 0, 'message': 'Not Found!', })
     }
 
 }
@@ -193,11 +193,11 @@ const searchProductByName = async(req, res) => {
             res.status(200).send({ success: true, 'totResults': totalCount, 'products': data, })
         })
         .catch( (error) => {
-            res.status(500).send({ success: false, 'message': error })
+            res.status(400).send({ success: false, 'message': error })
         } )
     }
     else{
-        res.status(200).send({ success: true, 'totResults': 0, 'message': 'Not Found!', })
+        res.status(200).send({ success: false, 'totResults': 0, 'message': 'Not Found!', })
     }
 
 }
