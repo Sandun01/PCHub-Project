@@ -167,7 +167,6 @@ class OrderServices {
   // async getItemFromDB(id){
   //   var itemRes = await axios.get(BackendApi_URL+"/products/"+id);
   //   var itemData = itemRes.data.product;
-
   //   return itemData;
   // }
 
