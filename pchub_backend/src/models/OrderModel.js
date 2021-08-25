@@ -12,6 +12,11 @@ const orderSchema = mongoose.Schema({
         required: false,
         default: false,
     },
+    isActive: {
+        type: Boolean,
+        required: false,
+        default: true,
+    },
     orderItems: [
         {
             name: {

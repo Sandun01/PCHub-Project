@@ -109,10 +109,107 @@ const deleteProductDetails = async(req, res) => {
     }
 }
 
+// @desc  Get latest 3 products
+// @route GET /api/products/latest
+// @access User 
+// Home page - Sandun.
+
+const getLatestProducts = async(req, res) => {
+
+    await Product.find().sort({$natural:-1}).limit(3)
+    .then( data => {
+        res.status(200).send({ success: true, 'products': data })
+    })
+    .catch( (error) => {
+        res.status(500).send({ success: false, 'message': error })
+    } )
+}
+
+// @desc  Get latest 3 products
+// @route GET /api/products/filterProducts
+// @access User 
+// Home page - Sandun.
+
+const filterProducts = async(req, res) => {
+
+    const data = req.body;
+    const pageNumber = data.pagination.pageNumber;
+    const nPerPage = data.pagination.noPerPage;
+
+    const category = data.filterData.category;
+
+    const filterQuery = {
+        "category": category,
+    }
+
+    const totalCount = await Product.find(filterQuery).countDocuments() // find(filterQuery).count();
+
+    if(totalCount > 0){
+    
+        await Product.find(filterQuery).skip((pageNumber-1)*nPerPage).limit(nPerPage).sort({$natural:-1})
+        .then( data => {
+            res.status(200).send({ success: true, 'totResults': totalCount, 'products': data, })
+        })
+        .catch( (error) => {
+            res.status(500).send({ success: false, 'message': error })
+        } )
+    }
+    else{
+        res.status(200).send({ success: true, 'totResults': 0, 'message': 'Not Found!', })
+    }
+
+}
+
+// @desc  Search products
+// @route GET /api/products/search
+// @access User 
+// Home page - Sandun.
+
+const searchProductByName = async(req, res) => {
+
+    const data = req.body;
+    const pageNumber = data.pagination.pageNumber;
+    const nPerPage = data.pagination.noPerPage;
+
+    const name = data.filterData.name;
+
+    // const filterQuery = {
+    //     "item_name": name,
+    // }
+    const filterQuery = {
+        "item_name" : {
+            $regex: new RegExp(name)
+        }
+    }
+    
+    const totalCount = await Product.find(filterQuery).countDocuments();
+
+    console.log(totalCount);
+
+    if(totalCount > 0){
+    
+        await Product.find(filterQuery).skip((pageNumber-1)*nPerPage).sort({$natural:-1})
+        .then( data => {
+            res.status(200).send({ success: true, 'totResults': totalCount, 'products': data, })
+        })
+        .catch( (error) => {
+            res.status(500).send({ success: false, 'message': error })
+        } )
+    }
+    else{
+        res.status(200).send({ success: true, 'totResults': 0, 'message': 'Not Found!', })
+    }
+
+}
+
+
 export default{
     createProduct,
     getAllProducts,
     getProductByID,
     updateProductDetails,
     deleteProductDetails,
+    getLatestProducts,
+    filterProducts,
+    searchProductByName,
 }

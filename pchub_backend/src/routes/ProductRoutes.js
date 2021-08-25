@@ -3,7 +3,10 @@ import ProductController from '../controllers/ProductController.js';
 
 const router = express.Router()
 
-
+// Home page - Sandun
+router.route('/latest').get( ProductController.getLatestProducts )
+router.route('/filter').post( ProductController.filterProducts )
+router.route('/search').post( ProductController.searchProductByName )
 
 router.route('/').post( ProductController.createProduct)
                  .get( ProductController.getAllProducts)
