@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { alpha, withStyles } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import MoreIcon from "@material-ui/icons/MoreVert";
-import { Button } from "@material-ui/core";
-import {Link } from 'react-router-dom'
+import React, { Component } from 'react';
+import { alpha, withStyles } from '@material-ui/core/styles';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import MailIcon from '@material-ui/icons/Mail';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 import {
   AppBar,
@@ -111,9 +111,9 @@ const styles = (theme) => ({
   iconButtons: {
     textDecoration: 'none',
     color: '#fff',
-    '&:hover':{
-        color: '#1a83ff',
-    }
+    '&:hover': {
+      color: '#1a83ff',
+    },
   },
 
   MuiDrawer: {
@@ -203,32 +203,29 @@ class UserHeader extends Component {
         this.setState({
           isLargeScreen: false,
         });
-    }})
-  
-    window.addEventListener("resize", () => {
+      }
+    });
+
+    window.addEventListener('resize', () => {
       if (window.innerWidth <= 1000) {
         this.setState({
           isLargeScreen: false,
         });
-      } 
-      else {
+      } else {
         this.setState({
           isLargeScreen: true,
         });
       }
     });
-    
   }
 
-  smallScreen(){
-
+  smallScreen() {
     const { classes } = this.props;
-    
+
     return (
-        <div className={classes.grow}>
+      <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar className={classes.navbar}>
-            
             <IconButton
               edge="start"
               className={classes.menuButton}
@@ -246,7 +243,7 @@ class UserHeader extends Component {
             </Typography>
 
             {/* mobile dropdown */}
-            <div className='ms-auto'>
+            <div className="ms-auto">
               <IconButton
                 aria-label="show more"
                 aria-controls={this.state.mobileMenuId}
@@ -261,60 +258,59 @@ class UserHeader extends Component {
         </AppBar>
 
         <Menu
-            anchorEl={this.state.mobileMoreAnchorEl}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            id={this.state.mobileMenuId}
-            keepMounted
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            open={this.state.isMobileMenuOpen}
-            onClose={this.handleMobileMenuClose}
+          anchorEl={this.state.mobileMoreAnchorEl}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          id={this.state.mobileMenuId}
+          keepMounted
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open={this.state.isMobileMenuOpen}
+          onClose={this.handleMobileMenuClose}
+        >
+          <MenuItem onClick={this.handleMobileMenuClose}>
+            <IconButton aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <p>Messages</p>
+          </MenuItem>
+          <MenuItem onClick={this.handleMobileMenuClose}>
+            <IconButton aria-label="show 11 new notifications" color="inherit">
+              <Badge badgeContent={11} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <p>Notifications</p>
+          </MenuItem>
+          <MenuItem onClick={this.handleMobileMenuClose}>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="primary-search-account-menu"
+              aria-haspopup="true"
+              color="inherit"
             >
-            <MenuItem onClick={this.handleMobileMenuClose} >
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                    <MailIcon />
-                </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem onClick={this.handleMobileMenuClose}>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                <Badge badgeContent={11} color="secondary">
-                    <NotificationsIcon />
-                </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
-            <MenuItem onClick={this.handleMobileMenuClose}>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                    >
-                    {/* <Badge badgeContent={11} color="secondary"> */}
-                        <ShoppingCartIcon />
-                    {/* </Badge> */}
-                </IconButton>
-                <p>Cart</p>
-            </MenuItem>
-            <MenuItem 
-                // onClick={navigate to profile}
+              {/* <Badge badgeContent={11} color="secondary"> */}
+              <ShoppingCartIcon />
+              {/* </Badge> */}
+            </IconButton>
+            <p>Cart</p>
+          </MenuItem>
+          <MenuItem
+          // onClick={navigate to profile}
+          >
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="primary-search-account-menu"
+              aria-haspopup="true"
+              color="inherit"
             >
-                <IconButton
-                aria-label="account of current user"
-                aria-controls="primary-search-account-menu"
-                aria-haspopup="true"
-                color="inherit"
-                >
-                <Badge color="secondary">
-                    <AccountCircle />
-                </Badge>
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
+              <Badge color="secondary">
+                <AccountCircle />
+              </Badge>
+            </IconButton>
+            <p>Profile</p>
+          </MenuItem>
         </Menu>
-
       </div>
     );
   }
@@ -344,18 +340,18 @@ class UserHeader extends Component {
                 About
               </a>
             </Typography>
-            <Typography className={classes.title}  noWrap>
+            <Typography className={classes.title} noWrap>
               <a className={classes.headerlink} href="/services">
                 Services
               </a>
             </Typography>
-            <Typography className={classes.title}  noWrap>
+            <Typography className={classes.title} noWrap>
               <a className={classes.headerlink} href="/contactUs">
                 Contact Us
               </a>
             </Typography>
-            <Typography className={classes.title}  noWrap>
-                +9471234567
+            <Typography className={classes.title} noWrap>
+              +9471234567
             </Typography>
             <div className={classes.grow} />
             <div className={classes.search}>
@@ -394,9 +390,9 @@ class UserHeader extends Component {
                   aria-haspopup="true"
                   color="inherit"
                 >
-                  <Badge badgeContent={11} color="secondary">
-                    <ShoppingCartIcon className={classes.iconButtons} />
-                  </Badge>
+                  {/* <Badge badgeContent={11} color="secondary"> */}
+                  <ShoppingCartIcon className={classes.iconButtons} />
+                  {/* </Badge> */}
                 </IconButton>
               </MenuItem>
             </div>

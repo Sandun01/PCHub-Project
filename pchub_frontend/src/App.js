@@ -36,7 +36,7 @@ import Login from './components/public/Login';
 //import PrivateRoute from './components/routing/PrivateRoute';
 import Private from './components/public/Private';
 import Register from './components/public/Register';
-import ForgotPassword from './components/public/Register';
+import ForgotPassword from './components/public/ForgotPassword';
 import ResetPassword from './components/public/ResetPassword';
 
 //session components
@@ -94,13 +94,13 @@ class App extends Component {
               component={ResetPassword}
             />
 
-            <Route exact path="/account" component={UserProfile} />
+            <UserRoutes exact path="/account" component={UserProfile} />
 
-            {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
-            {/* <Route exact path="/session/404" component={NotFound} /> */}
-            {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
+            <Route exact path="/session/401" component={NotAuthorized} />
+            <Route exact path="/session/404" component={NotFound} />
+            <Route exact path="/session/expired" component={TokenExpired} />
 
-            {/* <Route path="*" component={() => <Redirect to="/session/404" />} /> */}
+            <Route path="*" component={() => <Redirect to="/session/404" />} />
           </Switch>
         </main>
 

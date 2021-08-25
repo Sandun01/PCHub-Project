@@ -67,26 +67,6 @@ class Login extends Component {
     //console.log(this.state.email + this.state.password);
     e.preventDefault();
 
-    // this.setState({
-    //   loading: true,
-    // });
-
-    // try {
-    //   const { data } = await axios.post(
-    //     '/api/auth/login',
-    //     { email, password },
-    //     config
-    //   );
-
-    //   localStorage.setItem('authToken', data.token);
-
-    //   history.push('/');
-    // } catch (error) {
-    //   setError(error.response.data.error);
-    //   setTimeout(() => {
-    //     setError('');
-    //   }, 5000);
-    // }
     this.setState({
       loading: true,
     });
@@ -96,9 +76,9 @@ class Login extends Component {
     var variantRes = null;
 
     axios
-      .post('/api/users/login', this.state.formData)
+      .post('/api/auth/login', this.state.formData)
       .then((res) => {
-        // console.log(res);
+        console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
         var userData = res.data;
         var token = res.data.token;
 
@@ -107,7 +87,7 @@ class Login extends Component {
         if (userData.isAdmin) {
           window.location.href = '/admin';
         } else {
-          window.location.href = '/';
+          window.location.href = '/account';
         }
       })
       .catch((error) => {
@@ -126,12 +106,16 @@ class Login extends Component {
   };
 
   handleChange = (e) => {
-    const { name, value } = e.target;
+    var name = e.target.name;
+    var value = e.target.value;
+    var data = this.state.formData;
 
-    console.log(name, value);
+    data[name] = value;
+
     this.setState({
-      [name]: value,
+      formData: data,
     });
+    // console.log(this.state);
   };
 
   render() {
@@ -147,6 +131,9 @@ class Login extends Component {
           >
             Sign in
           </Typography>
+
+          {/* Loading */}
+          {this.state.loading && <Loader />}
 
           <Typography
             component="h1"
@@ -178,7 +165,7 @@ class Login extends Component {
               name="email"
               autoComplete="email"
               autoFocus
-              value={this.state.email}
+              value={this.state.formData.email}
               onChange={this.handleChange}
             />
             <TextField
@@ -192,7 +179,7 @@ class Login extends Component {
               type="password"
               id="password"
               autoComplete="current-password"
-              value={this.state.password}
+              value={this.state.formData.password}
               onChange={this.handleChange}
             />
             <FormControlLabel
@@ -218,7 +205,7 @@ class Login extends Component {
             <Grid container style={{ marginTop: '20px' }}>
               <Grid item xs>
                 <Link
-                  href="#"
+                  href="/forgotpassword"
                   variant="body2"
                   style={{ fontWeight: '500', color: 'white' }}
                 >
@@ -227,9 +214,9 @@ class Login extends Component {
               </Grid>
               <Grid item>
                 <Link
-                  href="#"
                   variant="body2"
                   style={{ fontWeight: '500', color: 'white' }}
+                  href="/register"
                 >
                   {"Don't have an account? Sign Up"}
                 </Link>
