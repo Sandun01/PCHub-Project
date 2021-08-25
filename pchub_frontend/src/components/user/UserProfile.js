@@ -14,6 +14,13 @@ import PublicIcon from '@material-ui/icons/Public';
 
 import Account_and_profile from './user_components/Account_and_profile';
 import Manage_payment from './user_components/Manage_payment';
+import Contact_support from './user_components/Contact_support';
+import Order_history from './user_components/Order_history';
+import Privacy_policy from './user_components/Privacy_policy';
+import Terms_and_condition from './user_components/Terms_and_condition';
+import Wish_list from './user_components/Wish_list';
+import Write_a_review from './user_components/Write_a_review';
+import Manage_address from './user_components/Manage_address';
 
 //import Profile_picture from '../../../public/images/profile_picture.jpg';
 
@@ -104,57 +111,69 @@ class UserProfile extends Component {
         show_terms_and_condition: false,
         show_privacy_policy: false,
       });
-    } else if (name === 'payment') {
+    } else if (name === 'order_history') {
       this.setState({
-        show_account_and_profile: true,
+        show_account_and_profile: false,
         show_manage_paymet: false,
         show_manage_address: false,
-        show_order_history: false,
+        show_order_history: true,
         show_contact_support: false,
         show_wish_list: false,
         show_write_a_review: false,
         show_terms_and_condition: false,
         show_privacy_policy: false,
       });
-    } else if (name === 'payment') {
+    } else if (name === 'contact_support') {
       this.setState({
-        show_account_and_profile: true,
+        show_account_and_profile: false,
         show_manage_paymet: false,
         show_manage_address: false,
         show_order_history: false,
-        show_contact_support: false,
+        show_contact_support: true,
         show_wish_list: false,
         show_write_a_review: false,
         show_terms_and_condition: false,
         show_privacy_policy: false,
       });
-    } else if (name === 'payment') {
+    } else if (name === 'wish_list') {
       this.setState({
-        show_account_and_profile: true,
+        show_account_and_profile: false,
         show_manage_paymet: false,
         show_manage_address: false,
         show_order_history: false,
         show_contact_support: false,
-        show_wish_list: false,
+        show_wish_list: true,
         show_write_a_review: false,
         show_terms_and_condition: false,
         show_privacy_policy: false,
       });
-    } else if (name === 'payment') {
+    } else if (name === 'terms_and_conditions') {
       this.setState({
-        show_account_and_profile: true,
+        show_account_and_profile: false,
         show_manage_paymet: false,
         show_manage_address: false,
         show_order_history: false,
         show_contact_support: false,
         show_wish_list: false,
         show_write_a_review: false,
+        show_terms_and_condition: true,
+        show_privacy_policy: false,
+      });
+    } else if (name === 'write_a_review') {
+      this.setState({
+        show_account_and_profile: false,
+        show_manage_paymet: false,
+        show_manage_address: false,
+        show_order_history: false,
+        show_contact_support: false,
+        show_wish_list: false,
+        show_write_a_review: true,
         show_terms_and_condition: false,
         show_privacy_policy: false,
       });
-    } else if (name === 'payment') {
+    } else if (name === 'privacy_policy') {
       this.setState({
-        show_account_and_profile: true,
+        show_account_and_profile: false,
         show_manage_paymet: false,
         show_manage_address: false,
         show_order_history: false,
@@ -162,19 +181,7 @@ class UserProfile extends Component {
         show_wish_list: false,
         show_write_a_review: false,
         show_terms_and_condition: false,
-        show_privacy_policy: false,
-      });
-    } else if (name === 'payment') {
-      this.setState({
-        show_account_and_profile: true,
-        show_manage_paymet: false,
-        show_manage_address: false,
-        show_order_history: false,
-        show_contact_support: false,
-        show_wish_list: false,
-        show_write_a_review: false,
-        show_terms_and_condition: false,
-        show_privacy_policy: false,
+        show_privacy_policy: true,
       });
     }
   };
@@ -207,6 +214,7 @@ class UserProfile extends Component {
               />
             </center>
 
+            {/* account and profile */}
             <div
               className={classes.leftNavItem}
               onClick={() => this.showComponent('account')}
@@ -232,6 +240,7 @@ class UserProfile extends Component {
               </div>
             </div>
 
+            {/* payment */}
             <div
               className={classes.leftNavItem}
               onClick={() => this.showComponent('payment')}
@@ -257,6 +266,7 @@ class UserProfile extends Component {
               </div>
             </div>
 
+            {/* address */}
             <div
               className={classes.leftNavItem}
               onClick={() => this.showComponent('address')}
@@ -282,6 +292,7 @@ class UserProfile extends Component {
               </div>
             </div>
 
+            {/* order History */}
             <div
               className={classes.leftNavItem}
               onClick={() => this.showComponent('order_history')}
@@ -307,6 +318,7 @@ class UserProfile extends Component {
               </div>
             </div>
 
+            {/* contact_support */}
             <div
               className={classes.leftNavItem}
               onClick={() => this.showComponent('contact_support')}
@@ -332,6 +344,7 @@ class UserProfile extends Component {
               </div>
             </div>
 
+            {/* wish_list */}
             <div
               className={classes.leftNavItem}
               onClick={() => this.showComponent('wish_list')}
@@ -357,7 +370,11 @@ class UserProfile extends Component {
               </div>
             </div>
 
-            <div className={classes.leftNavItem}>
+            {/* write_a_review */}
+            <div
+              className={classes.leftNavItem}
+              onClick={() => this.showComponent('write_a_review')}
+            >
               <div
                 style={{
                   textDecoration: 'none',
@@ -379,9 +396,12 @@ class UserProfile extends Component {
               </div>
             </div>
 
-            <div className={classes.leftNavItem}>
+            {/* terms_and_condition */}
+            <div
+              className={classes.leftNavItem}
+              onClick={() => this.showComponent('terms_and_conditions')}
+            >
               <div
-                to="/account_and_profile"
                 style={{
                   textDecoration: 'none',
                   display: 'flex',
@@ -402,9 +422,12 @@ class UserProfile extends Component {
               </div>
             </div>
 
-            <div className={classes.leftNavItem}>
+            {/* privacy_policy */}
+            <div
+              className={classes.leftNavItem}
+              onClick={() => this.showComponent('privacy_policy')}
+            >
               <div
-                to="/account_and_profile"
                 style={{
                   textDecoration: 'none',
                   display: 'flex',
@@ -433,7 +456,15 @@ class UserProfile extends Component {
               <Account_and_profile />
             )}
             {this.state.show_manage_paymet === true && <Manage_payment />}
-            {this.state.show_manage_address === true && <Manage_payment />}
+            {this.state.show_manage_address === true && <Manage_address />}
+            {this.state.show_order_history === true && <Order_history />}
+            {this.state.show_contact_support === true && <Contact_support />}
+            {this.state.show_privacy_policy === true && <Privacy_policy />}
+            {this.state.show_terms_and_condition === true && (
+              <Terms_and_condition />
+            )}
+            {this.state.show_wish_list === true && <Wish_list />}
+            {this.state.show_write_a_review === true && <Write_a_review />}
 
             {/* <center>
               <Typography

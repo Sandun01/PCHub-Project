@@ -47,17 +47,14 @@ const styles = (theme) => ({
 
 const initialState = {
   formData: {
-    fname: '',
-    lname: '',
     email: '',
-    password: '',
   },
   variant: '',
   message: '',
   loading: false,
 };
 
-class Register extends Component {
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
@@ -78,16 +75,11 @@ class Register extends Component {
     var variantRes = null;
 
     axios
-      .post('/api/auth/register', this.state.formData)
+      .post('/api/auth/forgotpassword', this.state.formData)
       .then((res) => {
-        console.log(res);
         if (res.status == 201) {
-          messageRes = 'Successfully Registered!';
+          messageRes = 'Successfully Send Email! Check Your Inbox';
           variantRes = 'success';
-
-          setTimeout(() => {
-            window.location.href = '/session/login';
-          }, 2000);
         } else {
           messageRes = 'Error';
           variantRes = 'error';
@@ -132,7 +124,7 @@ class Register extends Component {
             variant="h3"
             style={{ fontWeight: '500', color: 'white' }}
           >
-            Sign Up
+            Forgot Password
           </Typography>
 
           {/* Loading */}
@@ -148,7 +140,8 @@ class Register extends Component {
               margin: '30px 0px 30px 0px',
             }}
           >
-            Sign up and join with us!
+            Please enter the email address you register your account with. We
+            will send you reset password confirmation to this email
           </Typography>
 
           <form
@@ -163,66 +156,12 @@ class Register extends Component {
               margin="normal"
               required
               fullWidth
-              id="fname"
-              label="First Name"
-              name="fname"
-              value={this.state.formData.fname}
-              onChange={this.handleChange}
-            />
-
-            <TextField
-              className={classes.input}
-              variant="filled"
-              margin="normal"
-              required
-              fullWidth
-              id="lname"
-              label="Last Name"
-              name="lname"
-              value={this.state.formData.lname}
-              onChange={this.handleChange}
-            />
-
-            <TextField
-              className={classes.input}
-              variant="filled"
-              margin="normal"
-              required
-              fullWidth
               id="email"
               label="Email Address"
               name="email"
               autoComplete="email"
               autoFocus
-              value={this.state.formData.email}
-              onChange={this.handleChange}
-            />
-            <TextField
-              className={classes.input}
-              variant="filled"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={this.state.formData.password}
-              onChange={this.handleChange}
-            />
-
-            <TextField
-              className={classes.input}
-              variant="filled"
-              margin="normal"
-              required
-              fullWidth
-              name="confrmPassword"
-              label="confrmPassword"
-              type="confrmPassword"
-              id="confrmPassword"
-              value={this.state.formData.confrmPassword}
+              value={this.state.email}
               onChange={this.handleChange}
             />
 
@@ -233,20 +172,8 @@ class Register extends Component {
               color="primary"
               className={classes.submit}
             >
-              Register
+              Submit
             </Button>
-            <Grid container style={{ marginTop: '20px' }}>
-              <Grid item xs></Grid>
-              <Grid item>
-                <Link
-                  href="/login"
-                  variant="body2"
-                  style={{ fontWeight: '500', color: 'white' }}
-                >
-                  {'Already have an account? Sign In'}
-                </Link>
-              </Grid>
-            </Grid>
           </form>
         </div>
       </Container>
@@ -254,4 +181,4 @@ class Register extends Component {
   }
 }
 
-export default withStyles(styles)(Register);
+export default withStyles(styles)(ForgotPassword);

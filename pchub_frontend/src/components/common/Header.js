@@ -1,20 +1,18 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import UserHeader from '../user/UserHeader';
 export default class Header extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
   }
 
-  componentDidMount(){
-
-  }
+  componentDidMount() {}
 
   render() {
     return (
       <div>
         <UserHeader />
       </div>
-    )
+    );
   }
 }
