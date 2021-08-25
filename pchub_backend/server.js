@@ -22,8 +22,8 @@ app.use(bodyParser.json());
 
 app.use('/api/auth', auth);
 app.use('/api/users', authRoutes);
-app.use('/api/wishlist', WishlistRouts);
-app.use('/api/product', ProductRouts);
+app.use('/api/wishlists', WishlistRouts);
+app.use('/api/products', ProductRouts);
 app.use('/api/orders', OrderRouts);
 
 const PORT = process.env.PORT || 5000;
