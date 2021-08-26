@@ -25,7 +25,7 @@ import { Alert } from '@material-ui/lab'
 
 const styles = (theme) => ({
   table: {
-    // minWidth: 650,
+     minWidth: 550,
   },
   editButtonIcon: {
     color: '#0625C8',
@@ -58,7 +58,8 @@ const styles = (theme) => ({
     fontSize: '1rem',
   },
   container: {
-    maxHeight: 440,
+    maxHeight: 520,
+    maxWidth: 1300,
   },
   root: {
     width: '100%',

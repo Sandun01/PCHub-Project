@@ -10,8 +10,9 @@ import AuthService from '../../services/AuthService'
 
 const styles = (theme) => ({
   root: {
-    width: '20%',
-    minWidth: '250px',
+    width: '15%',
+    minWidth: '150px',
+    marginRight: '20px',
     borderRadius: '0px',
     backgroundColor: '#363740',
     borderStyle: 'none',
