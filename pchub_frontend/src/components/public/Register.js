@@ -86,7 +86,7 @@ class Register extends Component {
           variantRes = 'success';
 
           setTimeout(() => {
-            window.location.href = '/session/login';
+            window.location.href = '/login';
           }, 2000);
         } else {
           messageRes = 'Error';

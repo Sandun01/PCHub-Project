@@ -407,7 +407,10 @@ class UserHeader extends Component {
                   // onClick={this.handleProfileMenuOpen}
                   color="inherit"
                 >
-                  <AccountCircle className={classes.iconButtons} />
+                  <AccountCircle
+                    className={classes.iconButtons}
+                    style={{ width: '30', height: '30' }}
+                  />
                 </IconButton>
               </div>
             ) : (
