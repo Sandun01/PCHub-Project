@@ -2,13 +2,13 @@ import UserModel from '../models/UserModel.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import sendEmail from '../utils/sendEmail.js';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 const register = async (req, res, next) => {
   const { username, email, password, fname, lname, isAdmin } = req.body;
 
   try {
     const user = await UserModel.create({
-      username,
       email,
       password,
       fname,
@@ -154,32 +154,50 @@ const generateToken = (user) => {
   return user.getSignedJwtToken();
 };
 
-// const updateUserData = async(req, res) => {
+const updateUserData = async (req, res) => {
+  if (req.body && req.params) {
+    //console.log(req.params.id);
+    const query = { _id: req.params.id };
+    //var password = this.hashPassword(req.body.password);
+    var salt = await bcrypt.genSalt(10);
+    var Hpassword = await bcrypt.hash(req.body.password, salt);
+    //console.log(salt);
+    console.log(Hpassword);
+    const update = {
+      fname: req.body.fname,
+      lname: req.body.lname,
+      password: Hpassword,
+      email: req.body.email,
+    };
 
-//   if(req.body && req.params){
+    await UserModel.updateOne(query, update)
+      .then((result) => {
+        //console.log(result.nModified);
+        if (result.nModified > 0) {
+          res.status(200).send({
+            success: true,
+            message: 'User Info Updated Successfully!',
+          });
+        } else {
+          res.status(200).send({
+            success: false,
+            message: 'Error!',
+          });
+        }
+      })
+      .catch((error) => {
+        res.status(500).send({ success: false, message: error });
+      });
+  } else {
+    res.status(200).send({ success: false, message: 'No Data Found' });
+  }
+};
 
-//       const query = { "_id": req.params.id };
-//       const update = {
-//           "fname": req.body.title,
-//           "lname": req.body.venue,
-//           "startDate": req.body.startDate,
-//           "endDate": req.body.endDate,
-//           "description": req.body.description,
-//        };
-
-//       await UserModel.updateOne( query , update)
-//       .then( result => {
-//           // console.log(result.modifiedCount);
-//           res.status(200).send({ success: true, 'message': "Conference Updated Successfully!" })
-//       })
-//       .catch( (error) => {
-//           res.status(500).send({ success: false, 'message': error })
-//       } )
-
-//   }else{
-//       res.status(200).send({ success: false, 'message': "No Data Found" })
-//   }
-// }
+// const hashPassword = async (password) => {
+//   const salt = await bcrypt.genSalt(10);
+//   password = await bcrypt.hash(this.password, salt);
+//   return password;
+// };
 
 export default {
   register,
@@ -187,4 +205,5 @@ export default {
   forgotPassword,
   resetPassword,
   sendToken,
+  updateUserData,
 };
