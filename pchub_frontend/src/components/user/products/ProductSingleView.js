@@ -14,6 +14,8 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import LoadingScreen from '../../common/LoadingScreen';
 import OrderServices from '../../../services/OrderServices'
+import WishListServices from '../../../services/WishListServices';
+import AuthService from '../../../services/AuthService';
 
 const styles = (theme) => ({
 
@@ -121,8 +123,18 @@ class ProductSingleView extends Component {
 
     constructor(props){
         super(props);
-        this.state = {
+        //bind addtowishlist
+        this.addToWishList = this.addToWishList.bind(this);
 
+        this.state = {
+            //user data
+            user: {
+                _id: '',
+                fname: '',
+                lname: '',
+                email: '',
+                password: '',
+              },
             //Item details
             item: {
                 _id: null,
@@ -149,6 +161,19 @@ class ProductSingleView extends Component {
         }
 
     }
+
+    getUserData = async () => {
+        var res = AuthService.getUserData();
+        var userD = res.userData;
+        // userD['fname'] = userData.fname;
+    
+        console.log(userD);
+        this.setState({
+          user: userD,
+        });
+        console.log('1::' + res.userData._id);
+        console.log('2::' + this.state.user._id);
+      };
 
     addToCart = () => {
 
@@ -177,10 +202,24 @@ class ProductSingleView extends Component {
     }
 
     addToWishList(){
+        
+
         console.log('Add to wishlist')
+        //data that we want to add to wishlist
+        let wishlist = {
+            userID:this.state.user._id,
+            product: this.state.item._id
+        }
+        
+
+         //send to database
+         WishListServices.addToWishList(wishlist);
+
     }
 
     componentDidMount(){
+        //get user data
+        this.getUserData();
         //get item id
         const itmID = this.props.match.params.id;
         // console.log(itmID);
@@ -233,6 +272,7 @@ class ProductSingleView extends Component {
     }
 
     render() {
+        
         const { classes } = this.props;
 
         return (
@@ -315,7 +355,7 @@ class ProductSingleView extends Component {
                                             {/* </Link> */}
                                         </Grid>
                                     {
-                                        this.state.userLoggedIn &&
+                                        !this.state.userLoggedIn &&
                                             <Grid item sm={5}>
                                                 {/* <Link to="/wishlist" className={classes.linkStyles}> */}
                                                     <div className={classes.buttonStyles} onClick={this.addToWishList}>

@@ -3,7 +3,7 @@ import { Container, Typography } from '@material-ui/core';
 
 const styles = (theme) => ({});
 
-export default class Account_and_profile extends Component {
+export default class Wish_list extends Component {
   render() {
     return (
       <div>
