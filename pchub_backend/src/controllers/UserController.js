@@ -16,7 +16,7 @@ const register = async (req, res, next) => {
       isAdmin,
     });
 
-    sendToken(user, 200, res);
+    sendToken(user, 201, res);
   } catch (err) {
     next(err);
   }

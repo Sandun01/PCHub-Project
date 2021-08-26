@@ -34,7 +34,7 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   input: {
-    backgroundColor: '#17A2B8',
+    backgroundColor: '#FFFFFF',
     borderRadius: '5px',
     color: 'white',
   },
