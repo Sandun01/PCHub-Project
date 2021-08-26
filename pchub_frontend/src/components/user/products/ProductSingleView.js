@@ -14,6 +14,7 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import LoadingScreen from '../../common/LoadingScreen';
 import OrderServices from '../../../services/OrderServices'
+import AuthService from '../../../services/AuthService';
 
 const styles = (theme) => ({
 
@@ -136,6 +137,7 @@ class ProductSingleView extends Component {
 
             //user details
             userLoggedIn: false,
+            userID: null,
 
             //page details
             haveMoreImages: false,
@@ -150,9 +152,20 @@ class ProductSingleView extends Component {
 
     }
 
-    addToCart = () => {
+    addToCart = async() => {
 
         if(this.state.userLoggedIn){
+
+            var res = await OrderServices.addItemToCart_DB(this.state.item, this.state.userID);
+            // console.log("Item",res);
+
+            if(res.status == 201 || res.status == 200){
+                console.log('Item Added to cart - Success');
+                window.location.reload(false);
+            }
+            else{
+                console.log('Error');
+            }
 
         }
         else{
@@ -180,15 +193,38 @@ class ProductSingleView extends Component {
         console.log('Add to wishlist')
     }
 
+    async checkUserLoggedIn(){
+        var logIn = false;
+        var uData = await AuthService.getUserData();
+        var uInfo = null;
+        var id = null;
+        
+        if(uData != null){
+            uInfo = uData.userData;
+            id = uInfo._id
+            logIn = true;
+        }
+        
+        this.setState({
+            userLoggedIn: logIn,
+            userID: id,
+        })
+
+        // console.log("User",this.state)
+    }
+
     componentDidMount(){
         //get item id
         const itmID = this.props.match.params.id;
         // console.log(itmID);
+
+        //check user logged in
+        this.checkUserLoggedIn();
         
         //get item details
         axios.get(BackendApi_URL+"/products/"+itmID)
         .then(res => {
-            console.log(res);
+            // console.log(res);
 
             if(res.status === 200 && res.data.product != null){
                 const allImages = [];

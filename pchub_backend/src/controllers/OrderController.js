@@ -43,6 +43,7 @@ async function getActiveOrder(userID){
     
 };
 
+
 //Create Order
 async function createOrder(data){
 
@@ -66,6 +67,23 @@ async function createOrder(data){
         return null; //data not found
     }
 
+}
+
+// @desc Create New Order
+// @route POST /api/orders/
+// @access Registered User 
+const createNewOrder = async(req, res) => {
+
+    const order = new Order(req.body);
+    await order.save()
+    .then(data => {
+        res.status(201).send({ success: true, 'data': data })
+    })
+    .catch(error => {
+        console.log(error)
+        res.status(400).send({ success: false, 'message': 'Error'})
+    })
+    
 }
 
 
@@ -199,11 +217,14 @@ const getOrdersByUserID = async(req, res) => {
     const userId = req.params.id;
     let orderType = true;
     orderType = req.body.active;
+    
+    // console.log(orderType)
+
     let query = { user: userId };
     
     //check current order or previous order
-    if(orderType === true){
-        query = { user: userId, isActive: orderType };
+    if(orderType == true){
+        query = { user: userId, isActive: true };
     }
     else{
         query = { user: userId , isActive: false };
@@ -220,7 +241,7 @@ const getOrdersByUserID = async(req, res) => {
                 }
             })
             .then(data => {
-                res.status(200).send({ success: true, 'data': data })
+                res.status(200).send({ success: true, 'orders': data })
             })
             .catch(error => {
                 console.log(error)
@@ -309,7 +330,7 @@ const deleteItemInTheOrder = async(req, res) => {
     const orderID = req.params.id;
     const orderItemId = req.body.orderItemId;
     
-    // console.log(data);
+    // console.log(orderID, orderItemId);
     
     //check no of items in order
     const searchQuery = { _id: orderID }; //for both search and delete
@@ -365,7 +386,42 @@ const deleteItemInTheOrder = async(req, res) => {
 }
 
 
+// @desc get user cart - no of items
+// @route GET /api/orders/qty/user/:id
+// @access User(Registered) 
+const getNoOfItemsInActiveOrder = async(req, res) => {
+    var qty = 0;
+    var uId = req.params.id;
+
+    try
+    {
+        var orderID = await getActiveOrder(uId);
+    
+        // console.log(orderID)
+        if(orderID == null){
+            res.status(200).send({ success: true, 'count': qty }); //no active orders
+        }
+        else{
+            var order = await Order.findById({"_id": orderID});
+            var items = order.orderItems;
+            
+            if(items != null){
+                qty = items.length;
+                res.status(200).send({ success: true, 'count': qty }) //items = 0
+            }
+            else{
+                res.status(200).send({ success: true, 'count': qty }) //items = 0
+            }
+        }
+    }
+    catch(error){
+        res.status(400).send({ success: false, 'message': 'Error' }) //error
+
+    }
+}
+
 export default{
+    createNewOrder,
     getAllOrders,
     getOrderByID,
     editQuantity,
@@ -373,4 +429,5 @@ export default{
     getOrdersByUserID,
     addItemToTheOrder,
     deleteItemInTheOrder,
+    getNoOfItemsInActiveOrder,
 }

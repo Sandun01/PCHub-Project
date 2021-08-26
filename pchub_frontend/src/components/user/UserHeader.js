@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { alpha, withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
@@ -162,6 +163,7 @@ class UserHeader extends Component {
 
       //user
       loggedIn: false,
+      userID: null,
 
       //search button
       searchName: "",
@@ -226,11 +228,32 @@ class UserHeader extends Component {
 
   //get cart items count
   async getCartItemsCount(){
-     var count = await OrderServices.getNumberOfItemsInCart_Local();
 
-     this.setState({
-       cartCount: count,
-     })
+    var count = 0;
+    // console.log("count",this.state.loggedIn);
+
+    if(this.state.loggedIn){
+       await axios.get(BackendApi_URL+"/orders/qty/user/"+this.state.userID)
+       .then(res => {
+          count = res.data.count;
+          // console.log("count",res);
+        })
+        .catch(error => {
+          count = 0;
+          console.log(error)
+        })
+
+
+        this.setState({
+          cartCount: count,
+        })
+    }
+    else{
+      count = await OrderServices.getNumberOfItemsInCart_Local();
+      this.setState({
+        cartCount: count,
+      })
+    }
 
   }
 
@@ -252,14 +275,17 @@ class UserHeader extends Component {
     var logIn = false;
     var uData = await AuthService.getUserData();
     var uInfo = null;
+    var uId = null;
     
     if(uData != null){
-      var uInfo = uData.userData;
-        logIn = true;
+      uInfo = uData.userData;
+      logIn = true;
+      uId = uInfo._id;
     }
     
     this.setState({
       loggedIn: logIn,
+      userID: uId
     })
     
     // console.log("userD",this.state);
@@ -276,11 +302,11 @@ class UserHeader extends Component {
   
   async componentDidMount() {
     
-    //get cart items count
-    this.getCartItemsCount();
-    
     //setUserData
-    this.setUserData();
+    await this.setUserData();
+
+    //get cart items count
+    await this.getCartItemsCount();
 
 
     if (window.innerWidth <= 1000) {
@@ -385,6 +411,7 @@ class UserHeader extends Component {
               <>
                 <MenuItem 
                     // onClick={navigate to profile}
+                  onClick={() => this.openPageMobileView("/account")}
                 >
                     <IconButton
                     aria-label="account of current user"
@@ -505,7 +532,10 @@ class UserHeader extends Component {
             {this.state.loggedIn ? (
               <>
                 {/* profile */}
-                <div className={classes.sectionDesktop}>
+                <div 
+                    className={classes.sectionDesktop}
+                    onClick={() => this.openPageMobileView("/account")}
+                  >
                   <Tooltip title={"View Profile"} arrow>
                     <IconButton
                       edge="end"

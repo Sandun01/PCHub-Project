@@ -170,6 +170,104 @@ class OrderServices {
   //   return itemData;
   // }
 
+  //add item to cart DB
+  async addItemToCart_DB(item, userID){
+
+    var result = null;
+
+    var cartItem ={
+      "name": item.item_name,
+      "category": item.category,
+      "qty": 1,
+      "image": item.item_image,
+      "price": item.price,
+      "product": item._id
+    }
+    
+    // console.log("Item",cartItem);
+
+    // add one item to db order
+    await axios.put(BackendApi_URL+"/orders/addItem/user/"+userID, cartItem)
+      .then(res => {
+        // console.log("Item",res);
+        result = res;
+      })
+      .catch(error =>{
+        console.log(error);
+      })
+      
+    return result;
+  }
+
+  //get order by user id
+  async getOrderByUserID(userID){
+
+    var result = null;
+    var data = {
+      "active": true,
+    }
+
+    await axios.post(BackendApi_URL+"/orders/user/"+userID, data)
+    .then(res => {
+      // console.log("Item",res);
+      result = res;
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+
+    console.log(result);
+    return result;
+
+  }
+
+  //remove order item by order and item id's
+  async removeOrderItemByID(ordId, itmId){
+
+    var result = null;
+    var data = {
+      "orderItemId": itmId
+    }
+    // console.log("Item",ordId, data);
+
+    await axios.put(BackendApi_URL+"/orders/removeItem/"+ordId, data)
+    .then(res => {
+      // console.log("Item",res);
+      result = res;
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+
+    console.log(result);
+    return result;
+
+  }
+
+  //edit order item quantity
+  async editOrderItemQty(ordId, data){
+
+    var result = null;
+    // {
+    //   "orderItemDbID": "61230f8d577e6d3ff0a4a3f5",
+    //   "itemID": "612149c38548774608573af1",
+    //   "qty": 2
+    // }
+    // console.log("Item",ordId, data);
+
+    await axios.put(BackendApi_URL+"/orders/qty/edit/"+ordId, data)
+    .then(res => {
+      // console.log("Item",res);
+      result = res;
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+
+    // console.log(result);
+    return result;
+
+  }
 
 }
 

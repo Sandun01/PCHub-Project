@@ -11,13 +11,25 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import { LeftNavBarData } from '../utils/LeftNavBarData';
 import OrderServices from '../../services/OrderServices';
+import AuthService from '../../services/AuthService';
 
 const styles = (theme) => ({
     
     root:{
         display: 'block',
         width: '100%',
+        opacity: 1,
+        animation: '$customFade 2s linear',
     },
+    "@keyframes customFade":{
+        "0%":{ 
+            opacity: 0,
+        },
+        "100%":{ 
+            opacity: 1,
+        }
+    },
+
     headerContainer:{
         textAlign: 'center',
         marginTop: 20,
@@ -110,12 +122,14 @@ class Cart extends Component {
             //screen
             isSmallScreen: false,
 
-            //page data
+            //order data
             items: [],
             haveItems: false,
+            orderID: null,
 
             //user data
             userLoggedIn: false,
+            userID: null,
 
             totalAmount: 0,
 
@@ -159,38 +173,86 @@ class Cart extends Component {
     }
 
     //get cart items
-    getCartItems(){
+    async getCartItems(){
 
-        var arr = OrderServices.getAllItemsInCart_Local();
+        //get order by user id
+        if(this.state.userLoggedIn){
+            var uId = this.state.userID;
+            var itemsArr = [];
+            var oID = null;
 
-        if(arr != null && arr.length > 0){
-            console.log(arr);
-            this.setState({
-                items: arr,
-                haveItems: true,
-            })
+            var orderRes = await OrderServices.getOrderByUserID(uId);
 
-            // set icon related to category
-            this.setCategoryIcon(arr);
+            if(orderRes.status == 200 && orderRes != null){
+
+                if(orderRes.data.orders.length > 0){
+                    itemsArr = orderRes.data.orders[0].orderItems;
+                    oID = orderRes.data.orders[0]._id;
+    
+                    if(true){
+    
+                    }
+                    this.setState({
+                        items: itemsArr,
+                        haveItems: true,
+                        orderID: oID,
+                    })
+        
+                    // set icon related to category
+                    this.setCategoryIcon(itemsArr);
+                    // console.log("order items", orderRes);
+                }
+                else{
+                    console.log('Cart is empty');
+                }
+
+            }
+            else{
+                console.log("error");
+            }
+            // console.log("order",orderRes);
 
         }
-        else{
-            console.log('Cart is empty');
+        else{ //get guest user order - local
+            var arr = OrderServices.getAllItemsInCart_Local();
+    
+            if(arr != null && arr.length > 0){
+                console.log(arr);
+                this.setState({
+                    items: arr,
+                    haveItems: true,
+                })
+    
+                // set icon related to category
+                this.setCategoryIcon(arr);
+    
+            }
+            else{
+                console.log('Cart is empty');
+            }
+
         }
 
     }
 
     //remove item from cart
-    removeCartItem(id){
+    async removeCartItem(item){
         var userLog = this.state.userLoggedIn;
         var itemArr = [];
 
         if(userLog){ //get items in db
-            
+            var itmId = item._id;
+            var ordID = this.state.orderID;
+            // console.log(ordID, itmId);
+
+            var res = await OrderServices.removeOrderItemByID(ordID, itmId);
+            console.log("delete item",res);
+
         }
         else{  //remove item in local
+            var id = item.id;
             itemArr = OrderServices.removeItemInCart_Local(id);
-            console.log(id)
+            // console.log(id)
         }
 
         window.location.reload(false);
@@ -198,8 +260,10 @@ class Cart extends Component {
     }
 
     //change item quantity
-    changeQuantity(type, id, qty){
+    async changeQuantity(type, itm){
 
+        var id = itm.id;
+        var qty = itm.qty;
         var userLog = this.state.userLoggedIn;
 
         if(type === "-" && qty > 1){ //Decrease
@@ -211,6 +275,20 @@ class Cart extends Component {
 
         //check user logged in
         if(userLog){ //if user logged in DB changes
+
+            const data = {
+                "orderItemDbID": itm._id,
+                "itemID": itm.product._id,
+                "qty": qty,
+            }
+
+            var OrdID = this.state.orderID;
+
+            const res = await OrderServices.editOrderItemQty(OrdID, data);
+            // console.log(res);
+
+            //re load data
+            this.getCartItems();
 
         }
         else{  //if user not logged in LOCAL changes
@@ -230,10 +308,34 @@ class Cart extends Component {
 
     }
 
-    componentDidMount(){
+    //check user logged in
+    async checkUserLoggedIn(){
+        var logIn = false;
+        var uData = await AuthService.getUserData();
+        var uInfo = null;
+        var id = null;
         
+        if(uData != null){
+            uInfo = uData.userData;
+            id = uInfo._id
+            logIn = true;
+        }
+        
+        this.setState({
+            userLoggedIn: logIn,
+            userID: id,
+        })
+
+        // console.log("User",this.state)
+    }
+
+    async componentDidMount(){
+
+        //check user logged in
+        await this.checkUserLoggedIn();
+
         //get cart items
-        this.getCartItems();
+        await this.getCartItems();
 
         // setup screen size
         if(window.innerWidth <= 750) {
@@ -276,7 +378,7 @@ class Cart extends Component {
                         this.state.haveItems && 
                         this.state.items.map((item, key) => (
                             
-                            <Grid item xs={10}>
+                            <Grid item xs={10} key={key} >
 
                                 <Card className={classes.cardStyles}>
                                     <Grid container justifyContent="center" alignItems="center" direction="row">
@@ -306,14 +408,14 @@ class Cart extends Component {
                                                     variant="contained" 
                                                     size="small" 
                                                     className={classes.removeBtn}
-                                                    onClick={() => this.removeCartItem(item.id) }
+                                                    onClick={() => this.removeCartItem(item) }
                                                 >
                                                     Remove Item
                                                 </Button>
                                                 :
                                                 <div 
                                                     className={classes.deleteButton} 
-                                                    onClick={() => this.removeCartItem(item.id) }
+                                                    onClick={() => this.removeCartItem(item) }
                                                 >
                                                     <DeleteForeverIcon />
                                                 </div>
@@ -335,7 +437,7 @@ class Cart extends Component {
                                                 >
                                                 <div 
                                                     className={this.state.isSmallScreen ? "ml-3 mr-5" :classes.plusBtn}
-                                                    onClick={() => this.changeQuantity("+", item.id, item.qty)}
+                                                    onClick={() => this.changeQuantity("+", item)}
                                                 >
                                                     <AddIcon />
                                                 </div>
@@ -347,7 +449,7 @@ class Cart extends Component {
                                                 </div>
                                                 <div 
                                                     className={this.state.isSmallScreen ? "ml-5 mr-3" :classes.minusBtn}
-                                                    onClick={() => this.changeQuantity("-", item.id, item.qty)}
+                                                    onClick={() => this.changeQuantity("-", item)}
                                                 >
                                                     <RemoveIcon />
                                                 </div>
@@ -390,7 +492,7 @@ class Cart extends Component {
                     }
 
                     {
-                        this.state.userLoggedIn &&
+                        this.state.userLoggedIn && this.state.haveItems &&
                         <Grid item xs={10}>
                             <div className={classes.confirmBtn}>
                                 Confirm Order
