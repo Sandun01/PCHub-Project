@@ -41,11 +41,5 @@ export const AdminLeftNavBarData = [
         icon: <img width="25px" height="25px" src="/images/icons8-report.png" alt="report" />,
         cName: 'nav-text',
     },
-    {
-        title: 'Logout',
-        path: '/admin/reports',
-        iconPath:'/images/pc.png',
-        icon: <img width="25px" height="25px" src="/images/pc.png" alt="report" />,
-        cName: 'nav-text',
-    },
+   
 ]

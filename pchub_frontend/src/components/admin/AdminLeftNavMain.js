@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography'
 import { AdminLeftNavBarData } from '../utils/AdminLeftNavBarData'
 import { Link } from 'react-router-dom'
 
+import AuthService from '../../services/AuthService'
+
 const styles = (theme) => ({
   root: {
     width: '20%',
@@ -62,6 +64,15 @@ class AdminLeftNavMain extends Component {
     })
   }
 
+  redirectToLogin = () => {
+    window.location.href = '/login'
+  }
+
+  logoutUser = () => {
+    AuthService.userLogout()
+    this.redirectToLogin()
+  }
+
   render() {
     const { classes } = this.props
     return (
@@ -86,11 +97,22 @@ class AdminLeftNavMain extends Component {
                 >
                   <MenuItem className={classes.menuItem}>
                     {item.icon}
-                    <Typography  align={'left'}>{item.title}</Typography>
+                    <Typography align={'left'}>{item.title}</Typography>
                   </MenuItem>
                 </Link>
               )
             })}
+            <MenuItem className={classes.menuItem}>
+              <Typography align={'left'} onClick={this.logoutUser}>
+                  
+                  <img
+                  width='25px'
+                  height='25px'
+                  src='\images\icons8-logout.png'
+                  alt='report'
+                /> Logout 
+              </Typography>
+            </MenuItem>
           </Paper>
         )}
       </>
