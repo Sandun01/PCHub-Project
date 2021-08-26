@@ -19,6 +19,21 @@ const register = async (req, res, next) => {
   }
 };
 
+// @desc  Get All users
+// @route GET /api/users/
+// @access Admin 
+
+const getAllusers = async(req, res) => {
+
+  await UserModel.find({})
+  .then( data => {
+      res.status(200).send({ success: true, 'users': data })
+  })
+  .catch( (error) => {
+      res.status(500).send({ success: false, 'message': error })
+  } )
+}
+
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -142,6 +157,7 @@ export default {
   forgotPassword,
   resetPassword,
   sendToken,
+  getAllusers
 };
 
 // const crypto = require('crypto');

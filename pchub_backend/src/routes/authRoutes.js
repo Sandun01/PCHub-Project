@@ -14,5 +14,7 @@ auth.route('/forgotpassword').post(userController.forgotPassword);
 
 auth.route('/resetpassword/:resetToken').put(userController.resetPassword);
 
+auth.route('/').get(userController.getAllusers)
+
 // module.exports = auth;
 export default auth;
