@@ -12,6 +12,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { LeftNavBarData } from '../utils/LeftNavBarData';
 import OrderServices from '../../services/OrderServices';
 import AuthService from '../../services/AuthService';
+import EmptyCart from './products/EmptyCart';
 
 const styles = (theme) => ({
     
@@ -498,6 +499,12 @@ class Cart extends Component {
                                 Confirm Order
                             </div>
                         </Grid>
+                    }
+
+                    {/* empty cart */}
+                    {
+                        this.state.haveItems === false &&
+                        <EmptyCart />
                     }
 
                </Grid>

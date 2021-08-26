@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles'
 
 import ItemCard from '../home/ItemCard'
 import LoadingScreen from '../../common/LoadingScreen'
+import ProductNotFound from './ProductNotFound'
 
 const styles = (theme) =>({
 
@@ -194,7 +195,7 @@ class AllProducts extends Component {
                     :
                     this.state.loading === false && this.state.haveData === false ?
                     <div>
-                        Alert
+                        <ProductNotFound />
                     </div>
                     :
                     <div className={classes.itemContainer}>
