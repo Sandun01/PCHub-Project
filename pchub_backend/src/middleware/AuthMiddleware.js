@@ -37,4 +37,13 @@ const protectUser = async (req, res, next) => {
   }
 };
 
-export default protectUser;
+const admin = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    res.status(401);
+    throw new Error('Not an admin credential');
+  }
+};
+
+export default { protectUser, admin };
