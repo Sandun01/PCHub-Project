@@ -1,4 +1,3 @@
-///const ErrorResponse = require("../utils/errorResponse");
 import ErrorResponse from '../utils/errorResponse.js';
 
 const errorHandler = (err, req, res, next) => {

@@ -10,6 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Component } from 'react';
+import axios from 'axios';
+import Alert from '@material-ui/lab/Alert';
+import Loader from '../common/Loader';
+import AuthService from '../../services/AuthService';
 
 const styles = (theme) => ({
   paper: {
@@ -41,7 +45,79 @@ const styles = (theme) => ({
   },
 });
 
+const initialState = {
+  formData: {
+    email: '',
+    password: '',
+  },
+  variant: '',
+  message: '',
+  loading: false,
+};
+
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = initialState;
+    this.formSubmit = this.formSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  formSubmit = async (e) => {
+    //console.log(this.state.email + this.state.password);
+    e.preventDefault();
+
+    this.setState({
+      loading: true,
+    });
+
+    // console.log(this.state);
+    var messageRes = null;
+    var variantRes = null;
+
+    axios
+      .post('/api/auth/login', this.state.formData)
+      .then((res) => {
+        console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
+        var userData = res.data;
+        var token = res.data.token;
+
+        AuthService.setUserDataToLocal(userData, token);
+
+        if (userData.isAdmin) {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/account';
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        messageRes = error.message;
+        variantRes = 'error';
+      });
+
+    setTimeout(() => {
+      this.setState({
+        message: messageRes,
+        variant: variantRes,
+        loading: false,
+      });
+    }, 2000);
+  };
+
+  handleChange = (e) => {
+    var name = e.target.name;
+    var value = e.target.value;
+    var data = this.state.formData;
+
+    data[name] = value;
+
+    this.setState({
+      formData: data,
+    });
+    // console.log(this.state);
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -56,6 +132,9 @@ class Login extends Component {
             Sign in
           </Typography>
 
+          {/* Loading */}
+          {this.state.loading && <Loader />}
+
           <Typography
             component="h1"
             variant="h7"
@@ -69,7 +148,12 @@ class Login extends Component {
             Sign in and start managing your candidates!
           </Typography>
 
-          <form className={classes.form} noValidate method="post">
+          <form
+            className={classes.form}
+            noValidate
+            method="post"
+            onSubmit={this.formSubmit}
+          >
             <TextField
               className={classes.input}
               variant="filled"
@@ -81,6 +165,8 @@ class Login extends Component {
               name="email"
               autoComplete="email"
               autoFocus
+              value={this.state.formData.email}
+              onChange={this.handleChange}
             />
             <TextField
               className={classes.input}
@@ -93,6 +179,8 @@ class Login extends Component {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={this.state.formData.password}
+              onChange={this.handleChange}
             />
             <FormControlLabel
               style={{ fontWeight: '500', color: 'white' }}
@@ -117,7 +205,7 @@ class Login extends Component {
             <Grid container style={{ marginTop: '20px' }}>
               <Grid item xs>
                 <Link
-                  href="#"
+                  href="/forgotpassword"
                   variant="body2"
                   style={{ fontWeight: '500', color: 'white' }}
                 >
@@ -126,9 +214,9 @@ class Login extends Component {
               </Grid>
               <Grid item>
                 <Link
-                  href="#"
                   variant="body2"
                   style={{ fontWeight: '500', color: 'white' }}
+                  href="/register"
                 >
                   {"Don't have an account? Sign Up"}
                 </Link>

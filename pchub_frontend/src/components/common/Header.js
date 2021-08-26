@@ -1,22 +1,25 @@
-import React, { Component } from 'react'
-
+import React, { Component } from 'react';
 import UserHeader from '../user/UserHeader';
 import adminHeader from '../admin/adminHeader';
+
 export default class Header extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
+    this.state = {
+      user: this.props.user,
+    }
+    // console.log(this.props.user);
   }
 
-  componentDidMount(){
-
+  componentDidMount() {
   }
+
 
   render() {
     return (
       <div>
-        {/* <UserHeader /> */}
-        <adminHeader />
+        <UserHeader user={this.state.user}/>
       </div>
-    )
+    );
   }
 }

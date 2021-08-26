@@ -13,9 +13,12 @@ import { UserRoutes, AdminRoutes } from './routes/Routes';
 //user components
 import Home from './components/user/Home';
 import LeftNavMain from './components/user/LeftNavMain';
-import ProductSingleView from './components/user/ProductSingleView';
-import AllProducts from './components/user/AllProducts';
 import Cart from './components/user/Cart';
+
+//products
+import AllProducts from './components/user/products/AllProducts';
+import ProductSingleView from './components/user/products/ProductSingleView';
+import SearchResults from './components/user/products/SearchResults';
 
 import PrivacyPolicy from './components/user/static/PrivacyPolicy';
 import AboutUs from './components/user/static/AboutUs';
@@ -36,31 +39,57 @@ import Footer from './components/common/Footer';
 
 //public components
 import Login from './components/public/Login';
+//import PrivateRoute from './components/routing/PrivateRoute';
+import Private from './components/public/Private';
+import Register from './components/public/Register';
+import ForgotPassword from './components/public/ForgotPassword';
+import ResetPassword from './components/public/ResetPassword';
 
 //session components
 import NotAuthorized from './components/sessions/NotAuthorized';
 import NotFound from './components/sessions/NotFound';
 import TokenExpired from './components/sessions/TokenExpired';
 
-class App extends Component {
+//services
+import AuthService from './services/AuthService';
 
+class App extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      user: null,
+    }
   }
 
-  componentDidMount() {}
+  async getUserData(){
+    var uData = await AuthService.getUserData();
+    var uInfo = null;
+
+    if(uData != null){
+      var uInfo = uData.userData;
+    }
+
+    this.setState({
+      user: uInfo,
+    })
+
+    // console.log(uData);
+  }
+
+  componentDidMount() {
+    //get user data
+    this.getUserData();
+
+  }
 
   render() {
     return (
       <Router>
-        
-        <Header />
+        <Header user={this.state.user}/>
 
         {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
-        <main style={{ display: 'flex',}} >
-          
-          <AdminLeftNavMain />
+        <main style={{ display: 'flex' }}>
+          <LeftNavMain />
 
           <Switch>
             {/* Guest user Routes */}
@@ -70,10 +99,11 @@ class App extends Component {
             <Route exact path="/services" component={Services} />
             <Route exact path="/privacyPolicy" component={AboutUs} />
 
-            <Route exact path="/products/:name" component={AllProducts} />
+            <Route exact path="/products/search/:name" component={SearchResults} />
+            <Route exact path="/products/:category" component={AllProducts} />
             <Route exact path="/product/:id" component={ProductSingleView} />
 
-            <Route exact path="/cart/" component={Cart} />
+            <Route exact path="/cart" component={Cart} />
 
             {/* Registered User Routes */}
             {/* <UserRoutes exact path="/" /> */}
@@ -88,15 +118,24 @@ class App extends Component {
             {/* Session Routes */}
 
             {/* User login and registration routes here*/}
+            {/* <PrivateRoute exact path="/" component={Private} /> */}
             <Route exact path="/login" component={Login} />
 
-            <Route exact path="/account" component={UserProfile} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/forgotpassword" component={ForgotPassword} />
+            <Route
+              exact
+              path="/passwordreset/:resetToken"
+              component={ResetPassword}
+            />
 
-            {/* <Route exact path="/session/401" component={NotAuthorized} /> */}
-            {/* <Route exact path="/session/404" component={NotFound} /> */}
-            {/* <Route exact path="/session/expired" component={TokenExpired} /> */}
+            <UserRoutes exact path="/account" component={UserProfile} />
 
-            {/* <Route path="*" component={() => <Redirect to="/session/404" />} /> */}
+            <Route exact path="/session/401" component={NotAuthorized} />
+            <Route exact path="/session/404" component={NotFound} />
+            <Route exact path="/session/expired" component={TokenExpired} />
+
+            <Route path="*" component={() => <Redirect to="/session/404" />} />
           </Switch>
         </main>
 
