@@ -16,7 +16,7 @@ class TokenExpired extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ width: '100%', height: '100%' }}>
         <Grid container alignItems="center" justify="center" direction="column">
           <Grid item>
             <Typography variant="h3" className="my-3">
