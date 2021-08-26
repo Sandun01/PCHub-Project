@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import UserHeader from '../user/UserHeader';
+import adminHeader from '../admin/adminHeader';
 export default class Header extends Component {
   constructor(props){
     super(props);
@@ -13,7 +14,8 @@ export default class Header extends Component {
   render() {
     return (
       <div>
-        <UserHeader />
+        {/* <UserHeader /> */}
+        <adminHeader />
       </div>
     )
   }
