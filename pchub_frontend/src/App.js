@@ -47,17 +47,42 @@ import NotAuthorized from './components/sessions/NotAuthorized';
 import NotFound from './components/sessions/NotFound';
 import TokenExpired from './components/sessions/TokenExpired';
 
+//services
+import AuthService from './services/AuthService';
+
 class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      user: null,
+    }
   }
 
-  componentDidMount() {}
+  async getUserData(){
+    var uData = await AuthService.getUserData();
+    var uInfo = null;
+
+    if(uData != null){
+      var uInfo = uData.userData;
+    }
+
+    this.setState({
+      user: uInfo,
+    })
+
+    // console.log(uData);
+  }
+
+  componentDidMount() {
+    //get user data
+    this.getUserData();
+
+  }
 
   render() {
     return (
       <Router>
-        <Header />
+        <Header user={this.state.user}/>
 
         {/* <main style={{ display: 'flex', backgroundImage: "url(images/background.jpg)"}}> */}
         <main style={{ display: 'flex' }}>

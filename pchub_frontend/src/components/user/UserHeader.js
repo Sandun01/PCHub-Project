@@ -9,6 +9,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import {
   AppBar,
@@ -22,11 +23,13 @@ import {
   Menu,
   ListItem,
   SwipeableDrawer,
+  Tooltip,
 } from '@material-ui/core';
 
 import { LeftNavBarData } from '../utils/LeftNavBarData';
 import { BackendApi_URL } from "../utils/AppConst";
 import OrderServices from "../../services/OrderServices";
+import AuthService from '../../services/AuthService';
 
 const styles = (theme) => ({
   grow: {
@@ -157,6 +160,7 @@ class UserHeader extends Component {
       isLargeScreen: true,
       drawer: false,
 
+      //user
       loggedIn: false,
 
       //search button
@@ -221,8 +225,8 @@ class UserHeader extends Component {
   }
 
   //get cart items count
-  getCartItemsCount(){
-     var count = OrderServices.getNumberOfItemsInCart_Local();
+  async getCartItemsCount(){
+     var count = await OrderServices.getNumberOfItemsInCart_Local();
 
      this.setState({
        cartCount: count,
@@ -235,10 +239,49 @@ class UserHeader extends Component {
     window.location.href = url;
   }
 
-  componentDidMount() {
+  //setUserData
+  async setUserData(){
+    // var userD = this.props.user;
+    // var logIn = false;
+    // console.log("userD",userD);
+    
+    // if(userD != null){
+      //   logIn = true;
+      // }
+      
+    var logIn = false;
+    var uData = await AuthService.getUserData();
+    var uInfo = null;
+    
+    if(uData != null){
+      var uInfo = uData.userData;
+        logIn = true;
+    }
+    
+    this.setState({
+      loggedIn: logIn,
+    })
+    
+    // console.log("userD",this.state);
+  }
 
+  redirectToLogin = () => {
+    window.location.href = "/login";
+  };
+
+  logoutUser = () => {
+    AuthService.userLogout();
+    this.redirectToLogin();
+  };
+  
+  async componentDidMount() {
+    
     //get cart items count
     this.getCartItemsCount();
+    
+    //setUserData
+    this.setUserData();
+
 
     if (window.innerWidth <= 1000) {
       this.setState({
@@ -259,13 +302,15 @@ class UserHeader extends Component {
     });
   }
 
-  smallScreen() {
-    const { classes } = this.props;
+  smallScreen(){
 
+    const { classes } = this.props;
+    
     return (
-      <div className={classes.grow}>
+        <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar className={classes.navbar}>
+            
             <IconButton
               edge="start"
               className={classes.menuButton}
@@ -283,7 +328,7 @@ class UserHeader extends Component {
             </Typography>
 
             {/* mobile dropdown */}
-            <div className="ms-auto">
+            <div className='ms-auto'>
               <IconButton
                 aria-label="show more"
                 aria-controls={this.state.mobileMenuId}
@@ -298,36 +343,13 @@ class UserHeader extends Component {
         </AppBar>
 
         <Menu
-          anchorEl={this.state.mobileMoreAnchorEl}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          id={this.state.mobileMenuId}
-          keepMounted
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          open={this.state.isMobileMenuOpen}
-          onClose={this.handleMobileMenuClose}
-        >
-          <MenuItem onClick={this.handleMobileMenuClose}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <p>Messages</p>
-          </MenuItem>
-          <MenuItem onClick={this.handleMobileMenuClose}>
-            <IconButton aria-label="show 11 new notifications" color="inherit">
-              <Badge badgeContent={11} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <p>Notifications</p>
-          </MenuItem>
-          <MenuItem onClick={this.handleMobileMenuClose}>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="primary-search-account-menu"
-              aria-haspopup="true"
-              color="inherit"
+            anchorEl={this.state.mobileMoreAnchorEl}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            id={this.state.mobileMenuId}
+            keepMounted
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            open={this.state.isMobileMenuOpen}
+            onClose={this.handleMobileMenuClose}
             >
             <MenuItem onClick={() => this.openPageMobileView("/messages")} >
                 <IconButton aria-label="show 4 new mails" color="inherit">
@@ -347,7 +369,7 @@ class UserHeader extends Component {
             </MenuItem>
             <MenuItem onClick={() => this.openPageMobileView("/cart")}>
                 <IconButton
-                    aria-label="account of current user"
+                    aria-label="cart of current user"
                     aria-controls="primary-search-account-menu"
                     aria-haspopup="true"
                     color="inherit"
@@ -358,17 +380,41 @@ class UserHeader extends Component {
                 </IconButton>
                 <p>Cart</p>
             </MenuItem>
-            <MenuItem 
-                // onClick={navigate to profile}
+            {
+              this.state.loggedIn &&
+              <>
+                <MenuItem 
+                    // onClick={navigate to profile}
                 >
-              <Badge color="secondary">
-                <AccountCircle />
-              </Badge>
-            </MenuItem>
-            </IconButton>
-            <p>Profile</p>
-          </MenuItem>
+                    <IconButton
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                    >
+                    <Badge color="secondary">
+                        <AccountCircle />
+                    </Badge>
+                    </IconButton>
+                    <p>Profile</p>
+                </MenuItem>
+                <MenuItem 
+                    onClick={this.logoutUser}
+                >
+                    <IconButton
+                    aria-label="logout current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                    >
+                        <ExitToAppIcon />
+                    </IconButton>
+                    <p>Logout</p>
+                </MenuItem>
+              </>
+            }
         </Menu>
+
       </div>
     );
   }
@@ -442,10 +488,10 @@ class UserHeader extends Component {
             </div>
 
             {/* Cart */}
-            <a href="/cart" className={classes.sectionDesktop}>
-              <MenuItem>
+            <MenuItem>
+              <a href="/cart" className={classes.sectionDesktop}>
                 <IconButton
-                  aria-label="account of current user"
+                  aria-label="cart of current user"
                   aria-controls="primary-search-account-menu"
                   aria-haspopup="true"
                   color="inherit"
@@ -454,22 +500,41 @@ class UserHeader extends Component {
                     <ShoppingCartIcon className={classes.iconButtons} />
                   </Badge>
                 </IconButton>
-              </MenuItem>
-            </a>
+              </a>
 
             {this.state.loggedIn ? (
-              <div className={classes.sectionDesktop}>
-                <IconButton
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={this.state.menuId}
-                  aria-haspopup="true"
-                  // onClick={this.handleProfileMenuOpen}
-                  color="inherit"
-                >
-                  <AccountCircle className={classes.iconButtons} />
-                </IconButton>
-              </div>
+              <>
+                {/* profile */}
+                <div className={classes.sectionDesktop}>
+                  <Tooltip title={"View Profile"} arrow>
+                    <IconButton
+                      edge="end"
+                      aria-label="account of current user"
+                      aria-controls={this.state.menuId}
+                      aria-haspopup="true"
+                      // onClick={this.handleProfileMenuOpen}
+                      color="inherit"
+                    >
+                      <AccountCircle className={classes.iconButtons} />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+                {/* logout */}
+                <div className={classes.sectionDesktop}>
+                    <Tooltip title={"Logout"} arrow>
+                      <IconButton
+                        edge="end"
+                        aria-label="logout current user"
+                        aria-controls={this.state.menuId}
+                        aria-haspopup="true"
+                        color="inherit"
+                        onClick={this.logoutUser}
+                      >
+                        <ExitToAppIcon className={classes.iconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                </div>
+              </>
             ) : (
               <Link style={{ textDecoration: 'none' }} to="/login">
                 <Button
@@ -482,6 +547,9 @@ class UserHeader extends Component {
                 </Button>
               </Link>
             )}
+            </MenuItem>
+
+
           </Toolbar>
         </AppBar>
       </div>

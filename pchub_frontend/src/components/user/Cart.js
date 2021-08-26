@@ -163,7 +163,7 @@ class Cart extends Component {
 
         var arr = OrderServices.getAllItemsInCart_Local();
 
-        if(arr != null){
+        if(arr != null && arr.length > 0){
             console.log(arr);
             this.setState({
                 items: arr,
@@ -378,13 +378,16 @@ class Cart extends Component {
                     }
 
                     {/* section 2 */}
-                    <Grid item xs={10}>
-                        <div className={classes.totalPriceText}>
-                            <Typography variant="h5" style={{ fontWeight: 'bold', }}>
-                                Rs.{this.state.totalAmount} /=
-                            </Typography>
-                        </div>
-                    </Grid>
+                    {
+                        this.state.haveItems &&
+                        <Grid item xs={10}>
+                            <div className={classes.totalPriceText}>
+                                <Typography variant="h5" style={{ fontWeight: 'bold', }}>
+                                    Rs.{this.state.totalAmount} /=
+                                </Typography>
+                            </div>
+                        </Grid>
+                    }
 
                     {
                         this.state.userLoggedIn &&

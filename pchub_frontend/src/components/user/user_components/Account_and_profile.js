@@ -28,7 +28,7 @@ export default class Account_and_profile extends Component {
     this.setState({
       user: userD,
     });
-    console.log(res.userData.lname);
+    // console.log(res.userData.lname);
   };
 
   async componentDidMount() {
