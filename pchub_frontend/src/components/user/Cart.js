@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles';
 
 import { 
-    Grid, Typography, Card, Button,
+    Grid, Typography, Card, Button, Tooltip,
 } from '@material-ui/core'
+
+import { Link } from 'react-router-dom';
 
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -13,6 +15,7 @@ import { LeftNavBarData } from '../utils/LeftNavBarData';
 import OrderServices from '../../services/OrderServices';
 import AuthService from '../../services/AuthService';
 import EmptyCart from './products/EmptyCart';
+import LoadingScreen from '../common/LoadingScreen';
 
 const styles = (theme) => ({
     
@@ -113,6 +116,15 @@ const styles = (theme) => ({
         }
     },
 
+    onClickViewItemText:{
+        textAlign: 'center',
+        color: "#fff",
+        textDecoration: 'none',
+        '&:hover':{
+            textDecoration: 'underline',
+        }
+    },
+
 })
 class Cart extends Component {
 
@@ -122,6 +134,7 @@ class Cart extends Component {
 
             //screen
             isSmallScreen: false,
+            loading: true,
 
             //order data
             items: [],
@@ -234,10 +247,15 @@ class Cart extends Component {
 
         }
 
+        this.setState({
+            loading: false,
+        })
+
     }
 
     //remove item from cart
     async removeCartItem(item){
+
         var userLog = this.state.userLoggedIn;
         var itemArr = [];
 
@@ -251,12 +269,16 @@ class Cart extends Component {
 
         }
         else{  //remove item in local
-            var id = item.id;
-            itemArr = OrderServices.removeItemInCart_Local(id);
-            // console.log(id)
-        }
 
-        window.location.reload(false);
+            var id = item.product;
+            itemArr = OrderServices.removeItemInCart_Local(id);
+            console.log(id)
+            
+        }
+        
+        setTimeout( () => {
+            window.location.reload(false);
+        }, 500)
 
     }
 
@@ -293,6 +315,7 @@ class Cart extends Component {
 
         }
         else{  //if user not logged in LOCAL changes
+            var id = itm.product;
             var res = OrderServices.changeItemQuantityInCart_Local(id, qty);
             // console.log(res);
 
@@ -365,7 +388,15 @@ class Cart extends Component {
         return (
 
             <div className={classes.root}>
-               
+
+            {
+                // loading icon
+                this.state.loading ?
+                <div>
+                    <LoadingScreen />
+                </div>
+               :
+
                <Grid container justifyContent="center" alignItems="center" direction="row">
                    <Grid item xs={12} sm={12}>
                         <div className={classes.headerContainer}>
@@ -399,7 +430,12 @@ class Cart extends Component {
                                             className={classes.itemName}
                                         >
                                             {/* Asus ROG Strix G712LWS */}
-                                            { item.name }
+                                            {/* <Tooltip title="View Item" arrow> */}
+                                                <Link className={classes.onClickViewItemText} to={"/product/"+item.product}>
+                                                    { item.name }
+                                                </Link>
+                                            {/* </Tooltip> */}
+
                                         </Grid>
 
                                         {/* Remove button */}
@@ -486,6 +522,9 @@ class Cart extends Component {
                         <Grid item xs={10}>
                             <div className={classes.totalPriceText}>
                                 <Typography variant="h5" style={{ fontWeight: 'bold', }}>
+                                    Total Amount
+                                </Typography>
+                                <Typography variant="h5" style={{ fontWeight: 'bold', }}>
                                     Rs.{this.state.totalAmount} /=
                                 </Typography>
                             </div>
@@ -508,6 +547,7 @@ class Cart extends Component {
                     }
 
                </Grid>
+            }
 
             </div>
         )

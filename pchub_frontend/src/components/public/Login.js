@@ -14,6 +14,8 @@ import axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import Loader from '../common/Loader';
 import AuthService from '../../services/AuthService';
+import OrderServices from '../../services/OrderServices';
+import Utils from '../utils/Utils';
 
 const styles = (theme) => ({
   paper: {
@@ -78,7 +80,7 @@ class Login extends Component {
     axios
       .post('/api/auth/login', this.state.formData)
       .then((res) => {
-        console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
+        // console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
         var userData = res.data;
         var token = res.data.token;
 
@@ -87,7 +89,30 @@ class Login extends Component {
         if (userData.isAdmin) {
           window.location.href = '/admin';
         } else {
-          window.location.href = '/account';
+
+          //check user's local cart
+          var orderedItems = OrderServices.getAllItemsInCart_Local()
+          var resOrders = Utils.isEmptyObject(orderedItems);
+          // console.log(orderedItems)
+
+          if(resOrders){ //empty
+              window.location.href = '/account';
+          }
+          else{ //not empty
+            var uID = userData._id;
+            
+            OrderServices.addLocalItemsToDBLogin(uID, orderedItems)
+            .then(res => {
+              console.log('Order Success');
+            })
+            .catch(error => {
+              console.log(error)
+              console.log('Error in orders');
+            })
+            .finally(() => {
+                window.location.href = '/account';
+            })
+          }
         }
       })
       .catch((error) => {

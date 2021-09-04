@@ -55,7 +55,7 @@ const login = async (req, res, next) => {
       isAdmin: user.isAdmin,
       token: generateToken(user),
     };
-    console.log(userData);
+    // console.log(userData);
 
     res.json(userData);
   } catch (err) {

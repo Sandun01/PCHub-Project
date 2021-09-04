@@ -50,14 +50,13 @@ class OrderServices {
     var data = item;
     var cartItemArr = []
     var cartItem = {
-      id: item._id,
+      product: item._id,
       name: item.item_name,
       category: item.category,
       maxQty: item.countInStock,
       qty: 1,
       image: item.item_image,
       price: item.price,
-      product: item.item_name,
     }
 
     if(data){
@@ -122,7 +121,7 @@ class OrderServices {
     
     //check with item id
     itemsArr.forEach(item => {
-      if(item.id !== id){
+      if(item.product !== id){
         itemsArrNew.push(item);
       }
     })
@@ -142,7 +141,7 @@ class OrderServices {
     
     //check with item id
     itemsArr.forEach(item => {
-      if(item.id === id)
+      if(item.product === id)
       {
         var max = item.maxQty;
         if(max > qty){
@@ -163,14 +162,14 @@ class OrderServices {
 
   }
   
-  // Get item from DC
+  // Get item from DB
   // async getItemFromDB(id){
   //   var itemRes = await axios.get(BackendApi_URL+"/products/"+id);
   //   var itemData = itemRes.data.product;
   //   return itemData;
   // }
 
-  //add item to cart DB
+  //Database -- add item to cart
   async addItemToCart_DB(item, userID){
 
     var result = null;
@@ -199,7 +198,7 @@ class OrderServices {
     return result;
   }
 
-  //get order by user id
+  //Database -- get order by user id - DB
   async getOrderByUserID(userID){
 
     var result = null;
@@ -221,7 +220,7 @@ class OrderServices {
 
   }
 
-  //remove order item by order and item id's
+  //Database -- Remove order item by order and item id's - DB
   async removeOrderItemByID(ordId, itmId){
 
     var result = null;
@@ -244,7 +243,7 @@ class OrderServices {
 
   }
 
-  //edit order item quantity
+  //Database -- edit order item quantity- DB
   async editOrderItemQty(ordId, data){
 
     var result = null;
@@ -265,6 +264,25 @@ class OrderServices {
     })
 
     // console.log(result);
+    return result;
+
+  }
+
+   //Database -- add local items to db when login
+   async addLocalItemsToDBLogin(uID, items){
+
+    //remove cart items from local storage
+    localStorage.removeItem(this.LOCAL_KEY);
+
+    var result = null;
+    var data = {
+      "userID": uID,
+      "orderItems": items
+    }
+    // console.log("Item",ordId, data);
+
+    result = await axios.post(BackendApi_URL+"/orders/local/", data);
+
     return result;
 
   }

@@ -79,7 +79,12 @@ class ItemCard extends Component {
             // <Link to={"/product"+this.state._id}>
             <div>
                 <Card className={classes.root} onClick={this.navigateToSingleViewPage}>
-                    <img src={this.state.item_image} className={classes.image} alt={this.state.item_name} />
+                    {
+                        this.state.item_image ?
+                        <img src={this.state.item_image} className={classes.image} alt={this.state.item_name} />
+                        :
+                        <img src={"/images/imageNotAvailable.png"} height="300px" width="300px" alt={this.state.item_name} />
+                    }
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
                             {this.state.item_name}

@@ -29,13 +29,22 @@ async function getActiveOrder(userID){
         "isActive": true,
     };
 
-    const data = await Order.find(query).limit(1);
+    const data = await Order.find(query)
+    .limit(1)
+    .populate( {
+        path: "orderItems", 
+        populate: {
+            path: "product"
+        }
+    })
+    
     //check data is not found
     const noData = UtilFunctions.isEmpty(data);
 
     if(!noData){
-        const id = data[0]._id;
-        return id;
+        // const id = data[0]._id;
+        var orderData = data[0];
+        return orderData;
     }
     else{
         return null; //data not found
@@ -68,6 +77,102 @@ async function createOrder(data){
     }
 
 }
+
+//Check Order Items
+async function checkItemAlreadyInCart(itemID, orderId){
+
+    var orderData = await Order.findById({"_id": orderId});
+    var products = orderData.orderItems;
+    var haveProduct = false;
+    // console.log("products -",products);
+    
+    //check item exists in list
+    products.forEach(item => {
+        if(item.product == itemID){
+            haveProduct = true;
+        }
+    })
+
+    return haveProduct;
+
+}
+
+// @desc Add local items to the Order when user login to the system
+// @route POST /api/orders/local
+// @access Registered User 
+const addLocalItemsToTheCart = async(req, res) => {
+
+    if(req.body){
+        
+        var userID = req.body.userID;
+        var items = req.body.orderItems;
+
+        //check user has already ordered
+        var actOrderData = await getActiveOrder(userID);
+        var isEmptyActOrderData = UtilFunctions.isEmpty(actOrderData); //check object is null
+        // console.log(actOrderData, isEmptyActOrderData, items, userID)
+
+        //add items to existing order
+        if(isEmptyActOrderData == false){
+            var ordID = actOrderData._id;
+            
+            var findQuery = { "_id": ordID };
+            
+            var newItmsArr = [];
+            
+            for(var i = 0; i < items.length; i++){
+                
+                //check item already in the cart
+                var itemExists = await checkItemAlreadyInCart(items[i].product, ordID); 
+                // console.log('=========',items[i].product, itemExists)
+                
+                if(itemExists == false){ //add new item to cart
+                    newItmsArr.push(items[i]);
+                }
+            }
+            
+            var updateQuery = { $push: { "orderItems": newItmsArr } };
+
+            Order.updateOne(findQuery, updateQuery)
+            .then(response => {
+                // console.log(res);
+                console.log('Added new item to order.');
+            })
+            .catch(error => {
+                console.log(error)
+            })
+               
+            res.status(200).send({ success: true, 'message': 'Order Updated Successfully!' })
+
+        }
+        //create new order
+        else{
+
+            const orderData = {
+                "user": userID,
+                "isDelivered": false,
+                "orderItems": items,
+            }
+
+            var resNewOrder = await createOrder(orderData);
+
+            if(resNewOrder === true){
+                res.status(201).send({ success: true, 'message': 'Order Created Successfully!' })
+            }
+            else{
+                res.status(200).send({ success: false, 'message': 'Error'})
+            }
+
+        }
+
+    }
+    else{
+        res.status(200).send({ success: false, 'message': 'Not Found'}) //data not found
+    }
+
+
+}
+
 
 // @desc Create New Order
 // @route POST /api/orders/
@@ -263,12 +368,20 @@ const addItemToTheOrder = async(req, res) => {
     const userID = req.params.id;
     const data = req.body;
 
-    //check item already in the active order ----------------------------------------------------------------
-    const activeOrderID = await getActiveOrder(userID);
-    // console.log(activeOrderID, data, userID);
-    
+    //get active order id----------------------------------------------------------------
+    var actOrderData = await getActiveOrder(userID);
+    // console.log(actOrderData, data, userID);
+
+    var isEmptyActOrderData = UtilFunctions.isEmpty(actOrderData); //check object is null
+    var activeOrderID = null;
+
+    if(isEmptyActOrderData == false){
+        activeOrderID = actOrderData._id;
+    }
+
     //create new order
-    if(activeOrderID === null){
+    if(activeOrderID == null){
+
         console.log('new creating order...');
 
         const orderData = {
@@ -295,26 +408,45 @@ const addItemToTheOrder = async(req, res) => {
 
     }
     else{ //add items to existing order ----------------------------------------------------------------
-        console.log('added to existing active order...');
-        
-        const findQuery = { "_id": activeOrderID };
-        const updateQuery = { $push: { "orderItems": data } };
 
-        const haveEmptyData = UtilFunctions.isEmpty(data);
+        //check item already in the active order --------------------------------------------------------
+        var itemID = req.body.product;
+        var checkItem = await checkItemAlreadyInCart(itemID, activeOrderID); //check item already in the order
+        // console.log('a',checkItem)
 
-        if(activeOrderID !== null && haveEmptyData === false){
-            await Order.updateOne(findQuery, updateQuery)
-            .then(response => {
-                // console.log(res);
-                res.status(200).send({ success: true, 'count': response.nModified });
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(400).send({ success: false, 'message': 'Error'});
-            })
+        if(checkItem){//item already exist in the cart(ordered items list)
+            console.log('item already existing in the active order...');
+            
+            res.status(200).send({ success: true, 'message': 'Already_Exists' });
+
         }
-        else{
-            res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+        else{ //item not exist in the cart(ordered items list)
+            console.log('added to existing active order...');
+            
+            const findQuery = { "_id": activeOrderID };
+            const updateQuery = { $push: { "orderItems": data } };
+    
+            const haveEmptyData = UtilFunctions.isEmpty(data);
+    
+            if(activeOrderID !== null && haveEmptyData === false){
+                await Order.updateOne(findQuery, updateQuery)
+                .then(response => {
+                    // console.log(res);
+                    res.status(200).send(
+                        { 
+                            success: true, 
+                            'count': response.nModified, 
+                            'message': 'Item added successfully!',
+                        });
+                })
+                .catch(error => {
+                    console.log(error);
+                    res.status(400).send({ success: false, 'message': 'Error'});
+                })
+            }
+            else{
+                res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+            }
         }
 
     }
@@ -395,14 +527,18 @@ const getNoOfItemsInActiveOrder = async(req, res) => {
 
     try
     {
-        var orderID = await getActiveOrder(uId);
-    
-        // console.log(orderID)
-        if(orderID == null){
+        var actOrderData = await getActiveOrder(uId);
+        var isEmptyActOrderData = UtilFunctions.isEmpty(actOrderData);
+        
+        // console.log(isEmptyActOrderData);
+
+        if(isEmptyActOrderData){
+            // const orderID = actOrderData._id;
             res.status(200).send({ success: true, 'count': qty }); //no active orders
         }
         else{
-            var order = await Order.findById({"_id": orderID});
+            // var order = await Order.findById({"_id": orderID});
+            var order = actOrderData;
             var items = order.orderItems;
             
             if(items != null){
@@ -430,4 +566,5 @@ export default{
     addItemToTheOrder,
     deleteItemInTheOrder,
     getNoOfItemsInActiveOrder,
+    addLocalItemsToTheCart,
 }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
 
 import { 
-    Grid, Typography, CircularProgress,
+    Grid, Typography, CircularProgress, Snackbar, 
 } from '@material-ui/core'
 
 import { Alert, AlertTitle, } from '@material-ui/lab';
@@ -76,6 +76,7 @@ const styles = (theme) => ({
         fontWeight: 'bold',
         backgroundColor:'#007BFF',
         // width: '100%',
+        minWidth: '180px',
         textAlign: 'center',
         borderRadius: 10,
         '&:hover':{
@@ -135,14 +136,19 @@ class ProductSingleView extends Component {
                 category: null,
             },
 
+            //snackbar
+            snackbar: false,
+            snackbar_severity: 'success',
+            snackbar_message: null,
+
             //user details
             userLoggedIn: false,
             userID: null,
 
             //page details
-            haveMoreImages: false,
             loadingData: true,
             haveData: false,
+            noOfImages : 0,
 
             //error
             error: false,
@@ -160,11 +166,41 @@ class ProductSingleView extends Component {
             // console.log("Item",res);
 
             if(res.status == 201 || res.status == 200){
-                console.log('Item Added to cart - Success');
-                window.location.reload(false);
+
+                if(res.data.message === "Already_Exists"){
+
+                    console.log('Item already in the cart');
+                    this.setState({
+                        snackbar: true,
+                        snackbar_severity: 'warning',
+                        snackbar_message: 'Item already in the cart',
+                    })
+    
+                }
+                else{
+                    console.log('Item Added to cart - Success');
+    
+                    this.setState({
+                        snackbar: true,
+                        snackbar_severity: 'success',
+                        snackbar_message: 'Item Successfully Added to the Cart!',
+                    })
+    
+                    setTimeout(() => {
+                        window.location.reload(false);
+                    }, 1500)
+
+                }
             }
             else{
                 console.log('Error');
+
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'error',
+                    snackbar_message: "Error! Item didn't added to the cart",
+                })
+
             }
 
         }
@@ -173,16 +209,47 @@ class ProductSingleView extends Component {
 
             if(res === true){
                 console.log('Success');
-                window.location.reload(false);
+
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'success',
+                    snackbar_message: 'Item Successfully Added to the Cart!',
+                })
+
+                setTimeout(() => {
+                    window.location.reload(false);
+                }, 1500)
+
             }
             else if(res === 100){
+
                 console.log('Item already in the cart');
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'warning',
+                    snackbar_message: 'Item already in the cart',
+                })
+
             }
             else if(res === false){
+
                 console.log('Error');
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'error',
+                    snackbar_message: "Error! Item didn't added to the cart",
+                })
+
             }
             else{
+
                 console.log('No Data Found');
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'error',
+                    snackbar_message: "Error! Item Data not Found",
+                })
+
             }
 
         }
@@ -213,6 +280,12 @@ class ProductSingleView extends Component {
         // console.log("User",this.state)
     }
 
+    handleCloseSnackbar = () =>{
+        this.setState({
+            snackbar: false,
+        })
+    }
+
     componentDidMount(){
         //get item id
         const itmID = this.props.match.params.id;
@@ -228,17 +301,25 @@ class ProductSingleView extends Component {
 
             if(res.status === 200 && res.data.product != null){
                 const allImages = [];
+                var count = 0;
                 const itemDetails = res.data.product;
                 const moreImages = Array.isArray(itemDetails.item_image);
 
                 if(moreImages){
                     allImages = JSON.stringify(itemDetails.item_image);
+                    count = allImages.length;
+                }
+                else if(itemDetails.item_image != null && itemDetails.item_image != ""){
+                    count = 1;
+                }
+                else{
+                    count = 0;
                 }
                   
                 setTimeout(() => {
                     this.setState({
                         item: itemDetails,
-                        haveMoreImages: moreImages,
+                        noOfImages: count,
                         images: allImages,
                         loadingData: false,
                         haveData: true,
@@ -307,12 +388,16 @@ class ProductSingleView extends Component {
                                 >
 
                                     { 
-                                        this.state.haveMoreImages ?
+                                        this.state.noOfImages > 1 ?
                                             this.state.images.map(img => (
                                                 <img src={img} className={classes.image} alt={""} />
                                             ))
                                         :
+                                        this.state.noOfImages == 1 ?
                                         <img src={this.state.item.item_image} className={classes.image} alt={""} />
+                                        :
+                                        this.state.noOfImages == 0 &&
+                                        <img src={"/images/imageNotAvailable.png"} className={classes.image} alt={""} />
                                     }
 
                                 </Carousel>
@@ -343,6 +428,8 @@ class ProductSingleView extends Component {
 
 
                                 <Grid container alignItems="center" justifyContent="center" direction="row">
+                                    {
+                                        this.state.item.countInStock > 0 &&
                                         <Grid item sm={5}>
                                             {/* <Link to="/cart" className={classes.linkStyles}> */}
                                                 <div className={classes.buttonStyles} onClick={this.addToCart}>
@@ -350,9 +437,11 @@ class ProductSingleView extends Component {
                                                 </div>
                                             {/* </Link> */}
                                         </Grid>
+                                    }
+                                    
                                     {
                                         this.state.userLoggedIn &&
-                                            <Grid item sm={5}>
+                                            <Grid item sm>
                                                 {/* <Link to="/wishlist" className={classes.linkStyles}> */}
                                                     <div className={classes.buttonStyles} onClick={this.addToWishList}>
                                                         Add to Wishlist <BookmarksIcon className={classes.iconButtonStyles}/>
@@ -369,6 +458,16 @@ class ProductSingleView extends Component {
                     </div>
 
                 }
+
+                <Snackbar 
+                    open={this.state.snackbar} 
+                    autoHideDuration={6000} 
+                    onClose={this.handleCloseSnackbar}
+                >
+                <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >
+                    {this.state.snackbar_message}
+                </Alert>
+                </Snackbar>
 
             </div>
         )

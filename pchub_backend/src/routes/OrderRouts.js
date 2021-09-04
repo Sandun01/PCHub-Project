@@ -5,6 +5,7 @@ const router = express.Router()
 
 router.route('/').get( OrderController.getAllOrders )
 router.route('/').post( OrderController.createNewOrder )
+router.route('/local').post( OrderController.addLocalItemsToTheCart )
 router.route('/:id').get( OrderController.getOrderByID )
 
 router.route('/qty/edit/:id').put( OrderController.editQuantity )
