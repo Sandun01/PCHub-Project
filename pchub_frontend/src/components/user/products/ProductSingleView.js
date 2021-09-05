@@ -162,45 +162,56 @@ class ProductSingleView extends Component {
 
         if(this.state.userLoggedIn){
 
-            var res = await OrderServices.addItemToCart_DB(this.state.item, this.state.userID);
-            // console.log("Item",res);
-
-            if(res.status == 201 || res.status == 200){
-
-                if(res.data.message === "Already_Exists"){
-
-                    console.log('Item already in the cart');
-                    this.setState({
-                        snackbar: true,
-                        snackbar_severity: 'warning',
-                        snackbar_message: 'Item already in the cart',
-                    })
+            try{
+                var res = await OrderServices.addItemToCart_DB(this.state.item, this.state.userID);
+                // console.log("Item",res);
     
+                if(res.status == 201 || res.status == 200){
+    
+                    if(res.data.message === "Already_Exists"){
+    
+                        console.log('Item already in the cart');
+                        this.setState({
+                            snackbar: true,
+                            snackbar_severity: 'warning',
+                            snackbar_message: 'Item already in the cart',
+                        })
+        
+                    }
+                    else{
+                        console.log('Item Added to cart - Success');
+        
+                        this.setState({
+                            snackbar: true,
+                            snackbar_severity: 'success',
+                            snackbar_message: 'Item Successfully Added to the Cart!',
+                        })
+        
+                        setTimeout(() => {
+                            window.location.reload(false);
+                        }, 1500)
+    
+                    }
                 }
                 else{
-                    console.log('Item Added to cart - Success');
+                    console.log('Error');
     
                     this.setState({
                         snackbar: true,
-                        snackbar_severity: 'success',
-                        snackbar_message: 'Item Successfully Added to the Cart!',
+                        snackbar_severity: 'error',
+                        snackbar_message: "Error! Item didn't added to the cart",
                     })
     
-                    setTimeout(() => {
-                        window.location.reload(false);
-                    }, 1500)
-
                 }
             }
-            else{
+            catch(err){
+                console.log(err)
                 console.log('Error');
-
                 this.setState({
                     snackbar: true,
                     snackbar_severity: 'error',
                     snackbar_message: "Error! Item didn't added to the cart",
                 })
-
             }
 
         }

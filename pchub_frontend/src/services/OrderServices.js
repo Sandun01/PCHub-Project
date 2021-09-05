@@ -137,6 +137,7 @@ class OrderServices {
     
     var itemsArr = this.getAllItemsInCart_Local();
     var itemsArrNew = [];
+    var maxQuantity = false;
     // console.log(itemsArr);
     
     //check with item id
@@ -144,11 +145,12 @@ class OrderServices {
       if(item.product === id)
       {
         var max = item.maxQty;
-        if(max > qty){
+        if(max >= qty){
           item.qty = qty;
         }
         else{
-          item.qty = max - 1;
+          item.qty = max;
+          maxQuantity = true;
         }
       }
       itemsArrNew.push(item);
@@ -158,7 +160,12 @@ class OrderServices {
     var resAdd = LocalStorageService.setItem(this.LOCAL_KEY, itemsArrNew);
     // console.log(resAdd);
 
-    return itemsArrNew;
+    var data = {
+      "max": maxQuantity,
+      "itemsArr": itemsArrNew,
+    }
+
+    return data;
 
   }
   

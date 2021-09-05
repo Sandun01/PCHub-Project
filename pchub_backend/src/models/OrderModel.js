@@ -81,6 +81,11 @@ const orderSchema = mongoose.Schema({
                 type: Number,
                 required: true,
             },
+            inStock:{
+                type: Boolean,
+                default: true,
+                required: false,
+            },
             image:{
                 type: String,
                 required: false,

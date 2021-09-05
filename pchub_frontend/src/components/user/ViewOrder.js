@@ -376,6 +376,7 @@ class ViewOrder extends Component {
         deliveryData['paymentMethod'] = 'Credit Card /Paypal';
 
         var data = {
+            items: this.state.items,
             isPaid: true,
             paymentMethod: 'Credit Card /Paypal',
             detailsByPaypal: paypalResult,
@@ -386,12 +387,32 @@ class ViewOrder extends Component {
         .then(res => {
 
             console.log(res);
-            this.setState({
-                dialogBox: true,
-                dialogBox_severity: 'success',
-                dialogBox_message1: 'Payment Success and Order Completed!',
-                dialogBox_message2: dialogMessage,
-            })
+            
+            if( res.status == 200 && res.data.message === "Success" ){
+                this.setState({
+                    dialogBox: true,
+                    dialogBox_severity: 'success',
+                    dialogBox_message1: 'Order Completed!',
+                    dialogBox_message2: dialogMessage,
+                })
+            }
+            else if( res.status == 200 && res.data.message === "OutOfStock" ){
+                this.setState({
+                    dialogBox: true,
+                    dialogBox_severity: 'error',
+                    dialogBox_message1: "Order Can't Complete!",
+                    dialogBox_message2: "Some of the ordered items are out of stock! Please edit quantity/remove them"
+                    +"from the cart and try again.",
+                })
+            }
+            else{
+                this.setState({
+                    dialogBox: true,
+                    dialogBox_severity: 'error',
+                    dialogBox_message1: 'Error!',
+                    dialogBox_message2: dialogMessage,
+                })
+            }
 
             // setTimeout(() => {
                 // window.location.reload(false);
@@ -418,6 +439,7 @@ class ViewOrder extends Component {
         var oID = this.state.orderID;
 
         var data = {
+            items: this.state.items,
             isPaid: false,
             detailsByPaypal: null,
             orderData: deliveryData,
@@ -427,12 +449,32 @@ class ViewOrder extends Component {
         .then(res => {
 
             console.log(res);
-            this.setState({
-                dialogBox: true,
-                dialogBox_severity: 'success',
-                dialogBox_message1: 'Order Completed!',
-                dialogBox_message2: dialogMessage,
-            })
+
+            if( res.status == 200 && res.data.message === "Success" ){
+                this.setState({
+                    dialogBox: true,
+                    dialogBox_severity: 'success',
+                    dialogBox_message1: 'Order Completed!',
+                    dialogBox_message2: dialogMessage,
+                })
+            }
+            else if( res.status == 200 && res.data.message === "OutOfStock" ){
+                this.setState({
+                    dialogBox: true,
+                    dialogBox_severity: 'error',
+                    dialogBox_message1: "Order Can't Complete!",
+                    dialogBox_message2: "Some of the ordered items are out of stock! Please edit quantity/remove them"
+                    +"from the cart and try again.",
+                })
+            }
+            else{
+                this.setState({
+                    dialogBox: true,
+                    dialogBox_severity: 'error',
+                    dialogBox_message1: 'Error!',
+                    dialogBox_message2: dialogMessage,
+                })
+            }
 
             // setTimeout(() => {
                 // window.location.reload(false);
@@ -582,6 +624,50 @@ class ViewOrder extends Component {
 
                                         </Grid>
 
+                                        {/* status */}
+                                        <Grid 
+                                            item 
+                                            xs={this.state.isSmallScreen ? 2 : 1} 
+                                            sm={this.state.isSmallScreen ? 2 : 1}
+                                        >
+
+                                            <Grid 
+                                                container 
+                                                justifyContent="center" 
+                                                alignItems="center" 
+                                                direction="row"
+                                                >
+                                                <div>
+                                                    {
+                                                        item.inStock ? 
+                                                        <Typography 
+                                                            variant="body2" 
+                                                            style={{ 
+                                                                backgroundColor: "#288C04",
+                                                                padding:5, 
+                                                                borderRadius: 10,
+                                                             }}
+                                                        >
+                                                            In Stock
+                                                        </Typography>
+                                                        :
+                                                        <Typography 
+                                                            variant="body2"
+                                                            style={{ 
+                                                                backgroundColor: "#B32200",
+                                                                padding:5,
+                                                                borderRadius: 10,
+                                                             }}
+                                                        >
+                                                            Out Of Stock
+                                                        </Typography>
+                                                    }
+                                                </div>
+                                            </Grid>
+
+                                        </Grid>
+
+                                        {/* Quantity */}
                                         <Grid 
                                             item 
                                             xs={this.state.isSmallScreen ? 5 : 3} 
@@ -595,7 +681,7 @@ class ViewOrder extends Component {
                                                 direction="row"
                                                 >
                                                 <div>
-                                                    <Typography variant="h6">
+                                                    <Typography variant="body2">
                                                         {/* 13 */}
                                                         Quantity: { item.qty }
                                                     </Typography>
@@ -776,71 +862,43 @@ class ViewOrder extends Component {
                                     this.state.isActive && 
                                     this.state.orderData.paymentMethod === "Credit Card /Paypal" ?
 
-                                    <>
-                                        <Typography 
-                                            variant="body2" 
-                                            style={{ 
-                                                margin: 5,
-                                                textAlign: 'center',
-                                                backgroundColor: '#A10000', 
-                                                padding: 10,
-                                                borderRadius: 10,
-                                                // width: '300px',
-                                            }}
-                                        >
-                                            Pending...(Please make necessary payment to complete order)
-                                        </Typography>
-                                        <Button
-                                            className="mt-5 m-2 float-end"
-                                            style={{ backgroundColor: "#B90000", color: "#fff" }}
-                                            variant="contained"
-                                            onClick={this.deleteOrder}
-                                        >
-                                            Delete Order
-                                        </Button>
-                                    </>
+                                    <Typography 
+                                        variant="body2" 
+                                        style={{ 
+                                            margin: 5,
+                                            textAlign: 'center',
+                                            backgroundColor: '#A10000', 
+                                            padding: 10,
+                                            borderRadius: 10,
+                                            // width: '300px',
+                                        }}
+                                    >
+                                        Pending...(Please make necessary payment to complete order)
+                                    </Typography>
+
                                     :
 
                                     this.state.isActive && 
                                     this.state.orderData.paymentMethod === 'Cash On Delivery' ?
 
-                                    <>
-                                        <Typography 
-                                            variant="body2" 
-                                            style={{ 
-                                                margin: 5,
-                                                textAlign: 'center',
-                                                backgroundColor: "#D39B00",
-                                                color: "#B81E00",
-                                                padding: 10,
-                                                borderRadius: 10,
-                                                fontWeight: 'bold',
-                                                // width: '300px',
-                                            }}
-                                        >
-                                            Pending...(Please Confirm The order)
-                                        </Typography>
-                                        
-                                        <Button
-                                            className="mt-5 m-2 float-end"
-                                            style={{ backgroundColor: "#1b5e20", color: "#fff" }}
-                                            variant="contained"
-                                            onClick={this.confirmOrder}
-                                        >
-                                            Confirm Order
-                                        </Button>
-                                        <Button
-                                            className="mt-5 m-2 float-end"
-                                            style={{ backgroundColor: "#B90000", color: "#fff" }}
-                                            variant="contained"
-                                            onClick={this.deleteOrder}
-                                        >
-                                            Delete Order
-                                        </Button>
-                                      
-                                    </>
+                                    <Typography 
+                                        variant="body2" 
+                                        style={{ 
+                                            margin: 5,
+                                            textAlign: 'center',
+                                            backgroundColor: "#D39B00",
+                                            color: "#B81E00",
+                                            padding: 10,
+                                            borderRadius: 10,
+                                            fontWeight: 'bold',
+                                            // width: '300px',
+                                        }}
+                                    >
+                                        Pending...(Please Confirm The order)
+                                    </Typography>
+
                                     :
-                                    
+
                                     <Typography 
                                         variant="body2" 
                                         style={{ 
@@ -856,13 +914,13 @@ class ViewOrder extends Component {
                                     </Typography>
                                 }
 
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sm={12}>
                                 {
                                     this.state.isPaid === false && 
                                     this.state.orderData.paymentMethod === "Credit Card /Paypal" &&
                                     
                                     // Paypal Button
-                                    <Grid item xs={6} className={classes.paymentButtonContainer}>
+                                    <Grid item xs={12} sm={6} className={classes.paymentButtonContainer}>
                                         <Typography variant="h5" className="p-2">
                                             Pay Now
                                         </Typography>
@@ -898,11 +956,35 @@ class ViewOrder extends Component {
                                         }
 
                                     </Grid>
-                                    
                                 }
-
                                 </Grid>
 
+                                <Grid item xs={12}>
+                                {
+                                    this.state.isPaid === false && this.state.isActive &&
+                                    this.state.orderData.paymentMethod === 'Cash On Delivery' &&
+                                    <Button
+                                        className="mt-5 m-2 float-end"
+                                        style={{ backgroundColor: "#1b5e20", color: "#fff" }}
+                                        variant="contained"
+                                        onClick={this.confirmOrder}
+                                    >
+                                        Confirm Order
+                                    </Button>
+                                }
+                                {
+                                    this.state.isPaid === false && this.state.isActive &&
+                                    <Button
+                                        className="mt-5 m-2 float-end"
+                                        style={{ backgroundColor: "#B90000", color: "#fff" }}
+                                        variant="contained"
+                                        onClick={this.deleteOrder}
+                                    >
+                                        Delete Order
+                                    </Button>
+                                }
+                                </Grid>
+                                
                             </Grid>
 
                             {

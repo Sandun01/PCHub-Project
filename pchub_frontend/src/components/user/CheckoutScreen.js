@@ -76,11 +76,11 @@ const styles = (theme) => ({
         color: '#fff',
     },
     confirmBtn:{
-        float: 'right',
+        float: 'left',
         marginTop: 30,
         padding: 10,
         borderRadius: 10,
-        backgroundColor: '#A81100',
+        backgroundColor: '#004CB8',
         width: '250px',
         textAlign: 'center',
         // fontWeight: 'bold',
@@ -448,6 +448,50 @@ class CheckoutScreen extends Component {
 
                                         </Grid>
 
+                                        {/* status */}
+                                        <Grid 
+                                            item 
+                                            xs={this.state.isSmallScreen ? 2 : 1} 
+                                            sm={this.state.isSmallScreen ? 2 : 1}
+                                        >
+
+                                            <Grid 
+                                                container 
+                                                justifyContent="center" 
+                                                alignItems="center" 
+                                                direction="row"
+                                                >
+                                                <div>
+                                                    {
+                                                        item.inStock ? 
+                                                        <Typography 
+                                                            variant="body2" 
+                                                            style={{ 
+                                                                backgroundColor: "#288C04",
+                                                                padding:5, 
+                                                                borderRadius: 10,
+                                                             }}
+                                                        >
+                                                            In Stock
+                                                        </Typography>
+                                                        :
+                                                        <Typography 
+                                                            variant="body2"
+                                                            style={{ 
+                                                                backgroundColor: "#B32200",
+                                                                padding:5,
+                                                                borderRadius: 10,
+                                                             }}
+                                                        >
+                                                            Out Of Stock
+                                                        </Typography>
+                                                    }
+                                                </div>
+                                            </Grid>
+
+                                        </Grid>
+
+                                        {/* quantity */}
                                         <Grid 
                                             item 
                                             xs={this.state.isSmallScreen ? 5 : 3} 
@@ -461,7 +505,7 @@ class CheckoutScreen extends Component {
                                                 direction="row"
                                                 >
                                                 <div>
-                                                    <Typography variant="h6">
+                                                    <Typography variant="body2">
                                                         {/* 13 */}
                                                         Quantity: { item.qty }
                                                     </Typography>
@@ -675,7 +719,7 @@ class CheckoutScreen extends Component {
                                         <Grid item xs={12}>
                                             <div div style={{ textAlign: 'center', }}>
                                                 <Button
-                                                    className="mt-2"
+                                                    className="mt-2 p-2"
                                                     variant="contained" 
                                                     color="secondary" 
                                                     type="submit"
@@ -694,7 +738,7 @@ class CheckoutScreen extends Component {
                             
                             <Grid item xs={10}>
                                 <div className={classes.confirmBtn} onClick={this.navigateToCartScreen}>
-                                    Cancel Order
+                                    Back To Cart
                                 </div>
                             </Grid>
 

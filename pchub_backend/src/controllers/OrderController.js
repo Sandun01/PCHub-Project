@@ -1,5 +1,7 @@
-import Order from "../models/OrderModel.js"
-import Product from "../models/ProductModel.js"
+import mongoose from 'mongoose';
+
+import Order from "../models/OrderModel.js";
+import Product from "../models/ProductModel.js";
 import UtilFunctions from "../utils/UtilFunctions.js";
 
 //get item details
@@ -12,7 +14,7 @@ async function checkItemQuantity(itemId, qty){
     const data = await Product.findById(query);
     const stock = data.countInStock;
 
-    if(stock > qty){
+    if(stock >= qty){
         return true;
     }
     else{
@@ -96,6 +98,126 @@ async function checkItemAlreadyInCart(itemID, orderId){
     return haveProduct;
 
 }
+
+// check item quantities in order
+async function checkOrderItemQuantities(id, itemsArr){
+
+    var allInStock = 1;
+    
+    try
+    {
+        var orderID = id;
+        var lenItems = itemsArr.length;
+
+        // check item by item
+        for(var i = 0; i < lenItems; i++){
+            // console.log(itemsArr[i])
+            
+            // get item qty from Product Table
+            var pID = itemsArr[i].product._id;
+            var findProductQuery = { "_id": pID  }
+            var qtyData = await Product.findById(findProductQuery, { countInStock:1, _id:0 });
+            // console.log(qtyData)
+            
+            var isQtyDataEmpty = UtilFunctions.isEmpty(qtyData);
+            
+            if(isQtyDataEmpty == false){
+                
+                var cartQty = itemsArr[i].qty;
+                var qtyDB = qtyData.countInStock;
+                // console.log(cartQty, qtyDB)
+                
+                if(cartQty > qtyDB){ //if quantity in cart exceeded the count in stock
+                    allInStock = 0;
+                    
+                    //order item db id
+                    var orderItemDbId = itemsArr[i]._id;
+                    
+                    // update record
+                    const queryOrderID = { "_id": orderID , "orderItems._id": orderItemDbId };
+                    const queryUpdateQty = {
+                        $set: { "orderItems.$.inStock": false, }
+                    };
+                    
+                    //update order inStock status
+                    var updateRes = await Order.updateOne( queryOrderID, queryUpdateQty );
+
+                    // console.log(orderItemDbId, orderID, updateRes);
+
+                }
+
+            }
+            else{
+                console.log("Product data is empty")
+                allInStock = -1;
+                return allInStock;
+            }
+            
+        }
+
+        return allInStock;
+
+    }
+    catch(error){
+        console.log(error)
+        allInStock = -1;
+        return allInStock;
+    }
+
+};
+
+//update Order Item stock
+async function updateOrderItemsInProductStock(itemsArr){
+
+    var updateStockCode = 1;
+    
+    try
+    {
+        var lenItems = itemsArr.length;
+
+        // check item by item
+        for(var i = 0; i < lenItems; i++){
+            
+            var pID = itemsArr[i].product._id;
+            // var pID = itemsArr[i].product;
+            var findProductQuery = { "_id": pID  };
+            // console.log(pID)
+
+            //get item quantity
+            var qty = itemsArr[i].qty;
+
+            var queryUpdateQty = {
+                $inc: { countInStock: -qty }
+            };
+
+            // update quantity in db
+            var qtyData = await Product.updateOne(findProductQuery, queryUpdateQty);
+            // console.log(qtyData)
+            updateStockCode = 1;
+            
+        }
+
+    }
+    catch(error){
+        console.log(error)
+        updateStockCode = -1;
+    }
+
+    return updateStockCode;
+
+}
+
+
+//debugging check function
+const checkFunction = async(req, res) => {
+
+    // var arr = req.body.items;
+
+    // var result = updateOrderItemsInProductStock(arr)
+
+    // res.status(200).send({ 'data':result  })
+
+};
 
 // @desc Add local items to the Order when user login to the system
 // @route POST /api/orders/local
@@ -218,7 +340,7 @@ const getAllOrders = async(req, res) => {
 const getOrderByID = async(req, res) => {
 
     const id = req.params.id;
-    console.log(id);
+    // console.log(id);
         
     if(id){
         await Order.findById(id)
@@ -262,13 +384,13 @@ const editQuantity = async(req, res) => {
     if(checkQty){
         const queryOrderID = { "_id": orderId , "orderItems._id": orderItemDbId };
         const queryUpdateQty = {
-            $set: { "orderItems.$.qty": qty }
+            $set: { "orderItems.$.qty": qty, "orderItems.$.inStock": true, }
         };
     
         await Order.updateOne( queryOrderID, queryUpdateQty )
         .then( response => {
             // console.log(response)
-            res.status(200).send({ success: true, 'count': response.nModified })
+            res.status(200).send({ success: true, 'count': response.nModified, 'message': 'Success' })
         })
         .catch(error => {
             console.log(error);
@@ -276,7 +398,7 @@ const editQuantity = async(req, res) => {
         })
     }
     else{
-        res.status(200).send({ success: true, 'message': 'Exceeded!' })
+        res.status(200).send({ success: true, 'message': 'Exceeded' })
     }
 
 }
@@ -650,46 +772,67 @@ const changePaymentMethod = async(req, res) => {
     
 }
 
-//update online payment details
+//update online payment details(Finalize order)
 // @route put /api/orders/payment/:id
 // @access User(Registered) 
 const updatePaymentDetails = async(req, res) => {
 
     var isDataEmpty = UtilFunctions.isEmpty(req.body);
-
-    //update item quantities ------------------------------------------------------------
     
     if(!isDataEmpty){
 
-        var data = req.body;
-        var paidStatus = data.isPaid;
-        var paypalDetails = data.detailsByPaypal;
-        var orderData = data.orderData;
-
-        var find = { "_id": req.params.id };
-        var query = {
-            $set: { 
-                "isActive": false,
-                "isPaid": paidStatus,
-                "detailsByPaypal": paypalDetails,
-                "deliveryDetails": orderData,
-            } 
-        };
+        var itemsArr = req.body.items;
+        var ordID = req.params.id;
         
-        await Order.update(find, query)
-        .then(response => {
-            // console.log(response);
-            console.log('Payment Details Updated Success');
-            res.status(200).send({ success: true, 'count': response.nModified })
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(400).send({ success: false, 'message': 'Error'})
-        })
+        //update item quantities ------------------------------------------------------------
+        var haveOutOfStockItems = await checkOrderItemQuantities(ordID, itemsArr);
+
+        if(haveOutOfStockItems == 0){
+            res.status(200).send({ success: true, 'message': 'OutOfStock' })
+        }
+        else if(haveOutOfStockItems == -1){
+            res.status(200).send({ success: false, 'message': 'Error in checking ordered items', })
+        }
+        else{
+
+            var data = req.body;
+            var paidStatus = data.isPaid;
+            var paypalDetails = data.detailsByPaypal;
+            var orderData = data.orderData;
+            
+            var find = { "_id": ordID };
+            var query = {
+                $set: { 
+                    "isActive": false,
+                    "isPaid": paidStatus,
+                    "detailsByPaypal": paypalDetails,
+                    "deliveryDetails": orderData,
+                } 
+            };
+            
+            //update item quantity----------------------------
+            var qtyUpdated = await updateOrderItemsInProductStock(itemsArr);
+
+            if(qtyUpdated == -1){
+                res.status(200).send({ success: false, 'message': 'Error in updating product quantities', })
+            }
+
+            await Order.update(find, query)
+            .then(response => {
+                // console.log(response);
+                console.log('Payment Details Updated Success');
+                res.status(200).send({ success: true, 'count': response.nModified, 'message': 'Success', })
+            })
+            .catch(error => {
+                console.log(error);
+                res.status(400).send({ success: false, 'message': 'Error', })
+            })
+            
+        }
 
     }
     else{
-        res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+        res.status(200).send({ success: false, 'message': 'Not Found', }); //data not found
     }
     
 }
@@ -731,4 +874,7 @@ export default{
     changePaymentMethod,
     updatePaymentDetails,
     deleteOrderByID,
+
+    checkFunction,
+
 }

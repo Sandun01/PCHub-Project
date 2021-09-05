@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles';
 
 import { 
-    Grid, Typography, Card, Button, Tooltip, Snackbar, Alert
+    Grid, Typography, Card, Button, Snackbar,
 } from '@material-ui/core'
+
+import { Alert, } from '@material-ui/lab';
 
 import { Link } from 'react-router-dom';
 
@@ -138,6 +140,11 @@ class Cart extends Component {
             isSmallScreen: false,
             loading: true,
 
+            //snackbar
+            snackbar: false,
+            snackbar_severity: 'success',
+            snackbar_message: null,
+            
             //order data
             items: [],
             haveItems: false,
@@ -276,6 +283,11 @@ class Cart extends Component {
 
             var res = await OrderServices.removeOrderItemByID(ordID, itmId);
             console.log("delete item",res);
+            this.setState({
+                snackbar: true,
+                snackbar_severity: 'success',
+                snackbar_message: 'Item Removed!',
+            })
 
         }
         else{  //remove item in local
@@ -283,6 +295,12 @@ class Cart extends Component {
             var id = item.product;
             itemArr = OrderServices.removeItemInCart_Local(id);
             console.log(id)
+
+            this.setState({
+                snackbar: true,
+                snackbar_severity: 'success',
+                snackbar_message: 'Item Removed!',
+            })
             
         }
         
@@ -320,6 +338,15 @@ class Cart extends Component {
             const res = await OrderServices.editOrderItemQty(OrdID, data);
             // console.log(res);
 
+            //max quantity reached
+            if(res.data.message === "Exceeded"){
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'warning',
+                    snackbar_message: 'Max Quantity Reached!',
+                })
+            }
+
             //re load data
             this.getCartItems();
 
@@ -329,12 +356,23 @@ class Cart extends Component {
             var res = OrderServices.changeItemQuantityInCart_Local(id, qty);
             // console.log(res);
 
-            //set item images
-            this.setCategoryIcon(res);
+            var itemsNew = res.itemsArr;
 
-            if(Array.isArray(res)){
+            //set item images
+            this.setCategoryIcon(itemsNew);
+
+            if(Array.isArray(itemsNew)){
                 this.setState({
-                    items: res,
+                    items: itemsNew,
+                })
+            }
+
+            //max quantity reached
+            if(res.max){
+                this.setState({
+                    snackbar: true,
+                    snackbar_severity: 'warning',
+                    snackbar_message: 'Max Quantity Reached!',
                 })
             }
 
@@ -373,6 +411,13 @@ class Cart extends Component {
             window.location.href = '/login';
         }
 
+    }
+
+    //close snackbar
+    handleCloseSnackbar = () =>{
+        this.setState({
+            snackbar: false,
+        })
     }
 
     // download pdf
@@ -439,7 +484,13 @@ class Cart extends Component {
                             
                             <Grid item xs={10} key={key} >
 
-                                <Card className={classes.cardStyles}>
+                                <Card 
+                                    className={classes.cardStyles} 
+                                    style={{
+                                        backgroundColor: item.inStock === false && "#7A0000"
+                                    }}
+                                >
+
                                     <Grid container justifyContent="center" alignItems="center" direction="row">
 
                                         {/* Item Icon */}
@@ -472,6 +523,14 @@ class Cart extends Component {
                                                 >
                                                     { item.name }
                                                 </Link>
+                                            }
+
+                                            {/* Stock Status */}
+                                            {
+                                                item.inStock === false &&
+                                                <div>
+                                                    <b>Out of Stock</b>
+                                                </div>
                                             }
 
                                         </Grid>
@@ -600,6 +659,16 @@ class Cart extends Component {
                         this.state.haveItems === false &&
                         <EmptyCart />
                     }
+
+                    <Snackbar 
+                        open={this.state.snackbar} 
+                        autoHideDuration={2500} 
+                        onClose={this.handleCloseSnackbar}
+                    >
+                        <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >
+                            {this.state.snackbar_message}
+                        </Alert>
+                    </Snackbar>
 
                </Grid>
             }

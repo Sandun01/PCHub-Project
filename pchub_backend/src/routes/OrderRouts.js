@@ -21,4 +21,6 @@ router.route('/qty/user/:id').get( OrderController.getNoOfItemsInActiveOrder )
 router.route('/addItem/user/:id').put( OrderController.addItemToTheOrder )
 router.route('/removeItem/:id').put( OrderController.deleteItemInTheOrder )
 
+router.route('/check').put( OrderController.checkFunction )
+
 export default router;
