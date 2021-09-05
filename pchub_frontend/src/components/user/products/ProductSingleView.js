@@ -76,7 +76,7 @@ const styles = (theme) => ({
         fontWeight: 'bold',
         backgroundColor:'#007BFF',
         // width: '100%',
-        minWidth: '180px',
+        minWidth: '150px',
         textAlign: 'center',
         borderRadius: 10,
         '&:hover':{
@@ -464,9 +464,9 @@ class ProductSingleView extends Component {
                     autoHideDuration={6000} 
                     onClose={this.handleCloseSnackbar}
                 >
-                <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >
-                    {this.state.snackbar_message}
-                </Alert>
+                    <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >
+                        {this.state.snackbar_message}
+                    </Alert>
                 </Snackbar>
 
             </div>

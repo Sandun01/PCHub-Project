@@ -102,7 +102,9 @@ async function checkItemAlreadyInCart(itemID, orderId){
 // @access Registered User 
 const addLocalItemsToTheCart = async(req, res) => {
 
-    if(req.body){
+    var isDataEmpty = UtilFunctions.isEmpty(req.body);
+
+    if(!isDataEmpty){
         
         var userID = req.body.userID;
         var items = req.body.orderItems;
@@ -228,7 +230,7 @@ const getOrderByID = async(req, res) => {
                 }
             })
             .then(data => {
-                res.status(200).send({ success: true, 'data': data })
+                res.status(200).send({ success: true, 'order': data })
             })
             .catch(error => {
                 console.log(error)
@@ -556,6 +558,164 @@ const getNoOfItemsInActiveOrder = async(req, res) => {
     }
 }
 
+// @desc checkout order
+// @route post /api/orders/checkout/:id
+// @access User(Registered) 
+const checkoutOrder = async(req, res) => {
+
+    var isDataEmpty = UtilFunctions.isEmpty(req.body);
+
+    if(!isDataEmpty){
+
+        var data = req.body;
+        var paidStatus = data.isPaid;
+        var paypalDetails = data.detailsByPaypal;
+        var delDetails = data.orderData;
+
+        // console.log(req.body);
+
+        var find = { "_id": req.params.id };
+        var query = {
+            $set: { 
+                // "isActive": false,
+                "isPaid": paidStatus,
+                "detailsByPaypal": paypalDetails,
+                "deliveryDetails": {
+                    "paymentMethod": delDetails.paymentMethod,
+                    "totalAmount": delDetails.totalAmount,
+                    "addressLine1": delDetails.addressLine1,
+                    "addressLine2": delDetails.addressLine2,
+                    "contactNumber": delDetails.contactNumber,
+                    "city": delDetails.city,
+                    "zipCode": delDetails.zipCode,
+                },
+            } 
+        };
+        
+        await Order.update(find, query)
+        .then(response => {
+            // console.log(response);
+            console.log('Order Placed Success');
+            res.status(200).send({ success: true, 'count': response.nModified })
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(400).send({ success: false, 'message': 'Error'})
+        })
+
+    }
+    else{
+        res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+    }
+    
+}
+
+
+//update online payment method
+// @route put /api/orders/payment/method/:id
+// @access User(Registered) 
+const changePaymentMethod = async(req, res) => {
+
+    var isDataEmpty = UtilFunctions.isEmpty(req.body);
+
+    if(!isDataEmpty){
+
+        var data = req.body;
+        var method = data.method;
+
+        var find = { "_id": req.params.id };
+        var query = {
+            $set: { 
+                "deliveryDetails": {
+                    "paymentMethod": method,
+                }
+            } 
+        };
+        
+        await Order.update(find, query)
+        .then(response => {
+            // console.log(response);
+            console.log('Payment Method Updated Success');
+            res.status(200).send({ success: true, 'count': response.nModified })
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(400).send({ success: false, 'message': 'Error'})
+        })
+
+    }
+    else{
+        res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+    }
+    
+}
+
+//update online payment details
+// @route put /api/orders/payment/:id
+// @access User(Registered) 
+const updatePaymentDetails = async(req, res) => {
+
+    var isDataEmpty = UtilFunctions.isEmpty(req.body);
+
+    //update item quantities ------------------------------------------------------------
+    
+    if(!isDataEmpty){
+
+        var data = req.body;
+        var paidStatus = data.isPaid;
+        var paypalDetails = data.detailsByPaypal;
+        var orderData = data.orderData;
+
+        var find = { "_id": req.params.id };
+        var query = {
+            $set: { 
+                "isActive": false,
+                "isPaid": paidStatus,
+                "detailsByPaypal": paypalDetails,
+                "deliveryDetails": orderData,
+            } 
+        };
+        
+        await Order.update(find, query)
+        .then(response => {
+            // console.log(response);
+            console.log('Payment Details Updated Success');
+            res.status(200).send({ success: true, 'count': response.nModified })
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(400).send({ success: false, 'message': 'Error'})
+        })
+
+    }
+    else{
+        res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+    }
+    
+}
+
+//delete order by id
+// @route put /api/orders/:id
+// @access User(Registered) 
+const deleteOrderByID = async(req, res) => {
+
+    const orderID = req.params.id;
+    const searchQuery = { _id: orderID }; //for both search and delete
+
+    await Order.deleteOne(searchQuery)
+    .then(response => {
+        // console.log(response);
+        console.log('Order Deleted');
+        res.status(200).send({ success: true, 'count': response.deletedCount })
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(400).send({ success: false, 'message': 'Error'})
+    });
+
+}
+
+
 export default{
     createNewOrder,
     getAllOrders,
@@ -567,4 +727,8 @@ export default{
     deleteItemInTheOrder,
     getNoOfItemsInActiveOrder,
     addLocalItemsToTheCart,
+    checkoutOrder,
+    changePaymentMethod,
+    updatePaymentDetails,
+    deleteOrderByID,
 }

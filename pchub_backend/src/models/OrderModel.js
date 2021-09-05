@@ -17,6 +17,56 @@ const orderSchema = mongoose.Schema({
         required: false,
         default: true,
     },
+    isPaid: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+    detailsByPaypal:{
+        type: String,
+        required: false,
+        default: null,
+    },
+    deliveryDetails:{
+        
+        paymentMethod:{
+            type: String,
+            required: false,
+            default: null,
+        },
+        totalAmount:{
+            type: Number,
+            required: false,
+            default: 0,
+        },
+        addressLine1:{
+            type: String,
+            required: false,
+            default: null,
+        },
+        addressLine2:{
+            type: String,
+            required: false,
+            default: null,
+        },
+        contactNumber:{
+            type: String,
+            required: false,
+            default: null,
+        },
+        city:{
+            type: String,
+            required: false,
+            default: null,
+        },
+        zipCode:{
+            type: Number,
+            required: false,
+            default: 0,
+        },
+
+    },
+
     orderItems: [
         {
             name: {

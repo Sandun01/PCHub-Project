@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles';
 
 import { 
-    Grid, Typography, Card, Button, Tooltip,
+    Grid, Typography, Card, Button, Tooltip, Snackbar, Alert
 } from '@material-ui/core'
 
 import { Link } from 'react-router-dom';
@@ -105,14 +105,16 @@ const styles = (theme) => ({
     confirmBtn:{
         float: 'right',
         marginTop: 30,
+        marginLeft: 10,
         padding: 10,
         borderRadius: 10,
         backgroundColor: '#28A745',
         width: '250px',
         textAlign: 'center',
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
         '&:hover':{
             backgroundColor: '#1E7031',
+            cursor: 'pointer',
         }
     },
 
@@ -202,10 +204,16 @@ class Cart extends Component {
                 if(orderRes.data.orders.length > 0){
                     itemsArr = orderRes.data.orders[0].orderItems;
                     oID = orderRes.data.orders[0]._id;
-    
-                    if(true){
-    
-                    }
+
+                    // var confirmedOrder = orderRes.data.orders[0].deliveryDetails.addressLine1;
+                    // var active = orderRes.data.orders[0].isActive;
+
+                    // //if order is confirmed
+                    // if(confirmedOrder !== null && active){
+                    //     console.log("Confirmed Order")
+                    //     window.location.href = `/orders/${oID}`
+                    // }
+
                     this.setState({
                         items: itemsArr,
                         haveItems: true,
@@ -247,9 +255,11 @@ class Cart extends Component {
 
         }
 
-        this.setState({
-            loading: false,
-        })
+        setTimeout(() => {
+            this.setState({
+                loading: false,
+            })
+        },2000)
 
     }
 
@@ -353,6 +363,23 @@ class Cart extends Component {
         // console.log("User",this.state)
     }
 
+    //navigate to checkout screen
+    navigateToFinalOrderScreen = () => {
+
+        if(this.state.userLoggedIn){
+            window.location.href = '/checkout';
+        }
+        else{
+            window.location.href = '/login';
+        }
+
+    }
+
+    // download pdf
+    downloadPDF = () => {
+        console.log('download pdf')
+    }
+
     async componentDidMount(){
 
         //check user logged in
@@ -430,11 +457,22 @@ class Cart extends Component {
                                             className={classes.itemName}
                                         >
                                             {/* Asus ROG Strix G712LWS */}
-                                            {/* <Tooltip title="View Item" arrow> */}
-                                                <Link className={classes.onClickViewItemText} to={"/product/"+item.product}>
+                                            {
+                                                this.state.userLoggedIn ?
+                                                <Link 
+                                                    className={classes.onClickViewItemText} 
+                                                    to={"/product/"+item.product._id}
+                                                >
                                                     { item.name }
                                                 </Link>
-                                            {/* </Tooltip> */}
+                                                :
+                                                <Link 
+                                                    className={classes.onClickViewItemText} 
+                                                    to={"/product/"+item.product}
+                                                >
+                                                    { item.name }
+                                                </Link>
+                                            }
 
                                         </Grid>
 
@@ -519,26 +557,43 @@ class Cart extends Component {
                     {/* section 2 */}
                     {
                         this.state.haveItems &&
-                        <Grid item xs={10}>
-                            <div className={classes.totalPriceText}>
-                                <Typography variant="h5" style={{ fontWeight: 'bold', }}>
-                                    Total Amount
-                                </Typography>
-                                <Typography variant="h5" style={{ fontWeight: 'bold', }}>
-                                    Rs.{this.state.totalAmount} /=
-                                </Typography>
-                            </div>
-                        </Grid>
+                        <>
+                            <Grid item xs={10}>
+                                <div className={classes.totalPriceText}>
+                                    <Typography variant="h5" style={{ fontWeight: 'bold', }}>
+                                        Total Amount
+                                    </Typography>
+                                    <Typography variant="h5" style={{ fontWeight: 'bold', }}>
+                                        Rs.{this.state.totalAmount} /=
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={10}>
+                                <div className={classes.confirmBtn} onClick={this.navigateToFinalOrderScreen}>
+                                    Confirm Order
+                                </div>
+                                <div className={classes.confirmBtn} onClick={this.downloadPDF}>
+                                    Download PDF
+                                </div>
+                            </Grid>
+                        </>
                     }
 
-                    {
+                    {/* {
                         this.state.userLoggedIn && this.state.haveItems &&
-                        <Grid item xs={10}>
-                            <div className={classes.confirmBtn}>
-                                Confirm Order
-                            </div>
-                        </Grid>
-                    }
+                        <>
+                            <Grid item xs={10}>
+                                <div className={classes.confirmBtn}>
+                                    Confirm Order
+                                </div>
+                            </Grid>
+                            <Grid item xs={10}>
+                                <div className={classes.confirmBtn}>
+                                    Download PDF
+                                </div>
+                            </Grid>
+                        </>
+                    } */}
 
                     {/* empty cart */}
                     {

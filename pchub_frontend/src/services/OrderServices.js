@@ -208,7 +208,6 @@ class OrderServices {
 
     await axios.post(BackendApi_URL+"/orders/user/"+userID, data)
     .then(res => {
-      // console.log("Item",res);
       result = res;
     })
     .catch(error =>{
@@ -231,7 +230,6 @@ class OrderServices {
 
     await axios.put(BackendApi_URL+"/orders/removeItem/"+ordId, data)
     .then(res => {
-      // console.log("Item",res);
       result = res;
     })
     .catch(error =>{
@@ -256,7 +254,6 @@ class OrderServices {
 
     await axios.put(BackendApi_URL+"/orders/qty/edit/"+ordId, data)
     .then(res => {
-      // console.log("Item",res);
       result = res;
     })
     .catch(error =>{
@@ -268,8 +265,8 @@ class OrderServices {
 
   }
 
-   //Database -- add local items to db when login
-   async addLocalItemsToDBLogin(uID, items){
+  //Database -- add local items to db when login
+  async addLocalItemsToDBLogin(uID, items){
 
     //remove cart items from local storage
     localStorage.removeItem(this.LOCAL_KEY);
@@ -286,6 +283,73 @@ class OrderServices {
     return result;
 
   }
+
+  //Database -- get order by id
+  async getOrderByID(id){
+
+    var result = null;
+
+    await await axios.get(BackendApi_URL+"/orders/"+id)
+    .then(res => {
+      result = res;
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+
+    // console.log(result);
+    return result;
+
+  }
+
+  //Database -- update payment details
+  async updatePaymentDetails(id, data){
+
+    var result = null;
+    // console.log(data, id)
+    result = await await axios.put(BackendApi_URL+"/orders/payment/"+id, data)
+
+    // console.log(result);
+    return result;
+
+  }
+  
+  //Database -- checkout order
+  async checkoutOrder(data, id){
+
+    var result = null;
+    // console.log(data, id)
+    result = await await axios.post(BackendApi_URL+"/orders/checkout/"+id, data)
+
+    // console.log(result);
+    return result;
+
+  }
+
+  //Database -- change payment method
+  async changePaymentMethod(id, data){
+
+    var result = null;
+    // console.log(data, id)
+    result = await await axios.put(BackendApi_URL+"/orders/payment/method/"+id, data)
+
+    // console.log(result);
+    return result;
+
+  }
+
+  //Database -- delete Order by id
+  async deleteOrderById(id){
+
+    var result = null;
+    // console.log(data, id)
+    result = await await axios.delete(BackendApi_URL+"/orders/"+id)
+
+    // console.log(result);
+    return result;
+
+  }
+
 
 }
 

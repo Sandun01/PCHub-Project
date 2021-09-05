@@ -14,6 +14,8 @@ import { UserRoutes, AdminRoutes } from './routes/Routes';
 import Home from './components/user/Home';
 import LeftNavMain from './components/user/LeftNavMain';
 import Cart from './components/user/Cart';
+import CheckoutScreen from './components/user/CheckoutScreen';
+import ViewOrder from './components/user/ViewOrder';
 
 //products
 import AllProducts from './components/user/products/AllProducts';
@@ -104,6 +106,9 @@ class App extends Component {
 
             {/* Registered User Routes */}
             {/* <UserRoutes exact path="/" /> */}
+            <Route exact path="/checkout" component={CheckoutScreen} />
+            <Route exact path="/orders/:id" component={ViewOrder} />
+
 
             {/* Admin User Routes */}
             {/* <AdminRoutes exact path="/admin" component={AdminDashboard} /> */}
