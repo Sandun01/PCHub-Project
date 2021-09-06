@@ -33,44 +33,6 @@ const finalBillTemplate = (data) => {
    `;
   }
 
-  //  {
-  //    OrderID: '6134b54cca1af503e82ee8e8',
-  //    userName: 'Sandun Lakshitha',
-  //    items: [
-  //      {
-  //        inStock: true,
-  //        _id: '6134b54cca1af503e82ee8e9',
-  //        name: 'Asus ROG Strix G17',
-  //        category: 'Laptop',
-  //        qty: 2,
-  //        image: '/images/products/ROG_Strix_1.png',
-  //        price: 480000,
-  //        product: [Object],
-  //        categoryIconSrc: '/images/laptop.png'
-  //      },
-  //      {
-  //        inStock: true,
-  //        _id: '6134b56dca1af503e82ee8fd',
-  //        name: 'Dell Inspiron 5502 BLUE',
-  //        category: 'Laptop',
-  //        qty: 1,
-  //        image: 'https://i.dell.com/is/image/DellContent/content/dam/global-asset-library/Products/Notebooks/Inspiron/15_5593_non-touch/in5593nt_cnb_00055lf110_gy.psd?$S7-570x400$&layer=1&src=is{DellContent/content/dam/global-asset-library/Supporting_Assets/Screenfills/inspiron/Inspiron_F60A8784.psd?size=4000,4000}&perspective=2089,1266,3588,910,3268,2357,1818,2276&pos=-174,-809&wid=570&hei=400',
-  //        price: 134000,
-  //        product: [Object],
-  //        categoryIconSrc: '/images/laptop.png'
-  //      }
-  //    ],
-  //    order: {
-  //      paymentMethod: 'Cash On Delivery',
-  //      totalAmount: 1094000,
-  //      addressLine1: '711-2880 Nulla St.',
-  //      addressLine2: 'Mankato Mississippi 96522',
-  //      contactNumber: '2575637401',
-  //      city: 'Mississippi ',
-  //      zipCode: 12312
-  //    }
-  //  }
-
   return `
      <!doctype html>
      <html>
