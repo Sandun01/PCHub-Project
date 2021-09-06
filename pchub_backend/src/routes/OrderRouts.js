@@ -3,6 +3,10 @@ import OrderController from '../controllers/OrderController.js';
 
 const router = express.Router()
 
+//reports
+router.route('/fetchFinalBill').get( OrderController.getFinalOrderBill )
+router.route('/generateFinalBill').post( OrderController.generateFinalOrderBill )
+
 router.route('/').get( OrderController.getAllOrders )
 router.route('/').post( OrderController.createNewOrder )
 router.route('/:id').get( OrderController.getOrderByID )
@@ -13,7 +17,6 @@ router.route('/qty/edit/:id').put( OrderController.editQuantity )
 router.route('/delivery/edit/:id').put( OrderController.editDeliveryStatus )
 router.route('/payment/:id').put( OrderController.updatePaymentDetails )
 router.route('/payment/method/:id').put( OrderController.changePaymentMethod )
-
 
 router.route('/checkout/:id').post( OrderController.checkoutOrder )
 router.route('/user/:id').post( OrderController.getOrdersByUserID )

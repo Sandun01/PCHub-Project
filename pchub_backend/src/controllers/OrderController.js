@@ -1,4 +1,6 @@
-import mongoose from 'mongoose';
+import pdf from 'html-pdf';
+import finalBillTemplate from '../utils/orderReports/FinalOrderBill_Temp/FinalOrderBill.js';
+import path from 'path';
 
 import Order from "../models/OrderModel.js";
 import Product from "../models/ProductModel.js";
@@ -858,6 +860,40 @@ const deleteOrderByID = async(req, res) => {
 
 }
 
+//Generate final order bill
+// @route post /api/orders/generateFinalBill
+// @access User(Registered) 
+const generateFinalOrderBill = async(req, res) => {
+
+    // console.log("generate Final Order Bill");
+    
+    const __dirname = path.resolve()
+    
+    const data = req.body;
+    // console.log(data);
+    
+    //generate bill
+    pdf.create(finalBillTemplate(data), {}).toFile(`${__dirname}/files/OrderBill.pdf`, (err) => {
+        if(err) {
+            res.send(Promise.reject());
+        }
+        
+        res.send(Promise.resolve());
+    });
+    
+}
+
+//get final order bill
+// @route get /api/orders/fetchFinalBill
+// @access User(Registered) 
+const getFinalOrderBill = async(req, res) => {
+
+    console.log("get Final Order Bill");
+
+    const __dirname = path.resolve()
+
+    res.sendFile(`${__dirname}/files/OrderBill.pdf`)
+}
 
 export default{
     createNewOrder,
@@ -876,5 +912,9 @@ export default{
     deleteOrderByID,
 
     checkFunction,
+
+    // reports
+    generateFinalOrderBill,
+    getFinalOrderBill,
 
 }

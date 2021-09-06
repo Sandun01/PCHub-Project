@@ -2,10 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import auth from './src/routes/authRoutes.js';
 
 import connectDB from './src/config/db.js';
 
+import auth from './src/routes/authRoutes.js';
 import WishlistRouts from './src/routes/WishlistRouts.js';
 import ProductRouts from './src/routes/ProductRoutes.js';
 import OrderRouts from './src/routes/OrderRouts.js';

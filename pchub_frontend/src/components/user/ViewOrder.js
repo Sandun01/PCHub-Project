@@ -152,8 +152,9 @@ class ViewOrder extends Component {
             orderID: null,
 
             //user data
-            // userLoggedIn: false,
-            // userID: null,
+            userLoggedIn: false,
+            userID: null,
+            userName: null,
 
             totalAmount: 0,
 
@@ -227,26 +228,29 @@ class ViewOrder extends Component {
 
     }
 
-    //check user logged in
-    // async checkUserLoggedIn(){
-    //     var logIn = false;
-    //     var uData = await AuthService.getUserData();
-    //     var uInfo = null;
-    //     var id = null;
+    // check user logged in
+    async checkUserLoggedIn(){
+        var logIn = false;
+        var uData = await AuthService.getUserData();
+        var uInfo = null;
+        var id = null;
+        var name = null;
         
-    //     if(uData != null){
-    //         uInfo = uData.userData;
-    //         id = uInfo._id
-    //         logIn = true;
-    //     }
+        if(uData != null){
+            uInfo = uData.userData;
+            id = uInfo._id
+            name = uInfo.fname + " " + uInfo.lname
+            logIn = true
+        }
         
-    //     this.setState({
-    //         userLoggedIn: logIn,
-    //         userID: id,
-    //     })
+        this.setState({
+            userLoggedIn: logIn,
+            userID: id,
+            userName: name,
+        })
 
-    //     // console.log("User",this.state)
-    // }
+        // console.log("User",this.state)
+    }
 
     //get cart items
     async getOrderDetails(){
@@ -519,7 +523,56 @@ class ViewOrder extends Component {
 
     }
 
+    //generate pdf
+    generatePDF = async() => {
+        
+        this.setState({
+            loading: true,
+        })
+
+        var data = {
+            "OrderID": this.state.orderID,
+            "userName": this.state.userName,
+            "items": this.state.items,
+            "order": this.state.orderData,
+        }
+
+        await OrderServices.generateFinalOrderBill(data)
+        .then( res => {
+            if(res === 1){
+                this.setState({
+                    loading: false,
+                    snackbar: true,
+                    snackbar_severity: 'success',
+                    snackbar_message: 'Generate PDF Success!',
+                })
+            }
+            else{
+                console.log('error');
+                this.setState({
+                    loading: false,
+                    snackbar: true,
+                    snackbar_severity: 'error',
+                    snackbar_message: 'Error in Generating PDF!',
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            this.setState({
+                loading: false,
+                snackbar: true,
+                snackbar_severity: 'error',
+                snackbar_message: 'Error in Generating PDF!',
+            })
+        })
+    
+    }
+
     async componentDidMount(){
+
+        //get user data
+        await this.checkUserLoggedIn();
 
         //get cart items
         await this.getOrderDetails();
@@ -990,7 +1043,7 @@ class ViewOrder extends Component {
                             {
                                 this.state.isActive === false&& 
                                 <Grid item xs={10}>
-                                    <div className={classes.printBillBtn} onClick={this.navigateToCartScreen}>
+                                    <div className={classes.printBillBtn} onClick={this.generatePDF}>
                                         Print Bill
                                     </div>
                                 </Grid>
