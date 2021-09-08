@@ -421,8 +421,47 @@ class Cart extends Component {
     }
 
     // download pdf
-    downloadPDF = () => {
-        console.log('download pdf')
+    downloadPDF = async() => {
+         //generate pdf
+        this.setState({
+            loading: true,
+        })
+
+        var data = {
+            "items": this.state.items,
+            "totalAmount": this.state.totalAmount,
+        }
+
+        await OrderServices.generateQuotation(data)
+        .then( res => {
+            if(res === 1){
+                this.setState({
+                    loading: false,
+                    snackbar: true,
+                    snackbar_severity: 'success',
+                    snackbar_message: 'Generate PDF Success!',
+                })
+            }
+            else{
+                console.log('error');
+                this.setState({
+                    loading: false,
+                    snackbar: true,
+                    snackbar_severity: 'error',
+                    snackbar_message: 'Error in Generating PDF!',
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            this.setState({
+                loading: false,
+                snackbar: true,
+                snackbar_severity: 'error',
+                snackbar_message: 'Error in Generating PDF!',
+            })
+        })
+
     }
 
     async componentDidMount(){

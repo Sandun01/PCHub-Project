@@ -1,5 +1,6 @@
 import pdf from 'html-pdf';
 import finalBillTemplate from '../utils/orderReports/FinalOrderBill_Temp/FinalOrderBill.js';
+import Quotation_Template from '../utils/orderReports/Quotation/QuatationTemplate.js';
 import path from 'path';
 
 import Order from "../models/OrderModel.js";
@@ -895,6 +896,44 @@ const getFinalOrderBill = async(req, res) => {
     res.sendFile(`${__dirname}/files/OrderBill.pdf`)
 }
 
+
+//Generate Quotation
+// @route post /api/orders/generateQuotation
+// @access User(Registered) 
+const generateQuotation = async(req, res) => {
+
+    // console.log("generate Final Order Bill");
+    
+    const __dirname = path.resolve()
+    
+    const data = req.body;
+    // console.log(data);
+    
+    //generate bill
+    pdf.create(Quotation_Template(data), {}).toFile(`${__dirname}/files/Quotation.pdf`, (err) => {
+        if(err) {
+            res.send(Promise.reject());
+        }
+        
+        res.send(Promise.resolve());
+    });
+    
+}
+
+//get Quotation
+// @route get /api/orders/getQuotation
+// @access User(Registered) 
+const getPrintedQuotation = async(req, res) => {
+
+    console.log("get Quotation");
+
+    const __dirname = path.resolve()
+
+    res.sendFile(`${__dirname}/files/Quotation.pdf`)
+}
+
+
+
 export default{
     createNewOrder,
     getAllOrders,
@@ -913,7 +952,11 @@ export default{
 
     checkFunction,
 
-    // reports
+    // report quotation
+    generateQuotation,
+    getPrintedQuotation,
+
+    // report bill
     generateFinalOrderBill,
     getFinalOrderBill,
 

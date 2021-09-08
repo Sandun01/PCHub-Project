@@ -427,6 +427,59 @@ class OrderServices {
   
   }
 
+  //Database/Backend -- generate pdf
+  async generateQuotation(data){
+
+    var result = 0;
+
+    try{
+      var genPdfResult = await axios.post(BackendApi_URL+"/orders/generateQuotation", data);
+
+      if(!Utils.isEmptyObject(genPdfResult)){
+
+        if(genPdfResult.status === 200){ //pdf generate bill success
+
+          //get bill pdf
+          var genPdfResult2 = await axios.get(BackendApi_URL+"/orders/getQuotation", { responseType: 'blob' });
+
+          if(!Utils.isEmptyObject(genPdfResult2)){ //get bill pdf response success
+
+            if(genPdfResult2.status === 200){
+              const pdfBlob = new Blob([genPdfResult2.data], { type: 'application/pdf' });
+              saveAs(pdfBlob, 'newQuotation.pdf');
+      
+              // console.log(genPdfResult2);
+              result = 1;
+
+            }
+            else{ //get bill pdf response not success
+              result = 0;
+            }
+
+          }
+          else{ //get bill pdf response not success
+            result = 0;
+          }
+          
+        }
+        else{ //generate bill report response not success
+          result = 0;
+        }
+        
+      }
+      else{ //generate bill report response not success
+        result = 0;
+      }
+
+    }
+    catch(err){
+      console.log(err);
+      result = 0;
+    }
+    
+    return result;
+  
+  }
 
 }
 

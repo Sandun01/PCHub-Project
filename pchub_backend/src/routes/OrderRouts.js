@@ -7,6 +7,9 @@ const router = express.Router()
 router.route('/fetchFinalBill').get( OrderController.getFinalOrderBill )
 router.route('/generateFinalBill').post( OrderController.generateFinalOrderBill )
 
+router.route('/generateQuotation').post( OrderController.generateQuotation )
+router.route('/getQuotation').get( OrderController.getPrintedQuotation )
+
 router.route('/').get( OrderController.getAllOrders )
 router.route('/').post( OrderController.createNewOrder )
 router.route('/:id').get( OrderController.getOrderByID )
