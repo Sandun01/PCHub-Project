@@ -7,7 +7,7 @@ const productSchema = mongoose.Schema({
   },
   item_image: {
     type: String,
-    required: true,
+    required: false,
   },
   item_description: {
     type: String,
@@ -19,7 +19,7 @@ const productSchema = mongoose.Schema({
   },
   rating: {
     type: Number,
-    required: true,
+    required: false,
     default: 0,
   },
   price: {

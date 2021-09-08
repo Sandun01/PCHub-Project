@@ -1,18 +1,13 @@
 import React, { Component } from 'react'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
+import { Button, Grid, Typography } from '@material-ui/core'
+import Loader from '../common/Loader'
 import Paper from '@material-ui/core/Paper'
 import { withStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
 import axios from 'axios'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
+import { LeftNavBarData } from '../utils/LeftNavBarData'
+import { Autocomplete, Alert } from '@material-ui/lab'
+import { storage } from '../../firebase/firebase'
 
 const styles = (theme) => ({
   layout: {
@@ -20,7 +15,7 @@ const styles = (theme) => ({
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
+      width: 900,
       marginLeft: 'auto',
       marginRight: 'auto',
     },
@@ -44,33 +39,151 @@ const styles = (theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+
+  inputElement: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    minWidth: '360px',
+  },
+  linkText: {
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+      color: '#DDC545',
+    },
+  },
 })
 
 const initialState = {
-  isLargeScreen: true,
   variant: '',
   message: '',
   loading: false,
-  dialogBox: false,
+  imageFile: '',
 
   formData: {
     item_name: '',
     item_image: '',
-    venue: '',
-    startDate: '',
-    endDate: '',
-    selection: '',
+    item_description: '',
+    category: '',
+    rating: '',
+    price: '',
+    countInStock: '',
   },
 }
 class AddNewItem extends Component {
   constructor(props) {
     super(props)
     this.state = initialState
+    this.formSubmit = this.formSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.fileSelectedHandler = this.fileSelectedHandler.bind(this)
+    this.setSelectedValue = this.setSelectedValue.bind(this)
   }
 
-  handleChange(event, index, value) {
-    //set selection to the value selected
-    this.setState({ selection: value })
+  async formSubmit(e) {
+    e.preventDefault()
+
+    this.setState({
+      loading: true,
+    })
+
+    const uploadTask = storage
+      .ref(`images/${this.state.imageFile.name}`)
+      .put(this.state.imageFile)
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {},
+      (error) => {
+        console.log(error)
+      },
+      () =>
+        storage
+          .ref('images')
+          .child(this.state.imageFile.name)
+          .getDownloadURL()
+          .then((url) => {
+            var name = 'item_image'
+            var value = url
+            var data = this.state.formData
+            data[name] = value
+
+            this.setState({
+              formData: data,
+            })
+
+            this.createItem(data)
+          })
+    )
+  }
+
+  async createItem(data) {
+
+    //console.log(this.state);
+    var messageRes = null
+    var variantRes = null
+    
+    axios
+      .post('http://localhost:5000/api/products', data)
+      .then((res) => {
+        if (res.status == 201) {
+          messageRes = 'Successfully Inserted!'
+          variantRes = 'success'
+
+          setTimeout(() => {
+            window.location.href = '/admin/viewItems'
+          }, 1000)
+        } else {
+          //console.log(res)
+          messageRes = res.error
+          variantRes = 'error'
+        }
+      })
+      .catch((error) => {
+        // error.response.data.message : error.message
+        console.log(error)
+        messageRes = error.message
+        variantRes = 'error'
+      })
+
+    setTimeout(() => {
+      this.setState({
+        message: messageRes,
+        variant: variantRes,
+        loading: false,
+      })
+    }, 2000)
+  }
+
+  handleChange = (e) => {
+    var name = e.target.name
+    var value = e.target.value
+    var data = this.state.formData
+
+    data[name] = value
+
+    this.setState({
+      formData: data,
+    })
+    console.log(this.state)
+  }
+
+  fileSelectedHandler = (e) => {
+    this.state.imageFile = e.target.files[0]
+    console.log('image file', this.state.imageFile)
+
+    console.log(this.state)
+  }
+
+  setSelectedValue = (name, value) => {
+    var data = this.state.formData
+    data[name] = value
+
+    this.setState({
+      formData: data,
+    })
+
+    console.log(this.state)
   }
 
   render() {
@@ -81,87 +194,157 @@ class AddNewItem extends Component {
           <Typography component='h1' variant='h4' align='center'>
             Add New item
           </Typography>
-          <React.Fragment>
-            <Typography variant='h6' gutterBottom>
-              Item Details
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id='item_name'
-                  name='item_name'
-                  label='Item Name'
+          {/* Loading */}
+          {this.state.loading && <Loader />}
+
+          <ValidatorForm onSubmit={this.formSubmit}>
+            <Grid
+              container
+              alignItems='center'
+              justify='center'
+              direction='column'
+            >
+              <Grid item xs={12} md={12} className={classes.inputElement}>
+                <TextValidator
+                  className='mt-5'
+                  placeholder='Name'
+                  helperText='Product Name'
+                  variant='outlined'
+                  size='small'
                   fullWidth
-                  autoComplete='given-product'
+                  type='text'
+                  name='item_name'
+                  value={this.state.formData.item_name}
+                  onChange={(e) => this.handleChange(e)}
+                  validators={['required']}
+                  errorMessages={['This field is required']}
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <InputLabel id='demo-simple-select-label'>Category</InputLabel>
-                <Select
-                  labelId='demo-simple-select-label'
-                  id='demo-simple-select'
+              <Grid item xs={12} md={12} className={classes.inputElement}>
+                <TextValidator
+                  className='mt-4'
+                  placeholder='Description'
+                  helperText='Product description'
+                  variant='outlined'
+                  size='small'
                   fullWidth
-                  value={this.state.selection}
-                  onChange={this.handleChange}
-                >
-                  <MenuItem value={'English'}>English</MenuItem>
-                  <MenuItem value={'Spanish'}>Spanish</MenuItem>
-                  <MenuItem value={'French'}>French</MenuItem>
-                  <MenuItem value={'English'}>English</MenuItem>
-                  <MenuItem value={'Spanish'}>Spanish</MenuItem>
-                  <MenuItem value={'French'}>French</MenuItem>
-                  <MenuItem value={'English'}>English</MenuItem>
-                  <MenuItem value={'Spanish'}>Spanish</MenuItem>
-                  <MenuItem value={'French'}>French</MenuItem>
-                </Select>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  id='item_description'
+                  type='text'
                   name='item_description'
-                  label='Description'
-                  fullWidth
+                  value={this.state.formData.item_description}
+                  onChange={(e) => this.handleChange(e)}
+                  validators={['required']}
+                  errorMessages={[
+                    'This field is required',
+                    'Email is not valid',
+                  ]}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id='price'
-                  name='price'
-                  label='Unit Price'
+              <Grid item xs={12} md={12} className={classes.inputElement}>
+                <TextValidator
+                  className='mt-4'
+                  placeholder='Image'
+                  helperText='Product Image'
+                  variant='outlined'
+                  size='small'
                   fullWidth
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id='countInStock'
-                  name='countInStock'
-                  label='Stock Quantity'
-                  fullWidth
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  id='item_image'
+                  type='file'
                   name='item_image'
-                  label='Image'
-                  fullWidth
+                  onChange={(e) => this.fileSelectedHandler(e)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  id='zip'
-                  name='zip'
-                  label='Zip / Postal code'
+
+              <Grid item xs={12} md={12} className={classes.inputElement}>
+                <TextValidator
+                  className='mt-4'
+                  placeholder='Price (LKR)'
+                  helperText='Enter price'
+                  variant='outlined'
+                  size='small'
                   fullWidth
+                  type='number'
+                  name='price'
+                  value={this.state.formData.price}
+                  onChange={(e) => this.handleChange(e)}
+                  validators={['required']}
+                  errorMessages={[
+                    'Price is required!',
+                    'Please enter valid Price',
+                  ]}
                 />
+              </Grid>
+
+              <Grid item xs={12} md={12} className={classes.inputElement}>
+                <Autocomplete
+                  className='mt-4'
+                  fullWidth
+                  type='text'
+                  options={LeftNavBarData}
+                  getOptionLabel={(opt) => opt.title}
+                  name='category'
+                  size='small'
+                  // value={{value: this.state.formData.category}}
+                  onChange={(e, v) =>
+                    this.setSelectedValue(
+                      'category',
+                      v == null ? null : v.title
+                    )
+                  }
+                  renderInput={(params) => (
+                    <TextValidator
+                      {...params}
+                      variant='outlined'
+                      placeholder='Select Category'
+                      helperText='Select Category'
+                      value={
+                        this.state.formData.category == ''
+                          ? ''
+                          : this.state.formData.category
+                      }
+                      validators={['required']}
+                      errorMessages={['Category is required!']}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={12} className={classes.inputElement}>
+                <TextValidator
+                  className='mt-4'
+                  placeholder='Count In Stock'
+                  helperText='Enter the Count in Stock'
+                  variant='outlined'
+                  size='small'
+                  fullWidth
+                  type='number'
+                  name='countInStock'
+                  value={this.state.formData.countInStock}
+                  onChange={(e) => this.handleChange(e)}
+                  validators={['required']}
+                  errorMessages={['This field is required']}
+                />
+              </Grid>
+
+              {this.state.message != '' && (
+                <Grid item xs={12} md={12}>
+                  <Alert
+                    severity={this.state.variant}
+                    style={{ maxWidth: '360px' }}
+                  >
+                    <Typography>{this.state.message}</Typography>
+                  </Alert>
+                </Grid>
+              )}
+
+              <Grid item xs={12} md={12}>
+                <div className='text-center my-3'>
+                  <Button variant='contained' color='primary' type='submit'>
+                    Submit
+                  </Button>
+                </div>
               </Grid>
             </Grid>
-          </React.Fragment>
+          </ValidatorForm>
         </Paper>
       </main>
     )
