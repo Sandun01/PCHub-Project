@@ -80,23 +80,20 @@ class AddNewItem extends Component {
     this.setSelectedValue = this.setSelectedValue.bind(this)
   }
 
-  formSubmit(e) {
+  async formSubmit(e) {
     e.preventDefault()
 
     this.setState({
       loading: true,
     })
 
-    //console.log(this.state);
-    var messageRes = null
-    var variantRes = null
-
     const uploadTask = storage
       .ref(`images/${this.state.imageFile.name}`)
       .put(this.state.imageFile)
+
     uploadTask.on(
       'state_changed',
-      snapshot => {},
+      (snapshot) => {},
       (error) => {
         console.log(error)
       },
@@ -114,11 +111,20 @@ class AddNewItem extends Component {
             this.setState({
               formData: data,
             })
+
+            this.createItem(data)
           })
     )
+  }
 
+  async createItem(data) {
+
+    //console.log(this.state);
+    var messageRes = null
+    var variantRes = null
+    
     axios
-      .post('http://localhost:5000/api/products', this.state.formData)
+      .post('http://localhost:5000/api/products', data)
       .then((res) => {
         if (res.status == 201) {
           messageRes = 'Successfully Inserted!'

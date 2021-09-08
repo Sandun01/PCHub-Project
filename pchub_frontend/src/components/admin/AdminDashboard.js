@@ -45,7 +45,13 @@ const useStyles = makeStyles(styles)
 export default function Dashboard() {
   const classes = useStyles()
   return (
-    <div style={{padding: 20}}>
+    <div
+      style={{
+        padding: 10,
+       
+        margin: 10,
+      }}
+    >
       <GridContainer>
         <GridItem xs={12} sm={6} md={3}>
           <Card>
@@ -53,9 +59,9 @@ export default function Dashboard() {
               <CardIcon color='warning'>
                 <Icon>content_copy</Icon>
               </CardIcon>
-              <p className={classes.cardCategory}>Used Space</p>
+              <p className={classes.cardCategory}>Storage Capacity</p>
               <h3 className={classes.cardTitle}>
-                49/50 <small>GB</small>
+                49/50 <small>Acres</small>
               </h3>
             </CardHeader>
             <CardFooter stats>
@@ -77,7 +83,7 @@ export default function Dashboard() {
                 <Store />
               </CardIcon>
               <p className={classes.cardCategory}>Revenue</p>
-              <h3 className={classes.cardTitle}>$34,245</h3>
+              <h3 className={classes.cardTitle}>LKR 34,245</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
@@ -93,13 +99,13 @@ export default function Dashboard() {
               <CardIcon color='danger'>
                 <Icon>info_outline</Icon>
               </CardIcon>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
+              <p className={classes.cardCategory}>Returned Items</p>
+              <h3 className={classes.cardTitle}>7</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
                 <LocalOffer />
-                Tracked from Github
+                Tracked from storage
               </div>
             </CardFooter>
           </Card>
@@ -110,8 +116,8 @@ export default function Dashboard() {
               <CardIcon color='info'>
                 <Accessibility />
               </CardIcon>
-              <p className={classes.cardCategory}>Followers</p>
-              <h3 className={classes.cardTitle}>+245</h3>
+              <p className={classes.cardCategory}>Daily Customers</p>
+              <h3 className={classes.cardTitle}>+145</h3>
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
@@ -163,12 +169,12 @@ export default function Dashboard() {
               />
             </CardHeader>
             <CardBody>
-              <h4 className={classes.cardTitle}>Email Subscriptions</h4>
-              <p className={classes.cardCategory}>Last Campaign Performance</p>
+              <h4 className={classes.cardTitle}>Sales Chart</h4>
+              <p className={classes.cardCategory}>Last Week Performance</p>
             </CardBody>
             <CardFooter chart>
               <div className={classes.stats}>
-                <AccessTime /> campaign sent 2 days ago
+                <AccessTime /> updated 1 day ago
               </div>
             </CardFooter>
           </Card>
@@ -185,12 +191,12 @@ export default function Dashboard() {
               />
             </CardHeader>
             <CardBody>
-              <h4 className={classes.cardTitle}>Completed Tasks</h4>
-              <p className={classes.cardCategory}>Last Campaign Performance</p>
+              <h4 className={classes.cardTitle}>Profit / Loss Chart</h4>
+              <p className={classes.cardCategory}>Last Week Performance</p>
             </CardBody>
             <CardFooter chart>
               <div className={classes.stats}>
-                <AccessTime /> campaign sent 2 days ago
+                <AccessTime /> updated 1 day ago
               </div>
             </CardFooter>
           </Card>
@@ -199,11 +205,11 @@ export default function Dashboard() {
       <GridContainer>
         <GridItem xs={12} sm={12} md={6}>
           <CustomTabs
-            title='Tasks:'
+            title='Items:'
             headerColor='primary'
             tabs={[
               {
-                tabName: 'Bugs',
+                tabName: 'Stock Refill',
                 tabIcon: BugReport,
                 tabContent: (
                   <Tasks
@@ -214,7 +220,7 @@ export default function Dashboard() {
                 ),
               },
               {
-                tabName: 'Website',
+                tabName: 'Return',
                 tabIcon: Code,
                 tabContent: (
                   <Tasks
@@ -225,7 +231,7 @@ export default function Dashboard() {
                 ),
               },
               {
-                tabName: 'Server',
+                tabName: 'Warrenty',
                 tabIcon: Cloud,
                 tabContent: (
                   <Tasks
@@ -243,18 +249,18 @@ export default function Dashboard() {
             <CardHeader color='warning'>
               <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
               <p className={classes.cardCategoryWhite}>
-                New employees on 15th September, 2016
+                New employees on 15th August, 2021
               </p>
             </CardHeader>
             <CardBody>
               <Table
                 tableHeaderColor='warning'
-                tableHead={['ID', 'Name', 'Salary', 'Country']}
+                tableHead={['ID', 'Name', 'Salary', 'Emp Type']}
                 tableData={[
-                  ['1', 'Dakota Rice', '$36,738', 'Niger'],
-                  ['2', 'Minerva Hooper', '$23,789', 'Curaçao'],
-                  ['3', 'Sage Rodriguez', '$56,142', 'Netherlands'],
-                  ['4', 'Philip Chaney', '$38,735', 'Korea, South'],
+                  ['1', 'Rasitha', 'LKR 36,738', 'Full time'],
+                  ['2', 'Ayodhya ', 'LKR 23,789', 'Full time'],
+                  ['3', 'Sandun', 'LKR 56,142', 'Full time'],
+                  ['4', 'Nilan', 'LKR 38,735', 'Half time'],
                 ]}
               />
             </CardBody>
