@@ -11,17 +11,11 @@ import './App.css'
 import { UserRoutes, AdminRoutes } from './routes/Routes'
 
 //user components
-<<<<<<< HEAD
 import Home from './components/user/Home';
 import LeftNavMain from './components/user/LeftNavMain';
 import Cart from './components/user/Cart';
 import CheckoutScreen from './components/user/CheckoutScreen';
 import ViewOrder from './components/user/ViewOrder';
-=======
-import Home from './components/user/Home'
-import LeftNavMain from './components/user/LeftNavMain'
-import Cart from './components/user/Cart'
->>>>>>> origin/nilan_fe_product_management_new
 
 //products
 import AllProducts from './components/user/products/AllProducts'

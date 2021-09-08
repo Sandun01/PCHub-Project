@@ -12,12 +12,9 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
-<<<<<<< HEAD
     "file-saver": "^2.0.5",
-=======
     "chartist": "^0.11.4",
     "firebase": "^8.10.0",
->>>>>>> origin/nilan_fe_product_management_new
     "material-ui-image": "^3.3.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-beta.4",
