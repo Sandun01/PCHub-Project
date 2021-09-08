@@ -31,19 +31,18 @@ class HomeItemCard extends Component {
     constructor(props){
         super(props);
         this.state = {
-            id: 0,
-            src: this.props.data.src,
-            title: this.props.data.title,
-            description: this.props.data.description,
+            _id: this.props.data._id,
+            item_image: this.props.data.item_image,
+            item_name: this.props.data.item_name,
+            item_description: this.props.data.item_description,
         }
     }
 
     componentDidMount(){
-
     }
     
     navigateToSingleViewPage = () => {
-        window.location.href = '/product/'+this.state.id;
+        window.location.href = '/product/'+this.state._id;
     }
 
     render() {
@@ -54,14 +53,14 @@ class HomeItemCard extends Component {
             
             <div>
                 <Card className={classes.root} onClick={this.navigateToSingleViewPage}>
-                    <img src={this.state.src} className={classes.image} alt={this.state.imgTitle} />
+                    <img src={this.state.item_image} className={classes.image} alt={this.state.item_name} />
                     <CardActionArea>
                         <CardContent className={classes.cardContent}>
                             <Typography gutterBottom variant="h5" component="h2">
-                                {this.state.title}
+                                {this.state.item_name}
                             </Typography>
                             <Typography variant="body2" component="p">
-                                {this.state.description}
+                                {this.state.item_description.substring(0, 50).concat("...")}
                             </Typography>
                         </CardContent>
                     </CardActionArea>

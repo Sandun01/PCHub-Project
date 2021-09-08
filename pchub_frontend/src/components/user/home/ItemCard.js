@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles';
-import { Card, CardActionArea, CardContent, Divider, Typography,
+import { Card, CardContent, Typography,
 } from '@material-ui/core'
 
 // import { Link } from 'react-router-dom'
@@ -51,19 +51,19 @@ class ItemCard extends Component {
     constructor(props){
         super(props);
         this.state = {
-            id: 0,
-            src: this.props.data.src,
-            title: this.props.data.title,
-            price: 280000,
-            category: 'Laptop',
-            qty: 10,
+            _id: this.props.data._id,
+            item_image: this.props.data.item_image,
+            item_name: this.props.data.item_name,
+            price: this.props.data.price,
+            category: this.props.data.category,
+            countInStock: this.props.data.countInStock,
             published: false,
             // description: this.props.data.description,
         }
     }
 
     navigateToSingleViewPage = () => {
-        window.location.href = '/product/'+this.state.id;
+        window.location.href = '/product/'+this.state._id;
     }
 
     componentDidMount(){
@@ -76,13 +76,18 @@ class ItemCard extends Component {
 
         return (
             
-            // <Link to={"/product"+this.state.id}>
+            // <Link to={"/product"+this.state._id}>
             <div>
                 <Card className={classes.root} onClick={this.navigateToSingleViewPage}>
-                    <img src={this.state.src} className={classes.image} alt={this.state.imgTitle} />
+                    {
+                        this.state.item_image ?
+                        <img src={this.state.item_image} className={classes.image} alt={this.state.item_name} />
+                        :
+                        <img src={"/images/imageNotAvailable.png"} height="300px" width="300px" alt={this.state.item_name} />
+                    }
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
-                            {this.state.title}
+                            {this.state.item_name}
                         </Typography>
                         <Typography variant="body2" component="p">
                             {this.state.category}
@@ -92,7 +97,7 @@ class ItemCard extends Component {
                         </Typography>
                     </CardContent>
                     {
-                        this.state.qty > 0 ?
+                        this.state.countInStock > 0 ?
                         <div className={classes.inStockText}>
                             In Stock
                         </div>

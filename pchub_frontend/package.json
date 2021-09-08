@@ -2,6 +2,7 @@
   "name": "pchub_frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://127.0.0.1:5000/",
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
@@ -11,6 +12,7 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
+    "file-saver": "^2.0.5",
     "material-ui-image": "^3.3.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-beta.4",
@@ -18,6 +20,7 @@
     "react-icons": "^4.2.0",
     "react-material-ui-carousel": "^2.3.1",
     "react-material-ui-form-validator": "^2.1.4",
+    "react-paypal-button-v2": "^2.6.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.2"

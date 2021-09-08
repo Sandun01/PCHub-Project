@@ -1,14 +1,16 @@
-import React, { Component } from "react";
-import { alpha, withStyles } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import MoreIcon from "@material-ui/icons/MoreVert";
-import { Button } from "@material-ui/core";
-import {Link } from 'react-router-dom'
+import React, { Component } from 'react';
+import axios from 'axios';
+import { alpha, withStyles } from '@material-ui/core/styles';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import MailIcon from '@material-ui/icons/Mail';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import {
   AppBar,
@@ -22,9 +24,13 @@ import {
   Menu,
   ListItem,
   SwipeableDrawer,
+  Tooltip,
 } from '@material-ui/core';
 
 import { LeftNavBarData } from '../utils/LeftNavBarData';
+import { BackendApi_URL } from "../utils/AppConst";
+import OrderServices from "../../services/OrderServices";
+import AuthService from '../../services/AuthService';
 
 const styles = (theme) => ({
   grow: {
@@ -107,13 +113,17 @@ const styles = (theme) => ({
       color: 'black',
     },
   },
+  
+  disabledSearchButton: {
+    backgroundColor: 'rgba(210, 210, 210, 0.3)',
+  },
 
   iconButtons: {
     textDecoration: 'none',
     color: '#fff',
-    '&:hover':{
-        color: '#1a83ff',
-    }
+    '&:hover': {
+      color: '#1a83ff',
+    },
   },
 
   MuiDrawer: {
@@ -151,7 +161,16 @@ class UserHeader extends Component {
       isLargeScreen: true,
       drawer: false,
 
+      //user
       loggedIn: false,
+      userID: null,
+
+      //search button
+      searchName: "",
+
+      //cart item count
+      cartCount: 0,
+
     };
   }
 
@@ -191,33 +210,122 @@ class UserHeader extends Component {
     });
   };
 
-  componentDidMount() {
+  //search text change
+  handleChange = (e) => {
+
+    var sTxt = e.target.value;
+
+    this.setState({
+        searchName: sTxt,
+    })
+
+  }
+
+  //load search results page
+  searchText = () =>{
+    window.location.href = "/products/search/"+this.state.searchName;
+  }
+
+  //get cart items count
+  async getCartItemsCount(){
+
+    var count = 0;
+    // console.log("count",this.state.loggedIn);
+
+    if(this.state.loggedIn){
+       await axios.get(BackendApi_URL+"/orders/qty/user/"+this.state.userID)
+       .then(res => {
+          count = res.data.count;
+          // console.log("count",res);
+        })
+        .catch(error => {
+          count = 0;
+          console.log(error)
+        })
+
+
+        this.setState({
+          cartCount: count,
+        })
+    }
+    else{
+      count = await OrderServices.getNumberOfItemsInCart_Local();
+      this.setState({
+        cartCount: count,
+      })
+    }
+
+  }
+
+  //mobile view open page
+  openPageMobileView(url){
+    window.location.href = url;
+  }
+
+  //setUserData
+  async setUserData(){
+    // var userD = this.props.user;
+    // var logIn = false;
+    // console.log("userD",userD);
+    
+    // if(userD != null){
+      //   logIn = true;
+      // }
+      
+    var logIn = false;
+    var uData = await AuthService.getUserData();
+    var uInfo = null;
+    var uId = null;
+    
+    if(uData != null){
+      uInfo = uData.userData;
+      logIn = true;
+      uId = uInfo._id;
+    }
+    
+    this.setState({
+      loggedIn: logIn,
+      userID: uId
+    })
+    
+    // console.log("userD",this.state);
+  }
+
+  redirectToLogin = () => {
+    window.location.href = "/login";
+  };
+
+  logoutUser = () => {
+    AuthService.userLogout();
+    this.redirectToLogin();
+  };
+  
+  async componentDidMount() {
+    
+    //setUserData
+    await this.setUserData();
+
+    //get cart items count
+    await this.getCartItemsCount();
+
+
     if (window.innerWidth <= 1000) {
       this.setState({
         isLargeScreen: false,
       });
     }
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth <= 1000) {
-        this.setState({
-          isLargeScreen: false,
-        });
-    }})
   
     window.addEventListener("resize", () => {
       if (window.innerWidth <= 1000) {
         this.setState({
           isLargeScreen: false,
         });
-      } 
-      else {
+      } else {
         this.setState({
           isLargeScreen: true,
         });
       }
     });
-    
   }
 
   smallScreen(){
@@ -269,7 +377,7 @@ class UserHeader extends Component {
             open={this.state.isMobileMenuOpen}
             onClose={this.handleMobileMenuClose}
             >
-            <MenuItem onClick={this.handleMobileMenuClose} >
+            <MenuItem onClick={() => this.openPageMobileView("/messages")} >
                 <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="secondary">
                     <MailIcon />
@@ -277,7 +385,7 @@ class UserHeader extends Component {
                 </IconButton>
                 <p>Messages</p>
             </MenuItem>
-            <MenuItem onClick={this.handleMobileMenuClose}>
+            <MenuItem onClick={() => this.openPageMobileView("/notifications")}>
                 <IconButton aria-label="show 11 new notifications" color="inherit">
                 <Badge badgeContent={11} color="secondary">
                     <NotificationsIcon />
@@ -285,34 +393,53 @@ class UserHeader extends Component {
                 </IconButton>
                 <p>Notifications</p>
             </MenuItem>
-            <MenuItem onClick={this.handleMobileMenuClose}>
+            <MenuItem onClick={() => this.openPageMobileView("/cart")}>
                 <IconButton
+                    aria-label="cart of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                    >
+                    <Badge badgeContent={this.state.cartCount} color="secondary">
+                        <ShoppingCartIcon />
+                    </Badge>
+                </IconButton>
+                <p>Cart</p>
+            </MenuItem>
+            {
+              this.state.loggedIn &&
+              <>
+                <MenuItem 
+                    // onClick={navigate to profile}
+                  onClick={() => this.openPageMobileView("/account")}
+                >
+                    <IconButton
                     aria-label="account of current user"
                     aria-controls="primary-search-account-menu"
                     aria-haspopup="true"
                     color="inherit"
                     >
-                    {/* <Badge badgeContent={11} color="secondary"> */}
-                        <ShoppingCartIcon />
-                    {/* </Badge> */}
-                </IconButton>
-                <p>Cart</p>
-            </MenuItem>
-            <MenuItem 
-                // onClick={navigate to profile}
-            >
-                <IconButton
-                aria-label="account of current user"
-                aria-controls="primary-search-account-menu"
-                aria-haspopup="true"
-                color="inherit"
+                    <Badge color="secondary">
+                        <AccountCircle />
+                    </Badge>
+                    </IconButton>
+                    <p>Profile</p>
+                </MenuItem>
+                <MenuItem 
+                    onClick={this.logoutUser}
                 >
-                <Badge color="secondary">
-                    <AccountCircle />
-                </Badge>
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
+                    <IconButton
+                    aria-label="logout current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                    >
+                        <ExitToAppIcon />
+                    </IconButton>
+                    <p>Logout</p>
+                </MenuItem>
+              </>
+            }
         </Menu>
 
       </div>
@@ -344,18 +471,18 @@ class UserHeader extends Component {
                 About
               </a>
             </Typography>
-            <Typography className={classes.title}  noWrap>
+            <Typography className={classes.title} noWrap>
               <a className={classes.headerlink} href="/services">
                 Services
               </a>
             </Typography>
-            <Typography className={classes.title}  noWrap>
+            <Typography className={classes.title} noWrap>
               <a className={classes.headerlink} href="/contactUs">
                 Contact Us
               </a>
             </Typography>
-            <Typography className={classes.title}  noWrap>
-                +9471234567
+            <Typography className={classes.title} noWrap>
+              +9471234567
             </Typography>
             <div className={classes.grow} />
             <div className={classes.search}>
@@ -368,52 +495,76 @@ class UserHeader extends Component {
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
+                value={this.state.searchName}
+                onChange={(e) => this.handleChange(e) }
                 inputProps={{ 'aria-label': 'search' }}
               />
             </div>
 
             <div className={classes.sectionDesktop}>
-              <Link style={{ textDecoration: 'none' }} to="/account">
                 <Button
-                  className={classes.searchButton}
+                  className={this.state.searchName === "" ? classes.disabledSearchButton : classes.searchButton}
                   variant="outlined"
                   color="primary"
                   size="medium"
+                  disabled={this.state.searchName === "" ? true : false}
+                  onClick={this.searchText}
                 >
                   Search
                 </Button>
-              </Link>
             </div>
 
             {/* Cart */}
-            <div className={classes.sectionDesktop}>
-              <MenuItem>
+            <MenuItem>
+              <a href="/cart" className={classes.sectionDesktop}>
                 <IconButton
-                  aria-label="account of current user"
+                  aria-label="cart of current user"
                   aria-controls="primary-search-account-menu"
                   aria-haspopup="true"
                   color="inherit"
                 >
-                  <Badge badgeContent={11} color="secondary">
+                  <Badge badgeContent={this.state.cartCount} color="secondary">
                     <ShoppingCartIcon className={classes.iconButtons} />
                   </Badge>
                 </IconButton>
-              </MenuItem>
-            </div>
+              </a>
 
             {this.state.loggedIn ? (
-              <div className={classes.sectionDesktop}>
-                <IconButton
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={this.state.menuId}
-                  aria-haspopup="true"
-                  // onClick={this.handleProfileMenuOpen}
-                  color="inherit"
-                >
-                  <AccountCircle className={classes.iconButtons} />
-                </IconButton>
-              </div>
+              <>
+                {/* profile */}
+                <div 
+                    className={classes.sectionDesktop}
+                    onClick={() => this.openPageMobileView("/account")}
+                  >
+                  <Tooltip title={"View Profile"} arrow>
+                    <IconButton
+                      edge="end"
+                      aria-label="account of current user"
+                      aria-controls={this.state.menuId}
+                      aria-haspopup="true"
+                      // onClick={this.handleProfileMenuOpen}
+                      color="inherit"
+                    >
+                      <AccountCircle className={classes.iconButtons} />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+                {/* logout */}
+                <div className={classes.sectionDesktop}>
+                    <Tooltip title={"Logout"} arrow>
+                      <IconButton
+                        edge="end"
+                        aria-label="logout current user"
+                        aria-controls={this.state.menuId}
+                        aria-haspopup="true"
+                        color="inherit"
+                        onClick={this.logoutUser}
+                      >
+                        <ExitToAppIcon className={classes.iconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                </div>
+              </>
             ) : (
               <Link style={{ textDecoration: 'none' }} to="/login">
                 <Button
@@ -426,6 +577,9 @@ class UserHeader extends Component {
                 </Button>
               </Link>
             )}
+            </MenuItem>
+
+
           </Toolbar>
         </AppBar>
       </div>
