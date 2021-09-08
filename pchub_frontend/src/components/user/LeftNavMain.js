@@ -80,16 +80,16 @@ class LeftNavMain extends Component {
 
             {LeftNavBarData.map((item, key) => {
               return (
-                <Link
+                <a
                   className={classes.menuItemLink}
                   key={item.title}
-                  to={item.path}
+                  href={item.path}
                 >
                   <MenuItem className={classes.menuItem}>
                     <Typography>{item.title}</Typography>
                     {item.icon}
                   </MenuItem>
-                </Link>
+                </a>
               );
             })}
           </Paper>

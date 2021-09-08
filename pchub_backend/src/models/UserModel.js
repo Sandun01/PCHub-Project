@@ -2,16 +2,12 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-// const crypto = require('crypto');
-// const mongoose = require('mongoose');
-// const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, 'Please provide username'],
-  },
+  // username: {
+  //   type: String,
+  //   required: [true, 'Please provide username'],
+  // },
   email: {
     type: String,
     required: [true, 'Please provide email address'],
@@ -27,14 +23,66 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
+
+  fname: {
+    type: String,
+    required: true,
+  },
+  lname: {
+    type: String,
+    required: true,
+  },
+
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+
+  payemtDetails: {
+    addressLine1: {
+      type: String,
+      required: false,
+    },
+    addressLine2: {
+      type: String,
+      required: false,
+    },
+    addressLine3: {
+      type: String,
+      required: false,
+    },
+    zipcode: {
+      type: String,
+      required: false,
+    },
+    city: {
+      type: String,
+      required: false,
+    },
+  },
+
+  cardDetails: {
+    nameonthecard: {
+      type: String,
+      required: false,
+    },
+    cardnumber: {
+      type: String,
+      required: false,
+    },
+    expiarydate: {
+      type: String,
+      required: false,
+    },
+    cvv: {
+      type: String,
+      required: false,
+    },
+  },
+
   resetPasswordToken: String,
   resetPasswordExpire: Date,
-
-  // feedback : {
-  //   type : mongoose.Schema.Types.ObjectId,
-  //   required : false,
-  //   ref : ''
-  // }
 });
 
 UserSchema.pre('save', async function (next) {
@@ -74,5 +122,4 @@ UserSchema.methods.getResetPasswordToken = function () {
 
 const User = mongoose.model('User', UserSchema);
 
-//module.exports = User;
 export default User;
