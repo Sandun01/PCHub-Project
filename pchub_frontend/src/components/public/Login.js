@@ -82,9 +82,11 @@ class Login extends Component {
       .then((res) => {
         // console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
         var userData = res.data;
-        var status = res.data.success;
+        var token = res.data.token;
 
-        if (status == 'success') {
+        AuthService.setUserDataToLocal(userData, token);
+
+        if (userData.isAdmin) {
           window.location.href = '/admin';
         } else {
 
