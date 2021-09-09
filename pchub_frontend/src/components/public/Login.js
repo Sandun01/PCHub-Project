@@ -78,13 +78,10 @@ class Login extends Component {
     axios
       .post('/api/auth/login', this.state.formData)
       .then((res) => {
-        console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
         var userData = res.data;
-        var token = res.data.token;
+        var status = res.data.success;
 
-        AuthService.setUserDataToLocal(userData, token);
-
-        if (userData.isAdmin) {
+        if (status == 'success') {
           window.location.href = '/admin';
         } else {
           window.location.href = '/account';

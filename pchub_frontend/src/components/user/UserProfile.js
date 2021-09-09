@@ -362,7 +362,7 @@ class UserProfile extends Component {
                     className={classes.leftNavItemIcon}
                   />
                   <Typography className={classes.leftNavItemText}>
-                    Wish List
+                    Wishlist
                   </Typography>
                 </div>
 

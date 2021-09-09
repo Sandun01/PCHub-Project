@@ -71,7 +71,7 @@ const forgotPassword = async (req, res, next) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      return next(new ErrorResponse('No email could not be sent', 404));
+      return next(new ErrorResponse('No email could not be sent', 400));
     }
 
     // Reset Token Gen and add to database hashed (private) version of token
@@ -80,7 +80,7 @@ const forgotPassword = async (req, res, next) => {
     await user.save();
 
     // Create reset url to email to provided email
-    const resetUrl = `http://localhost:5000/passwordreset/${resetToken}`;
+    const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
 
     // HTML Message
     const message = `
