@@ -14,6 +14,7 @@ import axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import Loader from '../common/Loader';
 import AuthService from '../../services/AuthService';
+import { Snackbar } from '@material-ui/core';
 
 const styles = (theme) => ({
   paper: {
@@ -34,7 +35,7 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   input: {
-    backgroundColor: '#17A2B8',
+    backgroundColor: '#FFFFFF',
     borderRadius: '5px',
     color: 'white',
   },
@@ -55,6 +56,7 @@ const initialState = {
   variant: '',
   message: '',
   loading: false,
+  snackbar: false,
 };
 
 class Register extends Component {
@@ -64,6 +66,12 @@ class Register extends Component {
     this.formSubmit = this.formSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
+  closeSnackBar = (event, response) => {
+    this.setState({
+      snackbar: false,
+    });
+  };
 
   formSubmit = async (e) => {
     //console.log(this.state.email + this.state.password);
@@ -84,10 +92,14 @@ class Register extends Component {
         if (res.status == 201) {
           messageRes = 'Successfully Registered!';
           variantRes = 'success';
-
+          this.setState({
+            message: messageRes,
+            variant: variantRes,
+            snackbar: true,
+          });
           setTimeout(() => {
             window.location.href = '/login';
-          }, 2000);
+          }, 5000);
         } else {
           messageRes = 'Error';
           variantRes = 'error';
@@ -99,13 +111,13 @@ class Register extends Component {
         variantRes = 'error';
       });
 
-    setTimeout(() => {
-      this.setState({
-        message: messageRes,
-        variant: variantRes,
-        loading: false,
-      });
-    }, 2000);
+    // setTimeout(() => {
+    //   this.setState({
+    //     message: messageRes,
+    //     variant: variantRes,
+    //     loading: false,
+    //   });
+    // }, 2000);
   };
 
   handleChange = (e) => {
@@ -220,11 +232,24 @@ class Register extends Component {
               fullWidth
               name="confrmPassword"
               label="confrmPassword"
-              type="confrmPassword"
+              type="Password"
               id="confrmPassword"
               value={this.state.formData.confrmPassword}
               onChange={this.handleChange}
             />
+
+            {this.state.message != '' && (
+              <Snackbar
+                open={this.state.snackbar}
+                // autoHideDuration={5000}
+                onClose={this.closeSnackBar}
+                name="snackBar"
+              >
+                <Alert severity="success" onClose={this.closeSnackBar}>
+                  {this.state.message}
+                </Alert>
+              </Snackbar>
+            )}
 
             <Button
               type="submit"

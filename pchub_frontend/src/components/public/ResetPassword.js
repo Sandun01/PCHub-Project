@@ -34,7 +34,7 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   input: {
-    backgroundColor: '#17A2B8',
+    backgroundColor: '#FFFFFF',
     borderRadius: '5px',
     color: 'white',
   },
@@ -62,8 +62,12 @@ class ResetPassword extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidMount() {
+    console.log(this.props.match.params.resetToken);
+  }
+
   formSubmit = async (e) => {
-    //console.log(this.state.email + this.state.password);
+    console.log(this.state);
     e.preventDefault();
 
     this.setState({
@@ -76,7 +80,7 @@ class ResetPassword extends Component {
 
     axios
       .put(
-        // `/api/auth/passwordreset/${props.params.resetToken}`,
+        `/api/auth/resetpassword/${this.props.match.params.resetToken}`,
         this.state.formData
       )
       .then((res) => {
@@ -85,7 +89,7 @@ class ResetPassword extends Component {
           variantRes = 'success';
 
           setTimeout(() => {
-            window.location.href = '/session/login';
+            window.location.href = '/login';
           }, 2000);
         } else {
           messageRes = 'Error';
@@ -163,9 +167,10 @@ class ResetPassword extends Component {
               fullWidth
               id="newPassword"
               label="New Password"
-              name="newPassword"
+              name="password"
+              type="password"
               autoFocus
-              value={this.state.newPassword}
+              value={this.state.formData.password}
               onChange={this.handleChange}
             />
             <TextField
@@ -176,7 +181,7 @@ class ResetPassword extends Component {
               fullWidth
               name="confirmNewPassword"
               label="Confirm New Password"
-              type="confirmNewPassword"
+              type="password"
               id="confirmNewPassword"
               value={this.state.confirmNewPassword}
               onChange={this.handleChange}

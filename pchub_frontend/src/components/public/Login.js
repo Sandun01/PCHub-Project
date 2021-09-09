@@ -36,7 +36,7 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   input: {
-    backgroundColor: '#17A2B8',
+    backgroundColor: '#FFFFFF',
     borderRadius: '5px',
     color: 'white',
   },
@@ -82,11 +82,9 @@ class Login extends Component {
       .then((res) => {
         // console.log('jkdsfjkdsfgdsjfkdjsfkdfdkjfkjfsjkd' + res);
         var userData = res.data;
-        var token = res.data.token;
+        var status = res.data.success;
 
-        AuthService.setUserDataToLocal(userData, token);
-
-        if (userData.isAdmin) {
+        if (status == 'success') {
           window.location.href = '/admin';
         } else {
 

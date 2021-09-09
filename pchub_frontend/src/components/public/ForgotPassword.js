@@ -34,7 +34,7 @@ const styles = (theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
   input: {
-    backgroundColor: '#17A2B8',
+    backgroundColor: '#ffffff',
     borderRadius: '5px',
     color: 'white',
   },
@@ -52,6 +52,8 @@ const initialState = {
   variant: '',
   message: '',
   loading: false,
+  error: '',
+  success: '',
 };
 
 class ForgotPassword extends Component {
@@ -63,7 +65,7 @@ class ForgotPassword extends Component {
   }
 
   formSubmit = async (e) => {
-    //console.log(this.state.email + this.state.password);
+    console.log(this.state.formData.email);
     e.preventDefault();
 
     this.setState({
@@ -74,18 +76,29 @@ class ForgotPassword extends Component {
     var messageRes = null;
     var variantRes = null;
 
-    axios
+    await axios
       .post('/api/auth/forgotpassword', this.state.formData)
       .then((res) => {
-        if (res.status == 201) {
+        if (res.status == 200) {
           messageRes = 'Successfully Send Email! Check Your Inbox';
           variantRes = 'success';
+          this.setState({
+            success: messageRes,
+          });
         } else {
           messageRes = 'Error';
           variantRes = 'error';
+          this.setState({
+            error: messageRes,
+          });
         }
       })
       .catch((error) => {
+        messageRes = 'Error';
+        variantRes = 'error';
+        this.setState({
+          error: messageRes,
+        });
         console.log(error);
         messageRes = error.response.data.message;
         variantRes = 'error';
@@ -110,7 +123,7 @@ class ForgotPassword extends Component {
     this.setState({
       formData: data,
     });
-    // console.log(this.state);
+    console.log(this.state);
   };
 
   render() {
@@ -161,9 +174,16 @@ class ForgotPassword extends Component {
               name="email"
               autoComplete="email"
               autoFocus
-              value={this.state.email}
+              value={this.state.formData.email}
               onChange={this.handleChange}
             />
+
+            {this.state.error && (
+              <span className="error-message">{this.state.error}</span>
+            )}
+            {this.state.success && (
+              <span className="success-message">{this.state.success}</span>
+            )}
 
             <Button
               type="submit"
