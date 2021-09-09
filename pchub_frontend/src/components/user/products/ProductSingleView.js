@@ -14,7 +14,6 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import LoadingScreen from '../../common/LoadingScreen';
 import OrderServices from '../../../services/OrderServices'
-import WishListServices from '../../../services/WishListServices';
 import AuthService from '../../../services/AuthService';
 
 const styles = (theme) => ({
@@ -124,18 +123,8 @@ class ProductSingleView extends Component {
 
     constructor(props) {
         super(props);
-        //bind addtowishlist
-        this.addToWishList = this.addToWishList.bind(this);
-
         this.state = {
-            //user data
-            user: {
-                _id: '',
-                fname: '',
-                lname: '',
-                email: '',
-                password: '',
-            },
+
             //Item details
             item: {
                 _id: null,
@@ -279,19 +268,7 @@ class ProductSingleView extends Component {
     }
 
     addToWishList() {
-
-
         console.log('Add to wishlist')
-        //data that we want to add to wishlist
-        let wishlist = {
-            userID: this.state.user._id,
-            product: this.state.item._id
-        }
-
-
-        //send to database
-        WishListServices.addToWishList(wishlist);
-
     }
 
     async checkUserLoggedIn() {
@@ -321,8 +298,6 @@ class ProductSingleView extends Component {
     }
 
     componentDidMount() {
-        //get user data
-        this.getUserData();
         //get item id
         const itmID = this.props.match.params.id;
         // console.log(itmID);
@@ -386,7 +361,6 @@ class ProductSingleView extends Component {
     }
 
     render() {
-
         const { classes } = this.props;
 
         return (
