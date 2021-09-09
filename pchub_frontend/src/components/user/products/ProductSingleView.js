@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
 
-import { 
-    Grid, Typography, CircularProgress, Snackbar, 
+import {
+    Grid, Typography, CircularProgress, Snackbar,
 } from '@material-ui/core'
 
 import { Alert, AlertTitle, } from '@material-ui/lab';
@@ -14,95 +14,96 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import LoadingScreen from '../../common/LoadingScreen';
 import OrderServices from '../../../services/OrderServices'
+import WishListServices from '../../../services/WishListServices';
 import AuthService from '../../../services/AuthService';
 
 const styles = (theme) => ({
 
-    root:{
+    root: {
         // width: '100%',
         // height: '100%',
         // display: 'block',
         // position: 'fixed',
     },
-    header:{
+    header: {
         paddingTop: 20,
         paddingLeft: 40,
     },
-    imageIcon:{
+    imageIcon: {
         marginLeft: 10,
-        width:'40px',
-        height:'40px',
+        width: '40px',
+        height: '40px',
     },
-    image:{
-        maxHeight:"500px",
-        maxwidth:"500px",
-        height:"100%",
-        width:"100%",
+    image: {
+        maxHeight: "500px",
+        maxwidth: "500px",
+        height: "100%",
+        width: "100%",
     },
-    gridContainer1:{
+    gridContainer1: {
         padding: 20,
     },
-    gridContainer2:{
+    gridContainer2: {
         padding: 20,
     },
-    priceText:{
+    priceText: {
         paddingTop: 20,
         fontWeight: 'bold',
     },
-    inStockText:{
+    inStockText: {
         marginTop: 10,
         padding: 10,
         fontWeight: 'bold',
-        backgroundColor:'#014EA2',
+        backgroundColor: '#014EA2',
         width: '90px',
         textAlign: 'center',
         borderRadius: 10,
     },
-    outStockText:{
+    outStockText: {
         marginTop: 10,
         padding: 10,
         fontWeight: 'bold',
-        backgroundColor:'#D70000',
+        backgroundColor: '#D70000',
         width: '120px',
         textAlign: 'center',
         borderRadius: 10,
     },
 
-    buttonStyles:{
+    buttonStyles: {
         marginRight: 10,
         marginTop: 30,
         padding: 10,
         color: 'black',
         fontWeight: 'bold',
-        backgroundColor:'#007BFF',
+        backgroundColor: '#007BFF',
         // width: '100%',
         minWidth: '150px',
         textAlign: 'center',
         borderRadius: 10,
-        '&:hover':{
+        '&:hover': {
             // backgroundColor:'#014EA2',
-            backgroundColor:'#00DBAE',
+            backgroundColor: '#00DBAE',
             cursor: 'pointer',
             // color: 'white',
         }
     },
-    linkStyles:{
+    linkStyles: {
         textDecoration: 'none',
     },
-    iconButtonStyles:{
+    iconButtonStyles: {
         marginLeft: 5,
     },
-    
+
     // Transition
-    bodyContent:{
+    bodyContent: {
         opacity: 1,
         animation: '$customFade 2s linear',
     },
-    "@keyframes customFade":{
-        "0%":{ 
+    "@keyframes customFade": {
+        "0%": {
             opacity: 0,
         },
-        "100%":{ 
+        "100%": {
             opacity: 1,
         }
     },
@@ -121,10 +122,20 @@ const styles = (theme) => ({
 
 class ProductSingleView extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state = {
+        //bind addtowishlist
+        this.addToWishList = this.addToWishList.bind(this);
 
+        this.state = {
+            //user data
+            user: {
+                _id: '',
+                fname: '',
+                lname: '',
+                email: '',
+                password: '',
+            },
             //Item details
             item: {
                 _id: null,
@@ -148,7 +159,7 @@ class ProductSingleView extends Component {
             //page details
             loadingData: true,
             haveData: false,
-            noOfImages : 0,
+            noOfImages: 0,
 
             //error
             error: false,
@@ -158,53 +169,53 @@ class ProductSingleView extends Component {
 
     }
 
-    addToCart = async() => {
+    addToCart = async () => {
 
-        if(this.state.userLoggedIn){
+        if (this.state.userLoggedIn) {
 
-            try{
+            try {
                 var res = await OrderServices.addItemToCart_DB(this.state.item, this.state.userID);
                 // console.log("Item",res);
-    
-                if(res.status == 201 || res.status == 200){
-    
-                    if(res.data.message === "Already_Exists"){
-    
+
+                if (res.status == 201 || res.status == 200) {
+
+                    if (res.data.message === "Already_Exists") {
+
                         console.log('Item already in the cart');
                         this.setState({
                             snackbar: true,
                             snackbar_severity: 'warning',
                             snackbar_message: 'Item already in the cart',
                         })
-        
+
                     }
-                    else{
+                    else {
                         console.log('Item Added to cart - Success');
-        
+
                         this.setState({
                             snackbar: true,
                             snackbar_severity: 'success',
                             snackbar_message: 'Item Successfully Added to the Cart!',
                         })
-        
+
                         setTimeout(() => {
                             window.location.reload(false);
                         }, 1500)
-    
+
                     }
                 }
-                else{
+                else {
                     console.log('Error');
-    
+
                     this.setState({
                         snackbar: true,
                         snackbar_severity: 'error',
                         snackbar_message: "Error! Item didn't added to the cart",
                     })
-    
+
                 }
             }
-            catch(err){
+            catch (err) {
                 console.log(err)
                 console.log('Error');
                 this.setState({
@@ -215,10 +226,10 @@ class ProductSingleView extends Component {
             }
 
         }
-        else{
+        else {
             var res = OrderServices.addItemToCart_Local(this.state.item);
 
-            if(res === true){
+            if (res === true) {
                 console.log('Success');
 
                 this.setState({
@@ -232,7 +243,7 @@ class ProductSingleView extends Component {
                 }, 1500)
 
             }
-            else if(res === 100){
+            else if (res === 100) {
 
                 console.log('Item already in the cart');
                 this.setState({
@@ -242,7 +253,7 @@ class ProductSingleView extends Component {
                 })
 
             }
-            else if(res === false){
+            else if (res === false) {
 
                 console.log('Error');
                 this.setState({
@@ -252,7 +263,7 @@ class ProductSingleView extends Component {
                 })
 
             }
-            else{
+            else {
 
                 console.log('No Data Found');
                 this.setState({
@@ -267,22 +278,34 @@ class ProductSingleView extends Component {
 
     }
 
-    addToWishList(){
+    addToWishList() {
+
+
         console.log('Add to wishlist')
+        //data that we want to add to wishlist
+        let wishlist = {
+            userID: this.state.user._id,
+            product: this.state.item._id
+        }
+
+
+        //send to database
+        WishListServices.addToWishList(wishlist);
+
     }
 
-    async checkUserLoggedIn(){
+    async checkUserLoggedIn() {
         var logIn = false;
         var uData = await AuthService.getUserData();
         var uInfo = null;
         var id = null;
-        
-        if(uData != null){
+
+        if (uData != null) {
             uInfo = uData.userData;
             id = uInfo._id
             logIn = true;
         }
-        
+
         this.setState({
             userLoggedIn: logIn,
             userID: id,
@@ -291,188 +314,191 @@ class ProductSingleView extends Component {
         // console.log("User",this.state)
     }
 
-    handleCloseSnackbar = () =>{
+    handleCloseSnackbar = () => {
         this.setState({
             snackbar: false,
         })
     }
 
-    componentDidMount(){
+    componentDidMount() {
+        //get user data
+        this.getUserData();
         //get item id
         const itmID = this.props.match.params.id;
         // console.log(itmID);
 
         //check user logged in
         this.checkUserLoggedIn();
-        
+
         //get item details
-        axios.get(BackendApi_URL+"/products/"+itmID)
-        .then(res => {
-            // console.log(res);
+        axios.get(BackendApi_URL + "/products/" + itmID)
+            .then(res => {
+                // console.log(res);
 
-            if(res.status === 200 && res.data.product != null){
-                const allImages = [];
-                var count = 0;
-                const itemDetails = res.data.product;
-                const moreImages = Array.isArray(itemDetails.item_image);
+                if (res.status === 200 && res.data.product != null) {
+                    const allImages = [];
+                    var count = 0;
+                    const itemDetails = res.data.product;
+                    const moreImages = Array.isArray(itemDetails.item_image);
 
-                if(moreImages){
-                    allImages = JSON.stringify(itemDetails.item_image);
-                    count = allImages.length;
+                    if (moreImages) {
+                        allImages = JSON.stringify(itemDetails.item_image);
+                        count = allImages.length;
+                    }
+                    else if (itemDetails.item_image != null && itemDetails.item_image != "") {
+                        count = 1;
+                    }
+                    else {
+                        count = 0;
+                    }
+
+                    setTimeout(() => {
+                        this.setState({
+                            item: itemDetails,
+                            noOfImages: count,
+                            images: allImages,
+                            loadingData: false,
+                            haveData: true,
+                        })
+                    }, 800)
                 }
-                else if(itemDetails.item_image != null && itemDetails.item_image != ""){
-                    count = 1;
+                else {
+                    setTimeout(() => {
+                        this.setState({
+                            loadingData: false,
+                            haveData: false,
+                        })
+                    }, 800)
                 }
-                else{
-                    count = 0;
-                }
-                  
-                setTimeout(() => {
-                    this.setState({
-                        item: itemDetails,
-                        noOfImages: count,
-                        images: allImages,
-                        loadingData: false,
-                        haveData: true,
-                    })
-                }, 800)
-            }
-            else{
+
+                console.log(this.state);
+            })
+            .catch(error => {
+                console.log(error);
                 setTimeout(() => {
                     this.setState({
                         loadingData: false,
                         haveData: false,
                     })
                 }, 800)
-            }
-
-            console.log(this.state);
-        })
-        .catch(error => {
-            console.log(error);
-            setTimeout(() => {
-                this.setState({
-                    loadingData: false,
-                    haveData: false,
-                })
-            }, 800)
-        })
+            })
 
     }
 
     render() {
+
         const { classes } = this.props;
 
         return (
             <div className={classes.root}>
                 {
                     this.state.loadingData ?
-                    <div>
-                        <LoadingScreen />
-                    </div>
-                    :
-                    
-                    this.state.haveData === false ?
-                    <div className={classes.alertContainer}>
-                        <Alert severity="error" className={classes.alertStyles}>
-                            <AlertTitle>
-                                Error
-                            </AlertTitle>
-                            No Data Found!
-                        </Alert>
-                    </div>
-                    :
-                    
-                    <div className={classes.bodyContent}>
-                        <Typography variant="h3" className={classes.header}>
-                            {/* Asus ROG Strix G17  */}
-                            {this.state.item.item_name}
-                        </Typography>
+                        <div>
+                            <LoadingScreen />
+                        </div>
+                        :
 
-                        <Grid container alignItems="center" justifyContent="center" direction="row"> 
-                            <Grid item lg={6} className={classes.gridContainer2} >
-                                <Carousel
-                                    autoPlay={true}
-                                    indicators={false}
-                                    navButtonsAlwaysVisible={false}
-                                    timeout={400}
-                                >
+                        this.state.haveData === false ?
+                            <div className={classes.alertContainer}>
+                                <Alert severity="error" className={classes.alertStyles}>
+                                    <AlertTitle>
+                                        Error
+                                    </AlertTitle>
+                                    No Data Found!
+                                </Alert>
+                            </div>
+                            :
 
-                                    { 
-                                        this.state.noOfImages > 1 ?
-                                            this.state.images.map(img => (
-                                                <img src={img} className={classes.image} alt={""} />
-                                            ))
-                                        :
-                                        this.state.noOfImages == 1 ?
-                                        <img src={this.state.item.item_image} className={classes.image} alt={""} />
-                                        :
-                                        this.state.noOfImages == 0 &&
-                                        <img src={"/images/imageNotAvailable.png"} className={classes.image} alt={""} />
-                                    }
-
-                                </Carousel>
-                            </Grid>
-
-                            <Grid item lg={6} className={classes.gridContainer1} >
-                                {/* item description */}
-                                { this.state.item.item_description}
-
-                                <Typography variant="h4" className={classes.priceText}>
-                                    Rs.{this.state.item.price}
+                            <div className={classes.bodyContent}>
+                                <Typography variant="h3" className={classes.header}>
+                                    {/* Asus ROG Strix G17  */}
+                                    {this.state.item.item_name}
                                 </Typography>
 
-                                <Grid container>
-                                    <Grid item sm={3}>
-                                    {
-                                        this.state.item.countInStock !== 0 ?
-                                        <div className={classes.inStockText}>
-                                            In Stock
-                                        </div>
-                                        :
-                                        <div className={classes.outStockText}>
-                                            Out of Stock
-                                        </div>
-                                    }
-                                    </Grid>
-                                </Grid>
-
-
                                 <Grid container alignItems="center" justifyContent="center" direction="row">
-                                    {
-                                        this.state.item.countInStock > 0 &&
-                                        <Grid item sm={5}>
-                                            {/* <Link to="/cart" className={classes.linkStyles}> */}
-                                                <div className={classes.buttonStyles} onClick={this.addToCart}>
-                                                    Add to Cart <ShoppingCartIcon className={classes.iconButtonStyles}/>
-                                                </div>
-                                            {/* </Link> */}
-                                        </Grid>
-                                    }
-                                    
-                                    {
-                                        this.state.userLoggedIn &&
-                                            <Grid item sm>
-                                                {/* <Link to="/wishlist" className={classes.linkStyles}> */}
-                                                    <div className={classes.buttonStyles} onClick={this.addToWishList}>
-                                                        Add to Wishlist <BookmarksIcon className={classes.iconButtonStyles}/>
-                                                    </div>
-                                                {/* </Link> */}
+                                    <Grid item lg={6} className={classes.gridContainer2} >
+                                        <Carousel
+                                            autoPlay={true}
+                                            indicators={false}
+                                            navButtonsAlwaysVisible={false}
+                                            timeout={400}
+                                        >
+
+                                            {
+                                                this.state.noOfImages > 1 ?
+                                                    this.state.images.map(img => (
+                                                        <img src={img} className={classes.image} alt={""} />
+                                                    ))
+                                                    :
+                                                    this.state.noOfImages == 1 ?
+                                                        <img src={this.state.item.item_image} className={classes.image} alt={""} />
+                                                        :
+                                                        this.state.noOfImages == 0 &&
+                                                        <img src={"/images/imageNotAvailable.png"} className={classes.image} alt={""} />
+                                            }
+
+                                        </Carousel>
+                                    </Grid>
+
+                                    <Grid item lg={6} className={classes.gridContainer1} >
+                                        {/* item description */}
+                                        {this.state.item.item_description}
+
+                                        <Typography variant="h4" className={classes.priceText}>
+                                            Rs.{this.state.item.price}
+                                        </Typography>
+
+                                        <Grid container>
+                                            <Grid item sm={3}>
+                                                {
+                                                    this.state.item.countInStock !== 0 ?
+                                                        <div className={classes.inStockText}>
+                                                            In Stock
+                                                        </div>
+                                                        :
+                                                        <div className={classes.outStockText}>
+                                                            Out of Stock
+                                                        </div>
+                                                }
                                             </Grid>
-                                    }
+                                        </Grid>
+
+
+                                        <Grid container alignItems="center" justifyContent="center" direction="row">
+                                            {
+                                                this.state.item.countInStock > 0 &&
+                                                <Grid item sm={5}>
+                                                    {/* <Link to="/cart" className={classes.linkStyles}> */}
+                                                    <div className={classes.buttonStyles} onClick={this.addToCart}>
+                                                        Add to Cart <ShoppingCartIcon className={classes.iconButtonStyles} />
+                                                    </div>
+                                                    {/* </Link> */}
+                                                </Grid>
+                                            }
+
+                                            {
+                                                this.state.userLoggedIn &&
+                                                <Grid item sm>
+                                                    {/* <Link to="/wishlist" className={classes.linkStyles}> */}
+                                                    <div className={classes.buttonStyles} onClick={this.addToWishList}>
+                                                        Add to Wishlist <BookmarksIcon className={classes.iconButtonStyles} />
+                                                    </div>
+                                                    {/* </Link> */}
+                                                </Grid>
+                                            }
+
+                                        </Grid>
+
+                                    </Grid>
 
                                 </Grid>
-
-                            </Grid>
-
-                        </Grid>
-                    </div>
+                            </div>
 
                 }
 
-                <Snackbar 
-                    open={this.state.snackbar} 
-                    autoHideDuration={6000} 
+                <Snackbar
+                    open={this.state.snackbar}
+                    autoHideDuration={6000}
                     onClose={this.handleCloseSnackbar}
                 >
                     <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >

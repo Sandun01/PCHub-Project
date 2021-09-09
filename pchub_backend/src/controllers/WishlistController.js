@@ -20,7 +20,7 @@ const createWishlist = async (req, res) => {
 const getWishlistByUserId = async (req, res) => {
 
     if (req.params && req.params.id) {
-        await Wishlist.find({ userID: req.params.id })//.populate('products')
+        await Wishlist.find({ userID: req.params.id }).populate('product' )
             .then(data => {
                 res.status(200).send({ data: data })
             })

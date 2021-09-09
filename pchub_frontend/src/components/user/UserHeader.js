@@ -113,7 +113,7 @@ const styles = (theme) => ({
       color: 'black',
     },
   },
-  
+
   disabledSearchButton: {
     backgroundColor: 'rgba(210, 210, 210, 0.3)',
   },
@@ -216,25 +216,25 @@ class UserHeader extends Component {
     var sTxt = e.target.value;
 
     this.setState({
-        searchName: sTxt,
+      searchName: sTxt,
     })
 
   }
 
   //load search results page
-  searchText = () =>{
-    window.location.href = "/products/search/"+this.state.searchName;
+  searchText = () => {
+    window.location.href = "/products/search/" + this.state.searchName;
   }
 
   //get cart items count
-  async getCartItemsCount(){
+  async getCartItemsCount() {
 
     var count = 0;
     // console.log("count",this.state.loggedIn);
 
-    if(this.state.loggedIn){
-       await axios.get(BackendApi_URL+"/orders/qty/user/"+this.state.userID)
-       .then(res => {
+    if (this.state.loggedIn) {
+      await axios.get(BackendApi_URL + "/orders/qty/user/" + this.state.userID)
+        .then(res => {
           count = res.data.count;
           // console.log("count",res);
         })
@@ -244,11 +244,11 @@ class UserHeader extends Component {
         })
 
 
-        this.setState({
-          cartCount: count,
-        })
+      this.setState({
+        cartCount: count,
+      })
     }
-    else{
+    else {
       count = await OrderServices.getNumberOfItemsInCart_Local();
       this.setState({
         cartCount: count,
@@ -258,36 +258,36 @@ class UserHeader extends Component {
   }
 
   //mobile view open page
-  openPageMobileView(url){
+  openPageMobileView(url) {
     window.location.href = url;
   }
 
   //setUserData
-  async setUserData(){
+  async setUserData() {
     // var userD = this.props.user;
     // var logIn = false;
     // console.log("userD",userD);
-    
+
     // if(userD != null){
-      //   logIn = true;
-      // }
-      
+    //   logIn = true;
+    // }
+
     var logIn = false;
     var uData = await AuthService.getUserData();
     var uInfo = null;
     var uId = null;
-    
-    if(uData != null){
+
+    if (uData != null) {
       uInfo = uData.userData;
       logIn = true;
       uId = uInfo._id;
     }
-    
+
     this.setState({
       loggedIn: logIn,
       userID: uId
     })
-    
+
     // console.log("userD",this.state);
   }
 
@@ -299,9 +299,9 @@ class UserHeader extends Component {
     AuthService.userLogout();
     this.redirectToLogin();
   };
-  
+
   async componentDidMount() {
-    
+
     //setUserData
     await this.setUserData();
 
@@ -314,7 +314,7 @@ class UserHeader extends Component {
         isLargeScreen: false,
       });
     }
-  
+
     window.addEventListener("resize", () => {
       if (window.innerWidth <= 1000) {
         this.setState({
@@ -328,15 +328,15 @@ class UserHeader extends Component {
     });
   }
 
-  smallScreen(){
+  smallScreen() {
 
     const { classes } = this.props;
-    
+
     return (
-        <div className={classes.grow}>
+      <div className={classes.grow}>
         <AppBar position="static">
           <Toolbar className={classes.navbar}>
-            
+
             <IconButton
               edge="start"
               className={classes.menuButton}
@@ -369,77 +369,77 @@ class UserHeader extends Component {
         </AppBar>
 
         <Menu
-            anchorEl={this.state.mobileMoreAnchorEl}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            id={this.state.mobileMenuId}
-            keepMounted
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            open={this.state.isMobileMenuOpen}
-            onClose={this.handleMobileMenuClose}
+          anchorEl={this.state.mobileMoreAnchorEl}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          id={this.state.mobileMenuId}
+          keepMounted
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open={this.state.isMobileMenuOpen}
+          onClose={this.handleMobileMenuClose}
+        >
+          <MenuItem onClick={() => this.openPageMobileView("/messages")} >
+            <IconButton aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <p>Messages</p>
+          </MenuItem>
+          <MenuItem onClick={() => this.openPageMobileView("/notifications")}>
+            <IconButton aria-label="show 11 new notifications" color="inherit">
+              <Badge badgeContent={11} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <p>Notifications</p>
+          </MenuItem>
+          <MenuItem onClick={() => this.openPageMobileView("/cart")}>
+            <IconButton
+              aria-label="cart of current user"
+              aria-controls="primary-search-account-menu"
+              aria-haspopup="true"
+              color="inherit"
             >
-            <MenuItem onClick={() => this.openPageMobileView("/messages")} >
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                    <MailIcon />
-                </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem onClick={() => this.openPageMobileView("/notifications")}>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                <Badge badgeContent={11} color="secondary">
-                    <NotificationsIcon />
-                </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
-            <MenuItem onClick={() => this.openPageMobileView("/cart")}>
+              <Badge badgeContent={this.state.cartCount} color="secondary">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+            <p>Cart</p>
+          </MenuItem>
+          {
+            this.state.loggedIn &&
+            <>
+              <MenuItem
+                // onClick={navigate to profile}
+                onClick={() => this.openPageMobileView("/account")}
+              >
                 <IconButton
-                    aria-label="cart of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                    >
-                    <Badge badgeContent={this.state.cartCount} color="secondary">
-                        <ShoppingCartIcon />
-                    </Badge>
+                  aria-label="account of current user"
+                  aria-controls="primary-search-account-menu"
+                  aria-haspopup="true"
+                  color="inherit"
+                >
+                  <Badge color="secondary">
+                    <AccountCircle />
+                  </Badge>
                 </IconButton>
-                <p>Cart</p>
-            </MenuItem>
-            {
-              this.state.loggedIn &&
-              <>
-                <MenuItem 
-                    // onClick={navigate to profile}
-                  onClick={() => this.openPageMobileView("/account")}
+                <p>Profile</p>
+              </MenuItem>
+              <MenuItem
+                onClick={this.logoutUser}
+              >
+                <IconButton
+                  aria-label="logout current user"
+                  aria-controls="primary-search-account-menu"
+                  aria-haspopup="true"
+                  color="inherit"
                 >
-                    <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                    >
-                    <Badge color="secondary">
-                        <AccountCircle />
-                    </Badge>
-                    </IconButton>
-                    <p>Profile</p>
-                </MenuItem>
-                <MenuItem 
-                    onClick={this.logoutUser}
-                >
-                    <IconButton
-                    aria-label="logout current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                    >
-                        <ExitToAppIcon />
-                    </IconButton>
-                    <p>Logout</p>
-                </MenuItem>
-              </>
-            }
+                  <ExitToAppIcon />
+                </IconButton>
+                <p>Logout</p>
+              </MenuItem>
+            </>
+          }
         </Menu>
 
       </div>
@@ -496,22 +496,22 @@ class UserHeader extends Component {
                   input: classes.inputInput,
                 }}
                 value={this.state.searchName}
-                onChange={(e) => this.handleChange(e) }
+                onChange={(e) => this.handleChange(e)}
                 inputProps={{ 'aria-label': 'search' }}
               />
             </div>
 
             <div className={classes.sectionDesktop}>
-                <Button
-                  className={this.state.searchName === "" ? classes.disabledSearchButton : classes.searchButton}
-                  variant="outlined"
-                  color="primary"
-                  size="medium"
-                  disabled={this.state.searchName === "" ? true : false}
-                  onClick={this.searchText}
-                >
-                  Search
-                </Button>
+              <Button
+                className={this.state.searchName === "" ? classes.disabledSearchButton : classes.searchButton}
+                variant="outlined"
+                color="primary"
+                size="medium"
+                disabled={this.state.searchName === "" ? true : false}
+                onClick={this.searchText}
+              >
+                Search
+              </Button>
             </div>
 
             {/* Cart */}
@@ -529,28 +529,28 @@ class UserHeader extends Component {
                 </IconButton>
               </a>
 
-            {this.state.loggedIn ? (
-              <>
-                {/* profile */}
-                <div 
+              {this.state.loggedIn ? (
+                <>
+                  {/* profile */}
+                  <div
                     className={classes.sectionDesktop}
                     onClick={() => this.openPageMobileView("/account")}
                   >
-                  <Tooltip title={"View Profile"} arrow>
-                    <IconButton
-                      edge="end"
-                      aria-label="account of current user"
-                      aria-controls={this.state.menuId}
-                      aria-haspopup="true"
-                      // onClick={this.handleProfileMenuOpen}
-                      color="inherit"
-                    >
-                      <AccountCircle className={classes.iconButtons} />
-                    </IconButton>
-                  </Tooltip>
-                </div>
-                {/* logout */}
-                <div className={classes.sectionDesktop}>
+                    <Tooltip title={"View Profile"} arrow>
+                      <IconButton
+                        edge="end"
+                        aria-label="account of current user"
+                        aria-controls={this.state.menuId}
+                        aria-haspopup="true"
+                        // onClick={this.handleProfileMenuOpen}
+                        color="inherit"
+                      >
+                        <AccountCircle className={classes.iconButtons} />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                  {/* logout */}
+                  <div className={classes.sectionDesktop}>
                     <Tooltip title={"Logout"} arrow>
                       <IconButton
                         edge="end"
@@ -563,20 +563,20 @@ class UserHeader extends Component {
                         <ExitToAppIcon className={classes.iconButtons} />
                       </IconButton>
                     </Tooltip>
-                </div>
-              </>
-            ) : (
-              <Link style={{ textDecoration: 'none' }} to="/login">
-                <Button
-                  className={classes.searchButton}
-                  variant="outlined"
-                  color="primary"
-                  size="medium"
-                >
-                  Login
-                </Button>
-              </Link>
-            )}
+                  </div>
+                </>
+              ) : (
+                <Link style={{ textDecoration: 'none' }} to="/login">
+                  <Button
+                    className={classes.searchButton}
+                    variant="outlined"
+                    color="primary"
+                    size="medium"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              )}
             </MenuItem>
 
 
