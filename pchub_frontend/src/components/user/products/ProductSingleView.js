@@ -15,6 +15,7 @@ import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import LoadingScreen from '../../common/LoadingScreen';
 import OrderServices from '../../../services/OrderServices'
 import AuthService from '../../../services/AuthService';
+import WishListServices from '../../../services/WishListServices';
 
 const styles = (theme) => ({
 
@@ -123,6 +124,7 @@ class ProductSingleView extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
 
             //Item details
@@ -267,8 +269,24 @@ class ProductSingleView extends Component {
 
     }
 
-    addToWishList() {
+    addItemToWishList = async () => {
+
         console.log('Add to wishlist')
+
+        //data that we want to add to wishlist
+
+        if (this.state.userID != null) {
+
+            var wishlist = {
+                userID: this.state.userID,
+                product: this.state.item._id
+            }
+
+            // send to database
+            await WishListServices.addToWishList(wishlist);
+        }
+
+
     }
 
     async checkUserLoggedIn() {
@@ -454,7 +472,7 @@ class ProductSingleView extends Component {
                                                 this.state.userLoggedIn &&
                                                 <Grid item sm>
                                                     {/* <Link to="/wishlist" className={classes.linkStyles}> */}
-                                                    <div className={classes.buttonStyles} onClick={this.addToWishList}>
+                                                    <div className={classes.buttonStyles} onClick={this.addItemToWishList}>
                                                         Add to Wishlist <BookmarksIcon className={classes.iconButtonStyles} />
                                                     </div>
                                                     {/* </Link> */}
