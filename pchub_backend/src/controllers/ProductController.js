@@ -11,7 +11,7 @@ const createProduct = async(req, res) => {
         
         await product.save()
         .then( data => {
-            res.status(201).send({ success: true, 'message': "product Created Successfully!" })
+            res.status(201).send({ success: true, 'message': "product Created Successfully!"})
         })
         .catch( (error) => {
             res.status(500).send({ success: false, 'message': error })
@@ -78,7 +78,7 @@ const updateProductDetails = async(req, res) => {
         
         await Product.updateOne( query , update)
         .then( result => {
-            res.status(200).send({ success: true, 'message': "Product Updated Successfully!" })
+            res.status(201).send({ success: true, 'message': "Product Updated Successfully!" })
         })
         .catch( (error) => {
             res.status(500).send({ success: false, 'message': error })
