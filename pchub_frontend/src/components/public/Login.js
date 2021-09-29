@@ -89,29 +89,29 @@ class Login extends Component {
         if (userData.isAdmin) {
           window.location.href = '/admin';
         } else {
-
           //check user's local cart
-          var orderedItems = OrderServices.getAllItemsInCart_Local()
+          var orderedItems = OrderServices.getAllItemsInCart_Local();
           var resOrders = Utils.isEmptyObject(orderedItems);
           // console.log(orderedItems)
 
-          if(resOrders){ //empty
-              window.location.href = '/account';
-          }
-          else{ //not empty
+          if (resOrders) {
+            //empty
+            window.location.href = '/account';
+          } else {
+            //not empty
             var uID = userData._id;
-            
+
             OrderServices.addLocalItemsToDBLogin(uID, orderedItems)
-            .then(res => {
-              console.log('Order Success');
-            })
-            .catch(error => {
-              console.log(error)
-              console.log('Error in orders');
-            })
-            .finally(() => {
+              .then((res) => {
+                console.log('Order Success');
+              })
+              .catch((error) => {
+                console.log(error);
+                console.log('Error in orders');
+              })
+              .finally(() => {
                 window.location.href = '/account';
-            })
+              });
           }
         }
       })

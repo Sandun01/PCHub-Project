@@ -158,7 +158,7 @@ const finalBillTemplate = (data) => {
                     <td>Price</td>
                   </tr>
 
-                 ${items.map(itemsTemplate).join("")}
+                 ${items.map(itemsTemplate).join('')}
                   
               </table>
               <br />
