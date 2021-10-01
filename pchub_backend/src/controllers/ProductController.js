@@ -1,28 +1,31 @@
 import Product from "../models/ProductModel.js";
 import UtilFunctions from "../utils/UtilFunctions.js";
+import Product from "../models/ProductModel.js"
+import pdf from 'html-pdf';
+import finalReportTemplate from '../utils/productReports/allProductsReports.js';
+import path from 'path';
 
 // @desc  Create Product
 // @route POST /api/products/
-// @access Admin
+// @access Admin 
 
-const createProduct = async (req, res) => {
-  if (req.body) {
-    const product = new Product(req.body);
+const createProduct = async(req, res) => {
 
-    await product
-      .save()
-      .then((data) => {
-        res
-          .status(201)
-          .send({ success: true, message: "product Created Successfully!" });
-      })
-      .catch((error) => {
-        res.status(500).send({ success: false, message: error });
-      });
-  } else {
-    res.status(200).send({ success: false, message: "No Data Found" });
-  }
-};
+    if(req.body){
+        const product = new Product(req.body)
+        
+        await product.save()
+        .then( data => {
+            res.status(201).send({ success: true, 'message': "product Created Successfully!"})
+        })
+        .catch( (error) => {
+            res.status(500).send({ success: false, 'message': error })
+        } )
+
+    }else{
+        res.status(200).send({ success: false, 'message': "No Data Found" })
+    }
+}
 
 // @desc  Get All Products
 // @route GET /api/products/
@@ -203,13 +206,51 @@ const searchProductByName = async (req, res) => {
     });
 };
 
-export default {
-  createProduct,
-  getAllProducts,
-  getProductByID,
-  updateProductDetails,
-  deleteProductDetails,
-  getLatestProducts,
-  filterProducts,
-  searchProductByName,
-};
+//Generate final order bill
+// @route post /api/orders/generateFinalBill
+// @access User(Registered) 
+const generateAllProductsReport = async(req, res) => {
+
+    // console.log("generate Final Order Bill");
+    
+    const __dirname = path.resolve()
+    
+    const data = req.body;
+    // console.log(data);
+    
+    //generate bill
+    pdf.create(finalReportTemplate(data), {}).toFile(`${__dirname}/files/allProductsReport.pdf`, (err) => {
+        if(err) {
+            res.send(Promise.reject());
+        }
+        
+        res.send(Promise.resolve());
+    });
+    
+}
+
+//get final order bill
+// @route get /api/orders/fetchFinalBill
+// @access User(Registered) 
+const getAllProductsReport = async(req, res) => {
+
+    console.log("get All Procuts report");
+
+    const __dirname = path.resolve()
+
+    res.sendFile(`${__dirname}/files/allProductsReport.pdf`)
+}
+
+
+export default{
+    createProduct,
+    getAllProducts,
+    getProductByID,
+    updateProductDetails,
+    deleteProductDetails,
+    getLatestProducts,
+    filterProducts,
+    searchProductByName,
+    generateAllProductsReport,
+    getAllProductsReport
+}

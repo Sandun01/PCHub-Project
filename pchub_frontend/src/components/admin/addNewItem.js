@@ -4,7 +4,7 @@ import { Button, Grid, Typography } from '@material-ui/core'
 import Loader from '../common/Loader'
 import Paper from '@material-ui/core/Paper'
 import { withStyles } from '@material-ui/core/styles'
-import axios from 'axios'
+import ProductServices from '../../services/ProductServices'
 import { LeftNavBarData } from '../utils/LeftNavBarData'
 import { Autocomplete, Alert } from '@material-ui/lab'
 import { storage } from '../../firebase/firebase'
@@ -54,11 +54,16 @@ const styles = (theme) => ({
   },
 })
 
+
+
 const initialState = {
   variant: '',
   message: '',
   loading: false,
   imageFile: '',
+  formtype: '',
+  btnText:'',
+ 
 
   formData: {
     item_name: '',
@@ -79,10 +84,11 @@ class AddNewItem extends Component {
     this.fileSelectedHandler = this.fileSelectedHandler.bind(this)
     this.setSelectedValue = this.setSelectedValue.bind(this)
   }
+  
 
   async formSubmit(e) {
     e.preventDefault()
-
+    var pId = this.props.match.params.id;
     this.setState({
       loading: true,
     })
@@ -111,48 +117,123 @@ class AddNewItem extends Component {
             this.setState({
               formData: data,
             })
-
+            if(!pId){
             this.createItem(data)
+            }else{
+            this.updateItem(pId,data)  
+            }
           })
     )
   }
 
+  async loadData(id){
+    var productbyID;
+    var messageRes = '';
+    var variantRes = '';
+
+    //get data from db
+    await ProductServices.getproductByID(id)
+    .then(res => {
+        //console.log(res);
+        if(res.status == 200){
+            if(res.data.success){
+                messageRes = res.data.message;
+                variantRes = "success";
+                productbyID = res.data.product;
+                console.log("Product by ID", res);
+            }
+            else{
+                messageRes = res.data.message;
+                variantRes = "error";
+            }
+        }
+        else{
+            messageRes = res.data.message;
+            variantRes = "error";
+        }
+    })
+    .catch(error => {
+        console.log("Error:",error)
+        variantRes = "error";
+        messageRes = error.message;
+    })
+
+    this.setState({
+        message: messageRes,
+        formData: productbyID,
+        variant: variantRes,
+        id: id,
+    })
+
+}
+
   async createItem(data) {
 
-    //console.log(this.state);
-    var messageRes = null
-    var variantRes = null
     
-    axios
-      .post('http://localhost:5000/api/products', data)
+    await ProductServices.addNewProduct(data)
       .then((res) => {
-        if (res.status == 201) {
-          messageRes = 'Successfully Inserted!'
-          variantRes = 'success'
+        if (res.status == 201 && res.data.success === true) {
+          
+          this.setState({
+            message: 'Product was successfully inserted!',
+            variant: 'success',
+            loading: false,
+          })
 
           setTimeout(() => {
             window.location.href = '/admin/viewItems'
-          }, 1000)
+          }, 2000)
         } else {
           //console.log(res)
-          messageRes = res.error
-          variantRes = 'error'
+          this.setState({
+            message: res.error,
+            variant: 'error',
+            loading: false,
+          })
         }
       })
       .catch((error) => {
-        // error.response.data.message : error.message
         console.log(error)
-        messageRes = error.message
-        variantRes = 'error'
+        this.setState({
+          message: error.message,
+          variant: 'error',
+          loading: false,
+        })
       })
 
-    setTimeout(() => {
-      this.setState({
-        message: messageRes,
-        variant: variantRes,
-        loading: false,
+  }
+
+  async updateItem(id,data){
+      await ProductServices.updateProduct(id,data)
+      .then((res) => {
+        if (res.status == 200 && res.data.success === true) {
+          
+          this.setState({
+            message: 'Product was Updated inserted!',
+            variant: 'success',
+            loading: false,
+          })
+
+          setTimeout(() => {
+            window.location.href = '/admin/viewItems'
+          }, 2000)
+        } else {
+          //console.log(res)
+          this.setState({
+            message: res.error,
+            variant: 'error',
+            loading: false,
+          })
+        }
       })
-    }, 2000)
+      .catch((error) => {
+        console.log(error)
+        this.setState({
+          message: error.message,
+          variant: 'error',
+          loading: false,
+        })
+      })
   }
 
   handleChange = (e) => {
@@ -186,13 +267,31 @@ class AddNewItem extends Component {
     console.log(this.state)
   }
 
+  componentDidMount(){
+
+    //load data from database
+    var pId = this.props.match.params.id;
+    if(!pId){
+      this.setState({
+        formtype: 'Add New Product',
+        btnText:'SUBMIT',
+    })
+    }else{
+      this.loadData(pId);
+      this.setState({
+        formtype: 'Edit Product',
+        btnText:'UPDATE',
+    })
+    }
+}
+
   render() {
     const { classes } = this.props
     return (
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography component='h1' variant='h4' align='center'>
-            Add New item
+            {this.state.formtype}
           </Typography>
           {/* Loading */}
           {this.state.loading && <Loader />}
@@ -258,7 +357,7 @@ class AddNewItem extends Component {
                 <TextValidator
                   className='mt-4'
                   placeholder='Price (LKR)'
-                  helperText='Enter price'
+                  helperText='Enter price (LKR)'
                   variant='outlined'
                   size='small'
                   fullWidth
@@ -339,7 +438,7 @@ class AddNewItem extends Component {
               <Grid item xs={12} md={12}>
                 <div className='text-center my-3'>
                   <Button variant='contained' color='primary' type='submit'>
-                    Submit
+                  {this.state.btnText}
                   </Button>
                 </div>
               </Grid>

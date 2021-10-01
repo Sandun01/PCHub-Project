@@ -125,10 +125,11 @@ class App extends Component {
 
             {/* Admin User Routes */}
             {/* <AdminRoutes exact path="/admin" component={AdminDashboard} /> */}
-            <Route exact path="/admin/addItem" component={AddNewItem} />
-            <Route exact path="/admin/viewItems" component={ViewItems} />
-            <Route exact path="/admin/viewUsers" component={ViewUsers} />
-            <Route exact path="/admin" component={AdminDashboard} />
+            <Route exact path='/admin/Item' component={AddNewItem} />
+            <Route exact path='/admin/Item/:id' component={AddNewItem} />
+            <Route exact path='/admin/viewItems' component={ViewItems} />
+            <Route exact path='/admin/viewUsers' component={ViewUsers} />
+            <Route exact path='/admin' component={AdminDashboard} />
 
             {/* Session Routes */}
 
