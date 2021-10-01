@@ -12,21 +12,14 @@ import {
   TableRow,
   TableContainer,
   Snackbar,
-  TablePagination,
   InputBase,
-  Button,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import Loader from '../common/Loader';
-import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
 import axios from 'axios';
 import { Alert } from '@material-ui/lab';
 import { saveAs } from 'file-saver';
 import UserServices from '../../services/UserServices';
-import FlightIcon from '@material-ui/icons/Flight';
 
 const styles = (theme) => ({
   table: {
@@ -226,10 +219,6 @@ class ViewUsers extends Component {
     console.log(this.state.searchTerm);
   };
 
-  // seacrhWord = (rows) => {
-  //   return rows.filter((row) => row.fname.toLowerCase().indexOf(q) > -1);
-  // };
-
   render() {
     const { classes } = this.props;
 
@@ -284,18 +273,6 @@ class ViewUsers extends Component {
                     </TableRow>
                   </TableHead>
 
-                  {/* 
-                  .filter((val) => {
-                        if (searchTerm == '') {
-                          return val;
-                        } else if (
-                          val.fname
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
-                        ) {
-                          return val;
-                        }
-                       */}
                   <TableBody>
                     {this.state.users
                       .filter((row) => {

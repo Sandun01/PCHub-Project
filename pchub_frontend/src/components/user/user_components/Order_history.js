@@ -18,15 +18,11 @@ import {
   DialogActions,
 } from '@material-ui/core';
 import { alpha, withStyles } from '@material-ui/core/styles';
-
-import FlightIcon from '@material-ui/icons/Flight';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import axios from 'axios';
 import { Alert } from '@material-ui/lab';
 import { Button } from '@material-ui/core';
-
 import VisibilityIcon from '@material-ui/icons/Visibility';
-
 import AuthService from '../../../services/AuthService';
 import LoadingScreen from '../../common/LoadingScreen';
 
@@ -92,6 +88,11 @@ const styles = (theme) => ({
     padding: theme.spacing(0, 2),
     marginRight: '20px',
   },
+  dialogcontentdiv: {
+    marginTop: '5px',
+    marginBottom: '100px',
+  },
+  dialogbox: {},
 });
 
 const initialState = {
@@ -298,14 +299,13 @@ class Order_history extends Component {
             </Grid>
 
             {/* //dialogBox */}
-            <Dialog
-              open={this.state.dialogBoxOpen}
-              className={classes.dialogbox}
-            >
-              <DialogTitle>Order : {this.state.dialogBoxData._id}</DialogTitle>
-
-              <DialogContent>
-                <div>
+            <Dialog open={this.state.dialogBoxOpen}>
+              <DialogTitle>
+                Order ID : {this.state.dialogBoxData._id}
+              </DialogTitle>
+              <hr />
+              <DialogContent className={classes.dialogcontent}>
+                <div className={classes.dialogcontentdiv}>
                   {this.state.dialogBoxData.orderItems.map((row) => (
                     <div
                       style={{
