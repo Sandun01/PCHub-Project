@@ -122,11 +122,8 @@ class Order_history extends Component {
   trackOrder(id) {}
 
   viewItems = (order) => {
-    this.setState({
-      dialogBoxOpen: true,
-      dialogBoxData: order,
-    });
-    console.log(order);
+    // console.log(order._id)
+    window.location.href = `/orders/${order._id}`;
   };
 
   dialogBoxClose = () => {
@@ -155,7 +152,7 @@ class Order_history extends Component {
     var id = res.userData._id;
     // console.log('res---------------' + id);
 
-    console.log(res.userData._id);
+    // console.log(res.userData._id);
     await axios
       .post('http://localhost:5000/api/orders/user/' + id)
       .then((res) => {
@@ -188,7 +185,7 @@ class Order_history extends Component {
       snackbar: snackbarRes,
       loading: false,
     });
-    console.log(this.state.orders);
+    // console.log(this.state.orders);
   }
 
   render() {
