@@ -12,6 +12,7 @@ import {
   TableRow,
   TableContainer,
   Snackbar,
+  InputBase,
   TablePagination,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
@@ -68,6 +69,12 @@ const styles = (theme) => ({
   root: {
     width: '100%',
   },
+  search: {
+    backgroundColor: '#fff',
+    padding: '10px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+  },
 })
 
 const initialState = {
@@ -76,6 +83,7 @@ const initialState = {
   products: [],
   message: '',
   variant: '',
+  searchTerm: '',
   snackbar: false,
 }
 
@@ -214,6 +222,12 @@ class ViewItems extends Component {
     })
   }
 
+  handleChange = (event) => {
+    this.setState({ searchTerm: event.target.value });
+    event.preventDefault();
+    console.log(this.state.searchTerm);
+  };
+
   render() {
     const { classes } = this.props
 
@@ -224,6 +238,19 @@ class ViewItems extends Component {
             <Typography variant='h4' className='py-3'>
               All products
             </Typography>
+          </Grid>
+
+          <Grid>
+            <InputBase
+              className={classes.search}
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              value={this.state.searchTerm}
+              onChange={this.handleChange}
+            />
           </Grid>
 
           <Grid item xs={12} md={12}>
@@ -281,7 +308,21 @@ class ViewItems extends Component {
                   </TableHead>
 
                   <TableBody>
-                    {this.state.products.map((row) => (
+                    {this.state.products.filter((row) => {
+                        if (this.state.searchTerm == '') {
+                          console.log('val' + row);
+                          return row;
+                        } else if (
+                          row.item_name
+                            .toLowerCase()
+                            .includes(this.state.searchTerm.toLowerCase()) ||
+                          row.category
+                            .toLowerCase()
+                            .includes(this.state.searchTerm.toLowerCase())
+                        ) {
+                          return row;
+                        }
+                      }).map((row) => (
                       <TableRow key={row.item_name} hover>
                         <TableCell className={classes.tableCell}>
                           {row.item_name}
