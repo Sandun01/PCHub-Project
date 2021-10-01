@@ -23,6 +23,8 @@ import CloseIcon from '@material-ui/icons/Close'
 import ProductServices from '../../services/ProductServices'
 import { Alert } from '@material-ui/lab'
 import OrderServices from '../../services/OrderServices'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const styles = (theme) => ({
   table: {
@@ -86,7 +88,7 @@ class viewDeliveries extends Component {
     this.state = initialState
     this.deleteOrder = this.deleteOrder.bind(this)
     this.calcTotPrice = this.calcTotPrice.bind(this)
-    this.updateDeliveryDetails = this.updateDeliveryDetails.bind(this)
+    
   }
 
   async deleteOrder(id) {
@@ -103,7 +105,7 @@ class viewDeliveries extends Component {
               this.setState({
                 message: 'Order was successfully deleted!',
                 variant: 'success',
-                snackbar: false,
+                snackbar: true,
               })
               setTimeout(() => {
                 window.location.reload(false)
@@ -113,7 +115,7 @@ class viewDeliveries extends Component {
             this.setState({
               message: res.data.message,
               variant: 'error',
-              snackbar: false,
+              snackbar: true,
             })
           }
         })
@@ -121,7 +123,7 @@ class viewDeliveries extends Component {
           this.setState({
             message: error.message,
             variant: 'error',
-            snackbar: snackbarRes,
+            snackbar: true,
           })
         })
      
@@ -136,10 +138,12 @@ class viewDeliveries extends Component {
 
   }
 
-  async updateDeliveryDetails(id, deliveryStatus, paidStatus)
+
+  updateDeliveryDetails = async (id, deliveryStatus, paidStatus) =>
   { 
-     
+     console.log("asasas");
       if(id){
+        
         var data = {
          
                   "id":id,
@@ -149,7 +153,36 @@ class viewDeliveries extends Component {
                
                
       }
-      await OrderServices.updateDeliveryDetails(data)
+      await OrderServices.updateDeliveryDetails(data)        
+      .then((res) => {
+        // console.log(res);
+        if (res.status == 200 && res.data.success === true) {  
+            
+            this.setState({
+              message: 'Order was successfully updated!',
+              variant: 'success',
+              snackbar: true,
+            })
+            setTimeout(() => {
+              window.location.reload(false)
+            }, 2000)
+    
+        } else {
+          this.setState({
+            message: res.data.message,
+            variant: 'error',
+            snackbar: true,
+          })
+        }
+      })
+      .catch((error) => {
+        this.setState({
+          message: error.message,
+          variant: 'error',
+          snackbar: true,
+        })
+      })
+      
     }
   }
 
@@ -245,6 +278,20 @@ class viewDeliveries extends Component {
   }
 
 
+approveDelivery = (_id,isDelivered,isPaid)=>{
+  if(isPaid === true){
+    
+    
+    this.updateDeliveryDetails(_id,isDelivered,isPaid)
+  }
+  else  
+  {this.setState({
+    loading: false,
+    snackbar: true,
+    variant: 'error',
+    message: 'can\'t approve delivery without payment!',
+})}}
+
 
   render() {
     const { classes } = this.props
@@ -293,25 +340,26 @@ class viewDeliveries extends Component {
                   <TableHead>
                     <TableRow className={classes.tableHeaderRow}>
                       <TableCell className={classes.tableHeader} align='center'>
-                        customer 
+                        Customer 
                       </TableCell>
                       <TableCell className={classes.tableHeader} align='center'>
-                        address 
+                        Address 
                       </TableCell>
                       <TableCell className={classes.tableHeader} align='center'>
-                        items 
+                        Items 
                       </TableCell>
                       <TableCell className={classes.tableHeader} align='center'>
                         Price 
                       </TableCell>
                       <TableCell className={classes.tableHeader} align='center'>
-                        approve todo
+                        Approve Delivery 
+                      </TableCell>
+                      
+                      <TableCell className={classes.tableHeader} align='center'>
+                        Approve Payment
                       </TableCell>
                       <TableCell className={classes.tableHeader} align='center'>
-                        delete todo
-                      </TableCell>
-                      <TableCell className={classes.tableHeader} align='center'>
-                        status todo
+                        Delete 
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -341,27 +389,47 @@ class viewDeliveries extends Component {
                         </TableCell>
                         <TableCell className={classes.tableCell}>
                           
-                          <Tooltip title='Approve' arrow>
+                          <Tooltip title='Approve Delivery' arrow>
                             
                             <EditIcon
-                            onclick//todo
+                            onClick={() => {
+                                this.approveDelivery(row._id,!row.isDelivered,row.isPaid)
+                            }}
                             className={classes.FaClipboardCheck}
                           ></EditIcon>
+                          
                             
                           </Tooltip>
+                          {row.isDelivered? <CheckCircleIcon/>:<CancelIcon/> }
+                      
+                        
+                        
                         </TableCell>
                         <TableCell className={classes.tableCell}>
                           
-                          <Tooltip title='Delete' arrow>
-                            <DeleteIcon
-                              className={classes.deleteButtonIcon}
-                              onClick={() =>this.deleteOrder(row._id)}
-                            ></DeleteIcon>
+                          <Tooltip title='Approve Payment' arrow>
+                            
+                            <EditIcon
+                            onClick={() => this.updateDeliveryDetails(row._id,row.isDelivered,!row.isPaid)}
+                            className={classes.FaClipboardCheck}
+                          ></EditIcon>
+                          
+                            
                           </Tooltip>
+                          {row.isPaid? <CheckCircleIcon/>:<CancelIcon/> }
+                      
+                        
+                        
                         </TableCell>
-                        <TableCell>
-                        {row.isDelivered? "approved": "not approved"}
-                        </TableCell>
+                        <TableCell className={classes.tableCell}>
+                          
+                        <Tooltip title='Delete' arrow>
+                          <DeleteIcon
+                            className={classes.deleteButtonIcon}
+                            onClick={() =>this.deleteOrder(row._id)}
+                          ></DeleteIcon>
+                        </Tooltip>
+                      </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -383,15 +451,7 @@ class viewDeliveries extends Component {
             </Snackbar>
           )}
         </Grid>
-        <Snackbar
-        open={this.state.snackbar}
-        autoHideDuration={6000}
-        onClose={this.handleCloseSnackbar}
-    >
-        <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >
-            {this.state.snackbar_message}
-        </Alert>
-    </Snackbar>
+
       </div>
     )
   }

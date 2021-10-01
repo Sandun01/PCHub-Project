@@ -500,12 +500,8 @@ async updateDeliveryDetails(data){
   
 
 
-  await axios.put(BackendApi_URL+"/delivery/edit/"+id, data)
-  .then(res => {
-      console.log("success")
-    }).catch(error => {
-      console.log(error.errorMessage);
-    })
+  var result = await axios.put(BackendApi_URL+"/orders/delivery/edit/"+id, data)
+  return result
 }
 
 
