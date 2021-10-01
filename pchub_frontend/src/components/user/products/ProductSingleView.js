@@ -17,6 +17,7 @@ import OrderServices from '../../../services/OrderServices'
 import AuthService from '../../../services/AuthService';
 import WishListServices from '../../../services/WishListServices';
 
+
 const styles = (theme) => ({
 
     root: {
@@ -273,6 +274,8 @@ class ProductSingleView extends Component {
 
         console.log('Add to wishlist')
 
+
+
         //data that we want to add to wishlist
 
         if (this.state.userID != null) {
@@ -282,8 +285,25 @@ class ProductSingleView extends Component {
                 product: this.state.item._id
             }
 
+            await WishListServices.che
+
             // send to database
-            await WishListServices.addToWishList(wishlist);
+            await WishListServices.addToWishList(wishlist)
+            .then(
+                    this.setState({
+                        snackbar: true,
+                        snackbar_severity: 'success',
+                        snackbar_message: 'Item Successfully Added to the Wishlist!',
+                }))
+            .catch(e=>{
+                    console.log(e.message);
+                    this.setState({
+                        snackbar: true,
+                        snackbar_severity: 'error',
+                        snackbar_message: "Error! Item didn't get added to the Wishlist!",
+                        });
+                }
+              )
         }
 
 
@@ -484,6 +504,19 @@ class ProductSingleView extends Component {
                                     </Grid>
 
                                 </Grid>
+                                
+                                <Grid container alignItems="center" justifyContent="center" direction="row">
+                                    <Grid xs={2}>
+                                        <item>a</item>
+                                    </Grid>
+                                    <Grid xs={8}>
+                                        <item>b</item>
+                                    </Grid>
+                                    <Grid xs={2}>
+                                        <item>b</item>
+                                    </Grid>
+                                </Grid>
+                                
                             </div>
 
                 }

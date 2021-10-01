@@ -197,7 +197,7 @@ class OrderServices {
     // add one item to db order
     await axios.put(BackendApi_URL+"/orders/addItem/user/"+userID, cartItem)
       .then(res => {
-        // console.log("Item",res);
+        console.log("Item",res);
         result = res;
       })
       .catch(error =>{
@@ -480,6 +480,31 @@ class OrderServices {
     return result;
   
   }
+
+  //get all orders --> to be used in deleivery management in admin pages 
+  async getAlldeliveries() {
+    var result =null;
+
+    await axios.get(BackendApi_URL + "/orders")
+        .then(res => {
+            result =res;
+            console.log("success")
+        }).catch(error => {
+            console.log(error.errorMessage);
+        })
+        return result;
+}
+
+async updateDeliveryDetails(data){
+  var id = data.id
+  
+
+
+  var result = await axios.put(BackendApi_URL+"/orders/delivery/edit/"+id, data)
+  return result
+}
+
+
 
 }
 

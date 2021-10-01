@@ -28,12 +28,13 @@ import ContactUs from './components/user/static/ContactUs';
 import Services from './components/user/static/Services';
 
 //admin components
-import AdminDashboard from './components/admin/AdminDashboard';
-import AddNewItem from './components/admin/addNewItem';
-import ViewItems from './components/admin/viewItems';
-import UserProfile from './components/user/UserProfile';
-import AdminLeftNavMain from './components/admin/AdminLeftNavMain';
-import ViewUsers from './components/admin/viewUsers';
+import AdminDashboard from './components/admin/AdminDashboard'
+import AddNewItem from './components/admin/addNewItem'
+import ViewItems from './components/admin/viewItems'
+import UserProfile from './components/user/UserProfile'
+import AdminLeftNavMain from './components/admin/AdminLeftNavMain'
+import ViewUsers from './components/admin/viewUsers'
+import viewDeliveries from './components/admin/viewDeliveries';
 
 //common components
 import Header from './components/common/Header';
@@ -130,6 +131,7 @@ class App extends Component {
             <Route exact path='/admin/viewItems' component={ViewItems} />
             <Route exact path='/admin/viewUsers' component={ViewUsers} />
             <Route exact path='/admin' component={AdminDashboard} />
+            <Route exact path='/admin/viewDeliveries' component={viewDeliveries} />
 
             {/* Session Routes */}
 
