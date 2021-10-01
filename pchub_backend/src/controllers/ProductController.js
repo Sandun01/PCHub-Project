@@ -1,9 +1,7 @@
 import Product from "../models/ProductModel.js";
 import UtilFunctions from "../utils/UtilFunctions.js";
-import Product from "../models/ProductModel.js"
 import pdf from 'html-pdf';
 import finalReportTemplate from '../utils/productReports/allProductsReports.js';
-import path from 'path';
 
 // @desc  Create Product
 // @route POST /api/products/
