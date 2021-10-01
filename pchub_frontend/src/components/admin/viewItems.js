@@ -131,6 +131,51 @@ class ViewItems extends Component {
     })
   }
 
+  //generate pdf
+  generatePDF = async() => {
+        
+    this.setState({
+        loading: true,
+    })
+
+    var data = {
+        "items": this.state.products,
+    }
+
+    console.log("items", data);
+
+    await ProductServices.generateAllproductsReport(data)
+    .then( res => {
+        if(res === 1){
+            this.setState({
+                loading: false,
+                snackbar: true,
+                variant: 'success',
+                message: 'Generate PDF Success!',
+            })
+        }
+        else{
+            console.log('error');
+            this.setState({
+                loading: false,
+                snackbar: true,
+                variant: 'error',
+                message: 'Error in Generating PDF!',
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        this.setState({
+            loading: false,
+            snackbar: true,
+            variant: 'error',
+            message: 'Error in Generating PDF!',
+        })
+    })
+
+}
+
   async componentDidMount() {
     var productsArr = []
     var messageRes = ''
@@ -195,11 +240,11 @@ class ViewItems extends Component {
                   Add New Product
                 </button>
               </Link>
-              <Link to='/admin/Item'>
-                <button type='button' className={classes.reportBtn}>
+              
+                <button type='button' className='btn btn-outline-warning' style={{margin: 20}} onClick={() => this.generatePDF()}>
                   Download Product Report
                 </button>
-              </Link>
+              
             </div>
           </Grid>
 

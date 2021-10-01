@@ -66,20 +66,20 @@ class ProductServices {
     var result = 0;
 
     try{
-      var genPdfResult = await axios.post(BackendApi_URL+"/orders/generateFinalBill", data);
+      var genPdfResult = await axios.post(BackendApi_URL+"/products/generateallproductsReport", data);
 
       if(!Utils.isEmptyObject(genPdfResult)){
 
-        if(genPdfResult.status === 200){ //pdf generate bill success
+        if(genPdfResult.status === 200){ //pdf generate report success
 
-          //get bill pdf
-          var genPdfResult2 = await axios.get(BackendApi_URL+"/orders/fetchFinalBill", { responseType: 'blob' });
+          //get report pdf
+          var genPdfResult2 = await axios.get(BackendApi_URL+"/products/fetchallproductsReport", { responseType: 'blob' });
 
-          if(!Utils.isEmptyObject(genPdfResult2)){ //get bill pdf response success
+          if(!Utils.isEmptyObject(genPdfResult2)){ //get report pdf response success
 
             if(genPdfResult2.status === 200){
               const pdfBlob = new Blob([genPdfResult2.data], { type: 'application/pdf' });
-              saveAs(pdfBlob, 'newBill.pdf');
+              saveAs(pdfBlob, 'allproducts.pdf');
       
               // console.log(genPdfResult2);
               result = 1;

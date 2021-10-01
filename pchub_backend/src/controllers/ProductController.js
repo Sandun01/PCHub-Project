@@ -1,4 +1,8 @@
 import Product from "../models/ProductModel.js"
+import pdf from 'html-pdf';
+import finalReportTemplate from '../utils/productReports/allProductsReports.js';
+import path from 'path';
+
 
 // @desc  Create Product
 // @route POST /api/products/
@@ -202,6 +206,41 @@ const searchProductByName = async(req, res) => {
 
 }
 
+//Generate final order bill
+// @route post /api/orders/generateFinalBill
+// @access User(Registered) 
+const generateAllProductsReport = async(req, res) => {
+
+    // console.log("generate Final Order Bill");
+    
+    const __dirname = path.resolve()
+    
+    const data = req.body;
+    // console.log(data);
+    
+    //generate bill
+    pdf.create(finalReportTemplate(data), {}).toFile(`${__dirname}/files/allProductsReport.pdf`, (err) => {
+        if(err) {
+            res.send(Promise.reject());
+        }
+        
+        res.send(Promise.resolve());
+    });
+    
+}
+
+//get final order bill
+// @route get /api/orders/fetchFinalBill
+// @access User(Registered) 
+const getAllProductsReport = async(req, res) => {
+
+    console.log("get All Procuts report");
+
+    const __dirname = path.resolve()
+
+    res.sendFile(`${__dirname}/files/allProductsReport.pdf`)
+}
+
 
 export default{
     createProduct,
@@ -212,4 +251,6 @@ export default{
     getLatestProducts,
     filterProducts,
     searchProductByName,
+    generateAllProductsReport,
+    getAllProductsReport
 }
