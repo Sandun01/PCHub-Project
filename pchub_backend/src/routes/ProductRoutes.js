@@ -15,5 +15,8 @@ router.route('/:id').get( ProductController.getProductByID)
                     .put( ProductController.updateProductDetails)
                     .delete( ProductController.deleteProductDetails)
 
+//reports
+router.route('/fetchallproductsReport').get( ProductController.getAllProductsReport)
+router.route('/generateallproductsReport').post( ProductController.generateAllProductsReport)
 
 export default router;

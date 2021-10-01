@@ -20,7 +20,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
-import axios from 'axios'
+import ProductServices from '../../services/ProductServices'
 import { Alert } from '@material-ui/lab'
 
 const styles = (theme) => ({
@@ -44,6 +44,10 @@ const styles = (theme) => ({
   },
   deActiveButtonIcon: {
     color: '#EDAA26',
+  },
+  reportBtn:{
+    margin: '2rem',
+    
   },
   tableHeader: {
     fontWeight: 'bold',
@@ -82,42 +86,42 @@ class ViewItems extends Component {
     this.deleteproduct = this.deleteproduct.bind(this)
   }
 
-  deleteproduct(id) {
+  async deleteproduct(id) {
     var result = window.confirm('Are Sure You Want to delete?')
 
     if (result) {
-      var messageRes = ''
-      var variantRes = ''
       var snackbarRes = true
-
-      axios
-        .delete('http://localhost:5000/api/products/' + id)
+      await 
+         ProductServices.deleteProduct(id)
         .then((res) => {
           // console.log(res);
-          if (res.status == 200) {
-            if (res.data.success) {
-              snackbarRes = false
-              window.location.reload(false)
-            } else {
-              messageRes = res.data.message
-              variantRes = 'error'
-            }
+          if (res.status == 200 && res.data.success === true) {  
+              
+              this.setState({
+                message: 'Product was successfully deleted!',
+                variant: 'success',
+                snackbar: false,
+              })
+              setTimeout(() => {
+                window.location.reload(false)
+              }, 2000)
+      
           } else {
-            messageRes = res.data.message
-            variantRes = 'error'
+            this.setState({
+              message: res.data.message,
+              variant: 'error',
+              snackbar: false,
+            })
           }
         })
         .catch((error) => {
-          //console.log("Error:",error);
-          variantRes = 'error'
-          messageRes = error
+          this.setState({
+            message: error.message,
+            variant: 'error',
+            snackbar: snackbarRes,
+          })
         })
-
-      this.setState({
-        message: messageRes,
-        variant: variantRes,
-        snackbar: snackbarRes,
-      })
+     
     }
   }
 
@@ -127,15 +131,59 @@ class ViewItems extends Component {
     })
   }
 
+  //generate pdf
+  generatePDF = async() => {
+        
+    this.setState({
+        loading: true,
+    })
+
+    var data = {
+        "items": this.state.products,
+    }
+
+    console.log("items", data);
+
+    await ProductServices.generateAllproductsReport(data)
+    .then( res => {
+        if(res === 1){
+            this.setState({
+                loading: false,
+                snackbar: true,
+                variant: 'success',
+                message: 'Generate PDF Success!',
+            })
+        }
+        else{
+            console.log('error');
+            this.setState({
+                loading: false,
+                snackbar: true,
+                variant: 'error',
+                message: 'Error in Generating PDF!',
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        this.setState({
+            loading: false,
+            snackbar: true,
+            variant: 'error',
+            message: 'Error in Generating PDF!',
+        })
+    })
+
+}
+
   async componentDidMount() {
     var productsArr = []
     var messageRes = ''
     var variantRes = ''
     var snackbarRes = true
 
-    //get data from db
-    await axios
-      .get('http://localhost:5000/api/products')
+    //calling product services
+    await ProductServices.getAllProducts()
       .then((res) => {
         // console.log(res);
 
@@ -187,11 +235,16 @@ class ViewItems extends Component {
                 float: 'right',
               }}
             >
-              <Link to='/admin/addItem'>
+              <Link to='/admin/Item'>
                 <button type='button' className='btn btn-outline-primary'>
                   Add New Product
                 </button>
               </Link>
+              
+                <button type='button' className='btn btn-outline-warning' style={{margin: 20}} onClick={() => this.generatePDF()}>
+                  Download Product Report
+                </button>
+              
             </div>
           </Grid>
 
@@ -247,7 +300,7 @@ class ViewItems extends Component {
                         </TableCell>
                         <TableCell className={classes.tableCell}>
                           <Tooltip title='Edit' arrow>
-                            <Link to={'/admin/addItems' + row._id}>
+                            <Link to={'/admin/Item/' + row._id}>
                               <EditIcon
                                 className={classes.editButtonIcon}
                               ></EditIcon>
