@@ -66,7 +66,6 @@ class ProductServices {
           
           //get report pdf
           var genPdfResult2 = await axios.get(BackendApi_URL+"/products/fetchallproductsReport", { responseType: 'blob' });
-          console.log("=====================")
 
           if (!Utils.isEmptyObject(genPdfResult2)) {
             //get report pdf response success

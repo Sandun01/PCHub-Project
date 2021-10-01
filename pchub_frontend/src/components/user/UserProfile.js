@@ -310,7 +310,7 @@ class UserProfile extends Component {
                     className={classes.leftNavItemIcon}
                   />
                   <Typography className={classes.leftNavItemText}>
-                    Oreder History
+                    Order History
                   </Typography>
                 </div>
 

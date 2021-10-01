@@ -504,19 +504,6 @@ class ProductSingleView extends Component {
                                     </Grid>
 
                                 </Grid>
-                                
-                                <Grid container alignItems="center" justifyContent="center" direction="row">
-                                    <Grid xs={2}>
-                                        <item>a</item>
-                                    </Grid>
-                                    <Grid xs={8}>
-                                        <item>b</item>
-                                    </Grid>
-                                    <Grid xs={2}>
-                                        <item>b</item>
-                                    </Grid>
-                                </Grid>
-                                
                             </div>
 
                 }
