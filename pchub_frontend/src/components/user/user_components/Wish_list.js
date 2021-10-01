@@ -206,8 +206,7 @@ class Wish_list extends Component {
     await this.getUserData();
 
     console.log("state user id", this.state.user._id)
-
-    await axios.get(BackendApi_URL + "/wishlists/" + this.state.user._id)
+    WishListServices.getAllwishlistitems(this.state.user._id)
 
       .then(res => {
         // console.log("state", res);

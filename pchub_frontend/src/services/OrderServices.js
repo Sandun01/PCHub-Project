@@ -481,6 +481,20 @@ class OrderServices {
   
   }
 
+  //get all orders --> to be used in deleivery management in admin pages 
+  async getAlldeliveries() {
+    var result =null;
+
+    await axios.get(BackendApi_URL + "/orders")
+        .then(res => {
+            result =res;
+            console.log("success")
+        }).catch(error => {
+            console.log(error.errorMessage);
+        })
+        return result;
+}
+
 }
 
 export default new OrderServices();
