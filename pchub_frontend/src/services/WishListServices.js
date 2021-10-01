@@ -25,10 +25,17 @@ class WishListServices {
                 console.log(error.errorMessage);
             })
     }
+    async deleteItemFromWishList(wishlistItemID) {
 
+        await axios.delete(BackendApi_URL + "/wishlists/delete/" + wishlistItemID)
+            .then(res => {
+                console.log("success")
+            }).catch(error => {
+                console.log(error.errorMessage);
+            })
+    }
 
-
-
+    
 }
 
 export default new WishListServices();

@@ -197,7 +197,7 @@ class OrderServices {
     // add one item to db order
     await axios.put(BackendApi_URL+"/orders/addItem/user/"+userID, cartItem)
       .then(res => {
-        // console.log("Item",res);
+        console.log("Item",res);
         result = res;
       })
       .catch(error =>{

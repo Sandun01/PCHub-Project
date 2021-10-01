@@ -273,6 +273,8 @@ class ProductSingleView extends Component {
 
         console.log('Add to wishlist')
 
+
+
         //data that we want to add to wishlist
 
         if (this.state.userID != null) {
@@ -282,8 +284,25 @@ class ProductSingleView extends Component {
                 product: this.state.item._id
             }
 
+            await WishListServices.che
+
             // send to database
-            await WishListServices.addToWishList(wishlist);
+            await WishListServices.addToWishList(wishlist)
+            .then(
+                    this.setState({
+                        snackbar: true,
+                        snackbar_severity: 'success',
+                        snackbar_message: 'Item Successfully Added to the Wishlist!',
+                }))
+            .catch(e=>{
+                    console.log(e.message);
+                    this.setState({
+                        snackbar: true,
+                        snackbar_severity: 'error',
+                        snackbar_message: "Error! Item didn't get added to the Wishlist!",
+                        });
+                }
+              )
         }
 
 
