@@ -4,6 +4,11 @@ import sendEmail from '../utils/sendEmail.js';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 
+import pdf from 'html-pdf';
+import UserReport from '../utils/userReports/UserReport.js';
+import path from 'path';
+import UtilFunctions from '../utils/UtilFunctions.js';
+
 const register = async (req, res, next) => {
   const { username, email, password, fname, lname, isAdmin } = req.body;
 
@@ -16,7 +21,7 @@ const register = async (req, res, next) => {
       isAdmin,
     });
 
-    sendToken(user, 200, res);
+    sendToken(user, 201, res);
   } catch (err) {
     next(err);
   }
@@ -24,18 +29,17 @@ const register = async (req, res, next) => {
 
 // @desc  Get All users
 // @route GET /api/users/
-// @access Admin 
+// @access Admin
 
-const getAllusers = async(req, res) => {
-
+const getAllusers = async (req, res) => {
   await UserModel.find({})
-  .then( data => {
-      res.status(200).send({ success: true, 'users': data })
-  })
-  .catch( (error) => {
-      res.status(500).send({ success: false, 'message': error })
-  } )
-}
+    .then((data) => {
+      res.status(200).send({ success: true, users: data });
+    })
+    .catch((error) => {
+      res.status(500).send({ success: false, message: error });
+    });
+};
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -68,9 +72,15 @@ const login = async (req, res, next) => {
       lname: user.lname,
       email: user.email,
       isAdmin: user.isAdmin,
+      addressLine1: user.paymentDetails.addressLine1,
+      addressLine2: user.paymentDetails.addressLine2,
+      addressLine3: user.paymentDetails.addressLine3,
+      city: user.paymentDetails.city,
+      zipcode: user.paymentDetails.zipcode,
+      contactNumber: user.paymentDetails.contactNumber,
       token: generateToken(user),
     };
-    console.log(userData);
+    console.log(user);
 
     res.json(userData);
   } catch (err) {
@@ -86,7 +96,7 @@ const forgotPassword = async (req, res, next) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      return next(new ErrorResponse('No email could not be sent', 404));
+      return next(new ErrorResponse('No email could not be sent', 400));
     }
 
     // Reset Token Gen and add to database hashed (private) version of token
@@ -95,7 +105,7 @@ const forgotPassword = async (req, res, next) => {
     await user.save();
 
     // Create reset url to email to provided email
-    const resetUrl = `http://localhost:5000/passwordreset/${resetToken}`;
+    const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
 
     // HTML Message
     const message = `
@@ -214,6 +224,98 @@ const updateUserData = async (req, res) => {
 //   return password;
 // };
 
+const updateUserAddress = async (req, res) => {
+  if (req.body && req.params) {
+    let userID = req.params.id;
+    const {
+      addressLine1,
+      addressLine2,
+      addressLine3,
+      zipcode,
+      city,
+      contactNumber,
+    } = req.body;
+
+    var find = { _id: userID };
+
+    const update = {
+      $set: {
+        'paymentDetails.addressLine1': addressLine1,
+        'paymentDetails.addressLine2': addressLine2,
+        'paymentDetails.addressLine3': addressLine3,
+        'paymentDetails.contactNumber': contactNumber,
+        'paymentDetails.zipcode': zipcode,
+        'paymentDetails.city': city,
+      },
+    };
+
+    await UserModel.updateOne(find, update)
+      .then((result) => {
+        if (result.n > 0) {
+          res.status(200).send({
+            success: true,
+            message: 'User Info Updated Successfully!',
+          });
+        } else {
+          res.status(200).send({
+            success: false,
+            message: 'Error!',
+          });
+        }
+      })
+      .catch((error) => {
+        res.status(500).send({ success: false, message: error });
+      });
+  } else {
+    res.status(200).send({ success: false, message: 'No Data Found' });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  let userID = req.params.id;
+  await UserModel.findByIdAndDelete(userID)
+    .then(() => {
+      res
+        .status(200)
+        .send({ success: true, message: 'User Deleted Succefully' });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send({ success: false, message: error });
+    });
+};
+
+const generateUserDetails = async (req, res) => {
+  console.log('generate Final User Details');
+
+  const __dirname = path.resolve();
+
+  const data = req.body;
+  // console.log(data);
+
+  //generate bill
+  pdf
+    .create(UserReport(data), {})
+    .toFile(`${__dirname}/files/UserReport.pdf`, (err) => {
+      if (err) {
+        res.send(Promise.reject());
+      }
+
+      res.send(Promise.resolve());
+    });
+};
+
+//get final order bill
+// @route get /api/orders/fetchFinalBill
+// @access User(Registered)
+const getUserDetails = async (req, res) => {
+  console.log('get Final User Details');
+
+  const __dirname = path.resolve();
+
+  res.sendFile(`${__dirname}/files/UserReport.pdf`);
+};
+
 export default {
   register,
   login,
@@ -222,4 +324,8 @@ export default {
   sendToken,
   getAllusers,
   updateUserData,
+  updateUserAddress,
+  deleteUser,
+  getUserDetails,
+  generateUserDetails,
 };

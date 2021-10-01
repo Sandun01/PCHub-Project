@@ -12,6 +12,7 @@ import {
   TableRow,
   TableContainer,
   Snackbar,
+  InputBase,
   TablePagination,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
@@ -20,12 +21,12 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
-import axios from 'axios'
+import ProductServices from '../../services/ProductServices'
 import { Alert } from '@material-ui/lab'
 
 const styles = (theme) => ({
   table: {
-    // minWidth: 650,
+     minWidth: 550,
   },
   editButtonIcon: {
     color: '#0625C8',
@@ -45,6 +46,10 @@ const styles = (theme) => ({
   deActiveButtonIcon: {
     color: '#EDAA26',
   },
+  reportBtn:{
+    margin: '2rem',
+    
+  },
   tableHeader: {
     fontWeight: 'bold',
     color: '#000',
@@ -58,10 +63,17 @@ const styles = (theme) => ({
     fontSize: '1rem',
   },
   container: {
-    maxHeight: 440,
+    maxHeight: 520,
+    maxWidth: 1300,
   },
   root: {
     width: '100%',
+  },
+  search: {
+    backgroundColor: '#fff',
+    padding: '10px',
+    marginBottom: '20px',
+    borderRadius: '5px',
   },
 })
 
@@ -71,6 +83,7 @@ const initialState = {
   products: [],
   message: '',
   variant: '',
+  searchTerm: '',
   snackbar: false,
 }
 
@@ -81,42 +94,42 @@ class ViewItems extends Component {
     this.deleteproduct = this.deleteproduct.bind(this)
   }
 
-  deleteproduct(id) {
+  async deleteproduct(id) {
     var result = window.confirm('Are Sure You Want to delete?')
 
     if (result) {
-      var messageRes = ''
-      var variantRes = ''
       var snackbarRes = true
-
-      axios
-        .delete('http://localhost:5000/api/products/' + id)
+      await 
+         ProductServices.deleteProduct(id)
         .then((res) => {
           // console.log(res);
-          if (res.status == 200) {
-            if (res.data.success) {
-              snackbarRes = false
-              window.location.reload(false)
-            } else {
-              messageRes = res.data.message
-              variantRes = 'error'
-            }
+          if (res.status == 200 && res.data.success === true) {  
+              
+              this.setState({
+                message: 'Product was successfully deleted!',
+                variant: 'success',
+                snackbar: false,
+              })
+              setTimeout(() => {
+                window.location.reload(false)
+              }, 2000)
+      
           } else {
-            messageRes = res.data.message
-            variantRes = 'error'
+            this.setState({
+              message: res.data.message,
+              variant: 'error',
+              snackbar: false,
+            })
           }
         })
         .catch((error) => {
-          //console.log("Error:",error);
-          variantRes = 'error'
-          messageRes = error
+          this.setState({
+            message: error.message,
+            variant: 'error',
+            snackbar: snackbarRes,
+          })
         })
-
-      this.setState({
-        message: messageRes,
-        variant: variantRes,
-        snackbar: snackbarRes,
-      })
+     
     }
   }
 
@@ -126,15 +139,55 @@ class ViewItems extends Component {
     })
   }
 
+  //generate pdf
+  generatePDF = async() => {
+
+    var data = {
+        "items": this.state.products,
+    }
+
+    console.log("items", data);
+
+    await ProductServices.generateAllproductsReport(data)
+    .then( res => {
+        if(res === 1){
+            this.setState({
+                loading: false,
+                snackbar: true,
+                variant: 'success',
+                message: 'Generate PDF Success!',
+            })
+        }
+        else{
+            console.log('error');
+            this.setState({
+                loading: false,
+                snackbar: true,
+                variant: 'error',
+                message: 'Error in Generating PDF!',
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        this.setState({
+            loading: false,
+            snackbar: true,
+            variant: 'error',
+            message: 'Error in Generating PDF!',
+        })
+    })
+
+}
+
   async componentDidMount() {
     var productsArr = []
     var messageRes = ''
     var variantRes = ''
     var snackbarRes = true
 
-    //get data from db
-    await axios
-      .get('http://localhost:5000/api/products')
+    //calling product services
+    await ProductServices.getAllProducts()
       .then((res) => {
         // console.log(res);
 
@@ -165,6 +218,12 @@ class ViewItems extends Component {
     })
   }
 
+  handleChange = (event) => {
+    this.setState({ searchTerm: event.target.value });
+    event.preventDefault();
+    console.log(this.state.searchTerm);
+  };
+
   render() {
     const { classes } = this.props
 
@@ -177,6 +236,19 @@ class ViewItems extends Component {
             </Typography>
           </Grid>
 
+          <Grid>
+            <InputBase
+              className={classes.search}
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              value={this.state.searchTerm}
+              onChange={this.handleChange}
+            />
+          </Grid>
+
           <Grid item xs={12} md={12}>
             <div
               style={{
@@ -186,11 +258,16 @@ class ViewItems extends Component {
                 float: 'right',
               }}
             >
-              <Link to='/admin/addItem'>
+              <Link to='/admin/Item'>
                 <button type='button' className='btn btn-outline-primary'>
                   Add New Product
                 </button>
               </Link>
+              
+                <button type='button' className='btn btn-outline-warning' style={{margin: 20}} onClick={() => this.generatePDF()}>
+                  Download Product Report
+                </button>
+              
             </div>
           </Grid>
 
@@ -227,7 +304,21 @@ class ViewItems extends Component {
                   </TableHead>
 
                   <TableBody>
-                    {this.state.products.map((row) => (
+                    {this.state.products.filter((row) => {
+                        if (this.state.searchTerm == '') {
+                          console.log('val' + row);
+                          return row;
+                        } else if (
+                          row.item_name
+                            .toLowerCase()
+                            .includes(this.state.searchTerm.toLowerCase()) ||
+                          row.category
+                            .toLowerCase()
+                            .includes(this.state.searchTerm.toLowerCase())
+                        ) {
+                          return row;
+                        }
+                      }).map((row) => (
                       <TableRow key={row.item_name} hover>
                         <TableCell className={classes.tableCell}>
                           {row.item_name}
@@ -246,7 +337,7 @@ class ViewItems extends Component {
                         </TableCell>
                         <TableCell className={classes.tableCell}>
                           <Tooltip title='Edit' arrow>
-                            <Link to={'/admin/addItems' + row._id}>
+                            <Link to={'/admin/Item/' + row._id}>
                               <EditIcon
                                 className={classes.editButtonIcon}
                               ></EditIcon>
