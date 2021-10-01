@@ -84,23 +84,23 @@ class viewDeliveries extends Component {
   constructor(props) {
     super(props)
     this.state = initialState
-    this.deleteproduct = this.deleteproduct.bind(this)
+    this.deleteOrder = this.deleteOrder.bind(this)
     this.calcTotPrice = this.calcTotPrice.bind(this)
   }
 
-  async deleteproduct(id) {
+  async deleteOrder(id) {
     var result = window.confirm('Are Sure You Want to delete?')
 
     if (result) {
       var snackbarRes = true
       await 
-         ProductServices.deleteProduct(id)
+         OrderServices.deleteOrderById(id)
         .then((res) => {
           // console.log(res);
           if (res.status == 200 && res.data.success === true) {  
               
               this.setState({
-                message: 'Product was successfully deleted!',
+                message: 'Order was successfully deleted!',
                 variant: 'success',
                 snackbar: false,
               })
@@ -335,7 +335,7 @@ class viewDeliveries extends Component {
                           <Tooltip title='Delete' arrow>
                             <DeleteIcon
                               className={classes.deleteButtonIcon}
-                              onClick//todo
+                              onClick={() =>this.deleteOrder(row._id)}
                             ></DeleteIcon>
                           </Tooltip>
                         </TableCell>
@@ -363,6 +363,15 @@ class viewDeliveries extends Component {
             </Snackbar>
           )}
         </Grid>
+        <Snackbar
+        open={this.state.snackbar}
+        autoHideDuration={6000}
+        onClose={this.handleCloseSnackbar}
+    >
+        <Alert onClose={this.handleCloseSnackbar} severity={this.state.snackbar_severity} >
+            {this.state.snackbar_message}
+        </Alert>
+    </Snackbar>
       </div>
     )
   }
