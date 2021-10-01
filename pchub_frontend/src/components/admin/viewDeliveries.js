@@ -13,6 +13,7 @@ import {
   TableContainer,
   Snackbar,
   TablePagination,
+  InputBase,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import Loader from '../common/Loader'
@@ -71,12 +72,20 @@ const styles = (theme) => ({
   root: {
     width: '100%',
   },
+  search: {
+    width:1000,
+    backgroundColor: '#fff',
+    padding: '10px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+  },
 })
 
 const initialState = {
   isLargeScreen: true,
   loading: false,
   deliveries: [],
+  searchTerm: '',
   message: '',
   variant: '',
   snackbar: false,
@@ -236,6 +245,11 @@ class viewDeliveries extends Component {
     })
 
 }
+handleChange = (event) => {
+  this.setState({ searchTerm: event.target.value });
+  event.preventDefault();
+  console.log(this.state.searchTerm);
+};
 
   async componentDidMount() {
     var deliveriesArr = []
@@ -303,7 +317,9 @@ approveDelivery = (_id,isDelivered,isPaid)=>{
             <Typography variant='h4' className='py-3'>
               All Deliveries
             </Typography>
+            
           </Grid>
+
 
           <Grid item xs={12} md={12}>
             <div
@@ -314,7 +330,7 @@ approveDelivery = (_id,isDelivered,isPaid)=>{
                 float: 'right',
               }}
             >
-              <Link to='/admin/Item'>
+              <Link to=''>
                 <button type='button' className='btn btn-outline-primary'>
                 todo
                 </button>
@@ -325,6 +341,19 @@ approveDelivery = (_id,isDelivered,isPaid)=>{
                 </button>
               
             </div>
+          </Grid>
+          <Grid >
+          <InputBase
+            fullwidth
+            className={classes.search}
+            placeholder="Search by customer or address…"
+            classes={{
+              root: classes.inputRoot,
+              input: classes.inputInput,
+           }}
+            value={this.state.searchTerm}
+            onChange={this.handleChange}
+          />
           </Grid>
 
           <Grid item xs={12} md={12}>
@@ -365,15 +394,42 @@ approveDelivery = (_id,isDelivered,isPaid)=>{
                   </TableHead>
 
                   <TableBody>
-                    {this.state.deliveries.map((row) => (
+                    {this.state.deliveries.filter((row) => {
+                      if (this.state.searchTerm == '') {
+                        console.log('val' + row);
+                        return row;
+                      } else if (
+                        row.user.fname
+                          .toLowerCase()
+                          .includes(this.state.searchTerm.toLowerCase()) 
+                          ||
+                        row.user.lname
+                          .toLowerCase()
+                          .includes(this.state.searchTerm.toLowerCase())
+                          ||
+                          row.deliveryDetails.addressLine1
+                          .toLowerCase()
+                          .includes(this.state.searchTerm.toLowerCase())
+                          ||
+                          row.deliveryDetails.addressLine2
+                          .toLowerCase()
+                          .includes(this.state.searchTerm.toLowerCase())
+                          ||
+                          row.deliveryDetails.city
+                          .toLowerCase()
+                          .includes(this.state.searchTerm.toLowerCase())
+                      ) {
+                        return row;
+                      }
+                    }).map((row) => (
                       <TableRow key={row._id} hover>
                         <TableCell className={classes.tableCell}>
                           {row.user.fname+ " "+ row.user.lname}
                         </TableCell>
                         <TableCell className={classes.tableCell}>
-                          {row.deliveryDetails.addressLine1}
-                          {row.deliveryDetails.addressLine2}
-                          {row.deliveryDetails.city}
+                          {row.deliveryDetails.addressLine1+","}
+                          {row.deliveryDetails.addressLine2+","}
+                          {row.deliveryDetails.city+"."}
                         </TableCell>
                         <TableCell className={classes.tableCell}>
                           {row.orderItems.map((item,index)=>(
