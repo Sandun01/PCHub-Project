@@ -495,6 +495,21 @@ class OrderServices {
         return result;
 }
 
+async updateDeliveryDetails(data){
+  var id = data.id
+  
+
+
+  await axios.put(BackendApi_URL+"/delivery/edit/"+id, data)
+  .then(res => {
+      console.log("success")
+    }).catch(error => {
+      console.log(error.errorMessage);
+    })
+}
+
+
+
 }
 
 export default new OrderServices();

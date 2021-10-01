@@ -86,6 +86,7 @@ class viewDeliveries extends Component {
     this.state = initialState
     this.deleteproduct = this.deleteproduct.bind(this)
     this.calcTotPrice = this.calcTotPrice.bind(this)
+    this.updateDeliveryDetails = this.updateDeliveryDetails.bind(this)
   }
 
   async deleteproduct(id) {
@@ -124,6 +125,31 @@ class viewDeliveries extends Component {
           })
         })
      
+    }
+  }
+  calcTotPrice(orderItems){
+    var tot=null;
+    orderItems.map((item, index)=>{
+        tot += item.price*item.qty
+    })
+    return tot
+
+  }
+
+  async updateDeliveryDetails(id, deliveryStatus, paidStatus)
+  { 
+     
+      if(id){
+        var data = {
+         
+                  "id":id,
+                  "deliveryStatus": deliveryStatus,
+                  "paidStatus": paidStatus,
+                
+               
+               
+      }
+      await OrderServices.updateDeliveryDetails(data)
     }
   }
 
@@ -185,6 +211,7 @@ class viewDeliveries extends Component {
     var snackbarRes = true
 
     //calling product services
+    
     await OrderServices.getAlldeliveries()
       .then((res) => {
         // console.log(res);
@@ -217,14 +244,7 @@ class viewDeliveries extends Component {
     console.log(this.state.deliveries)
   }
 
-  calcTotPrice(orderItems){
-    var tot=null;
-    orderItems.map((item, index)=>{
-        tot += item.price*item.qty
-    })
-    return tot
 
-  }
 
   render() {
     const { classes } = this.props
@@ -340,7 +360,7 @@ class viewDeliveries extends Component {
                           </Tooltip>
                         </TableCell>
                         <TableCell>
-                        {row.isActive? "approved": "not approved"}
+                        {row.isDelivered? "approved": "not approved"}
                         </TableCell>
                       </TableRow>
                     ))}
