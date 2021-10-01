@@ -104,6 +104,38 @@ class Account_and_profile extends Component {
     }, 2000);
   };
 
+  deleteUser = () => {
+    console.log(this.state.user._idject);
+    console.log(this.state.user);
+    var messageRes = null;
+    var variantRes = null;
+    //console.log('button clicked');
+    axios
+      .delete(
+        'http://localhost:5000/api/auth/delete/' + this.state.user._id,
+        this.state.user
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.success == true) {
+          AuthService.userLogout();
+          window.location.href = '/login';
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        messageRes = error.message;
+        variantRes = 'error';
+      });
+    setTimeout(() => {
+      this.setState({
+        message: messageRes,
+        variant: variantRes,
+        loading: false,
+      });
+    }, 2000);
+  };
+
   render() {
     const { user } = this.state;
     const { classes } = this.props;
@@ -211,7 +243,10 @@ class Account_and_profile extends Component {
                 Update
               </Button>
             </div>
+
+            {/* delete user profile */}
             <Button
+              onClick={this.deleteUser}
               style={{
                 marginLeft: '20px',
                 background: 'rgba(0,0,0,.0)',

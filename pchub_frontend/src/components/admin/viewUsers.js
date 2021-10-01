@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Grid,
   Typography,
@@ -12,16 +12,14 @@ import {
   TableRow,
   TableContainer,
   Snackbar,
-  TablePagination,
-} from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
-import Loader from '../common/Loader'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
-import CheckIcon from '@material-ui/icons/Check'
-import CloseIcon from '@material-ui/icons/Close'
-import axios from 'axios'
-import { Alert } from '@material-ui/lab'
+  InputBase,
+} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import DeleteIcon from '@material-ui/icons/Delete';
+import axios from 'axios';
+import { Alert } from '@material-ui/lab';
+import { saveAs } from 'file-saver';
+import UserServices from '../../services/UserServices';
 
 const styles = (theme) => ({
   table: {
@@ -63,7 +61,13 @@ const styles = (theme) => ({
   root: {
     width: '100%',
   },
-})
+  search: {
+    backgroundColor: '#fff',
+    padding: '10px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+  },
+});
 
 const initialState = {
   isLargeScreen: true,
@@ -72,22 +76,24 @@ const initialState = {
   message: '',
   variant: '',
   snackbar: false,
-}
+  searchTerm: '',
+};
 
 class ViewUsers extends Component {
   constructor(props) {
-    super(props)
-    this.state = initialState
-    this.deleteuser = this.deleteuser.bind(this)
+    super(props);
+    this.state = initialState;
+    this.deleteuser = this.deleteuser.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   deleteuser(id) {
-    var result = window.confirm('Are Sure You Want to delete?')
+    var result = window.confirm('Are Sure You Want to delete?');
 
     if (result) {
-      var messageRes = ''
-      var variantRes = ''
-      var snackbarRes = true
+      var messageRes = '';
+      var variantRes = '';
+      var snackbarRes = true;
 
       axios
         .delete('http://localhost:5000/api/users/' + id)
@@ -95,42 +101,42 @@ class ViewUsers extends Component {
           // console.log(res);
           if (res.status == 200) {
             if (res.data.success) {
-              snackbarRes = false
-              window.location.reload(false)
+              snackbarRes = false;
+              window.location.reload(false);
             } else {
-              messageRes = res.data.message
-              variantRes = 'error'
+              messageRes = res.data.message;
+              variantRes = 'error';
             }
           } else {
-            messageRes = res.data.message
-            variantRes = 'error'
+            messageRes = res.data.message;
+            variantRes = 'error';
           }
         })
         .catch((error) => {
           //console.log("Error:",error);
-          variantRes = 'error'
-          messageRes = error
-        })
+          variantRes = 'error';
+          messageRes = error;
+        });
 
       this.setState({
         message: messageRes,
         variant: variantRes,
         snackbar: snackbarRes,
-      })
+      });
     }
   }
 
   closeSnackBar = (event, response) => {
     this.setState({
       snackbar: false,
-    })
-  }
+    });
+  };
 
   async componentDidMount() {
-    var usersArr = []
-    var messageRes = ''
-    var variantRes = ''
-    var snackbarRes = true
+    var usersArr = [];
+    var messageRes = '';
+    var variantRes = '';
+    var snackbarRes = true;
 
     //get data from db
     await axios
@@ -140,58 +146,102 @@ class ViewUsers extends Component {
 
         if (res.status == 200) {
           if (res.data.success) {
-            snackbarRes = false
-            usersArr = res.data.users
+            snackbarRes = false;
+            usersArr = res.data.users;
           } else {
-            messageRes = res.data.message
-            variantRes = 'error'
+            messageRes = res.data.message;
+            variantRes = 'error';
           }
         } else {
-          messageRes = res.data.message
-          variantRes = 'error'
+          messageRes = res.data.message;
+          variantRes = 'error';
         }
       })
       .catch((error) => {
-        console.log('Error:', error)
-        variantRes = 'error'
-        messageRes = error.message
-      })
+        console.log('Error:', error);
+        variantRes = 'error';
+        messageRes = error.message;
+      });
 
     this.setState({
       message: messageRes,
       users: usersArr,
       variant: variantRes,
       snackbar: snackbarRes,
-    })
+    });
   }
 
+  downloadPDF = async () => {
+    //generate pdf
+    this.setState({
+      loading: true,
+    });
+
+    var data = {
+      users: this.state.users,
+    };
+
+    console.log(data);
+
+    await UserServices.generateUserDetails(data)
+      .then((res) => {
+        if (res === 1) {
+          this.setState({
+            loading: false,
+            snackbar: true,
+            snackbar_severity: 'success',
+            snackbar_message: 'Generate PDF Success!',
+          });
+        } else {
+          console.log('error');
+          this.setState({
+            loading: false,
+            snackbar: true,
+            snackbar_severity: 'error',
+            snackbar_message: 'Error in Generating PDF!',
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          loading: false,
+          snackbar: true,
+          snackbar_severity: 'error',
+          snackbar_message: 'Error in Generating PDF!',
+        });
+      });
+  };
+
+  handleChange = (event) => {
+    this.setState({ searchTerm: event.target.value });
+    event.preventDefault();
+    console.log(this.state.searchTerm);
+  };
+
   render() {
-    const { classes } = this.props
+    const { classes } = this.props;
 
     return (
       <div align="center" style={{ paddingLeft: 100 }}>
-        <Grid container alignItems='center' justify='center' direction='column'>
+        <Grid container alignItems="center" justify="center" direction="column">
           <Grid item xs={12} md={12}>
-            <Typography variant='h4' className='py-3'>
+            <Typography variant="h4" className="py-3">
               All Users
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={12}>
-            <div
-              style={{
-                marginBottom: 20,
-                padding: 10,
-                position: 'relative',
-                float: 'right',
+          <Grid>
+            <InputBase
+              className={classes.search}
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
               }}
-            >
-              <Link to='/admin/'>
-                <button type='button' className='btn btn-outline-primary'>
-                  Add New User
-                </button>
-              </Link>
-            </div>
+              value={this.state.searchTerm}
+              onChange={this.handleChange}
+            />
           </Grid>
 
           <Grid item xs={12} md={12}>
@@ -200,65 +250,89 @@ class ViewUsers extends Component {
                 <Table
                   className={classes.table}
                   stickyHeader
-                  aria-label='sticky table'
-                  size='medium'
+                  aria-label="sticky table"
+                  size="medium"
                 >
                   <TableHead>
                     <TableRow className={classes.tableHeaderRow}>
-                      <TableCell className={classes.tableHeader} align='center'>
+                      <TableCell className={classes.tableHeader} align="center">
                         First Name
                       </TableCell>
-                      <TableCell className={classes.tableHeader} align='center'>
+                      <TableCell className={classes.tableHeader} align="center">
                         Last Name
                       </TableCell>
-                      <TableCell className={classes.tableHeader} align='center'>
+                      <TableCell className={classes.tableHeader} align="center">
                         Email
                       </TableCell>
-                      <TableCell className={classes.tableHeader} align='center'>
+                      <TableCell className={classes.tableHeader} align="center">
                         Is Admin
                       </TableCell>
-                      <TableCell className={classes.tableHeader} align='center'>
+                      <TableCell className={classes.tableHeader} align="center">
                         Actions
                       </TableCell>
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
-                    {this.state.users.map((row) => (
-                      <TableRow key={row.fname} hover>
-                        <TableCell className={classes.tableCell}>
-                          {row.fname}
-                        </TableCell>
-                        <TableCell className={classes.tableCell}>
-                          {row.lname}
-                        </TableCell>
-                        <TableCell className={classes.tableCell}>
-                          {row.email}
-                        </TableCell>
-                        <TableCell className={classes.tableCell}>
-                          {row.isAdmin}
-                        </TableCell>
-                        <TableCell className={classes.tableCell}>
-                          <Tooltip title='Edit' arrow>
-                            <Link to={'/admin/addUser' + row._id}>
-                              <EditIcon
-                                className={classes.editButtonIcon}
-                              ></EditIcon>
-                            </Link>
-                          </Tooltip>
-                          <Tooltip title='Delete' arrow>
-                            <DeleteIcon
-                              className={classes.deleteButtonIcon}
-                              onClick={() => this.deleteuser(row._id)}
-                            ></DeleteIcon>
-                          </Tooltip>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {this.state.users
+                      .filter((row) => {
+                        if (this.state.searchTerm == '') {
+                          console.log('val' + row);
+                          return row;
+                        } else if (
+                          row.fname
+                            .toLowerCase()
+                            .includes(this.state.searchTerm.toLowerCase()) ||
+                          row.lname
+                            .toLowerCase()
+                            .includes(this.state.searchTerm.toLowerCase())
+                        ) {
+                          return row;
+                        }
+                      })
+                      .map((row, key) => (
+                        <TableRow key={key} hover>
+                          <TableCell className={classes.tableCell}>
+                            {row.fname}
+                          </TableCell>
+                          <TableCell className={classes.tableCell}>
+                            {row.lname}
+                          </TableCell>
+                          <TableCell className={classes.tableCell}>
+                            {row.email}
+                          </TableCell>
+                          <TableCell className={classes.tableCell}>
+                            {row.isAdmin ? 'Yes' : 'No'}
+                          </TableCell>
+                          <TableCell className={classes.tableCell}>
+                            {/* <Tooltip title="Edit" arrow>
+                              <Link to={'/admin/addUser' + row._id}>
+                                <EditIcon
+                                  className={classes.editButtonIcon}
+                                ></EditIcon>
+                              </Link>
+                            </Tooltip> */}
+                            <Tooltip title="Delete" arrow>
+                              <DeleteIcon
+                                className={classes.deleteButtonIcon}
+                                onClick={() => this.deleteuser(row._id)}
+                              ></DeleteIcon>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
             </Paper>
+            <button
+              style={{ marginTop: '50px', float: 'right' }}
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={this.downloadPDF}
+            >
+              Download All User Info as PDF
+            </button>
           </Grid>
 
           {this.state.message != '' && (
@@ -266,7 +340,7 @@ class ViewUsers extends Component {
               open={this.state.snackbar}
               autoHideDuration={2500}
               onClose={this.closeSnackBar}
-              name='snackBar'
+              name="snackBar"
             >
               <Alert severity={this.state.variant} onClose={this.closeSnackBar}>
                 {this.state.message}
@@ -275,9 +349,9 @@ class ViewUsers extends Component {
           )}
         </Grid>
       </div>
-    )
+    );
   }
 }
 
 // export default ViewUsers;
-export default withStyles(styles)(ViewUsers)
+export default withStyles(styles)(ViewUsers);

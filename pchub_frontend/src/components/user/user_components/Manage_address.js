@@ -26,52 +26,53 @@ class Manage_address extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userID: null,
       user: {
-        _id: '',
-        fname: '',
-        lname: '',
-        email: '',
-        password: '',
+        addressLine1: '',
+        addressLine2: '',
+        addressLine3: '',
+        city: '',
+        zipcode: '',
+        contactNumber: '',
       },
     };
   }
 
   getUserData = async () => {
-    //   var res = AuthService.getUserData();
-    //   var userD = res.userData;
-    //   // userD['fname'] = userData.fname;
-    //   console.log(userD);
-    //   this.setState({
-    //     user: userD,
-    //   });
-    //   console.log('dsadsads' + res.userData._id);
-    //   console.log('dsadsads' + this.state.user.email);
-    // };
-    // async componentDidMount() {
-    //   // custom rule will have name 'isPasswordMatch'
-    //   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
-    //     if (value !== this.state.user.password) {
-    //       return false;
-    //     }
-    //     return true;
-    //   });
-    //   this.getUserData();
+    var res = AuthService.getUserData();
+
+    var data = res.userData;
+    var stateData = this.state.user;
+
+    stateData['addressLine1'] = data.addressLine1;
+    stateData['addressLine2'] = data.addressLine2;
+    stateData['addressLine3'] = data.addressLine3;
+    stateData['city'] = data.city;
+    stateData['zipcode'] = data.zipcode;
+    stateData['contactNumber'] = data.contactNumber;
+
+    this.setState({
+      userID: res.userData._id,
+      user: stateData,
+    });
+    console.log('u data' + res.userData);
   };
 
-  async componentWillUnmount() {
-    // remove rule when it is not needed
-    ValidatorForm.removeValidationRule('isPasswordMatch');
+  async componentDidMount() {
+    await this.getUserData();
   }
 
   handleChange = (event) => {
-    const { user } = this.state;
-    user[event.target.name] = event.target.value;
-    this.setState({ user });
+    const userData = this.state.user;
+    userData[event.target.name] = event.target.value;
+    this.setState({
+      user: userData,
+    });
+    console.log(this.state);
   };
 
   handleSubmit = async (e) => {
     //console.log('button clicked');
-    console.log(this.state.user.email + this.state.user);
     e.preventDefault();
     this.setState({
       loading: true,
@@ -80,12 +81,13 @@ class Manage_address extends Component {
     var messageRes = null;
     var variantRes = null;
     axios
-      .put('/api/auth/' + this.state.user._id, this.state.user)
+      .put(
+        'http://localhost:5000/api/auth/updateUserAddress/' + this.state.userID,
+        this.state.user
+      )
       .then((res) => {
         console.log(res);
         if (res.data.success == true) {
-          AuthService.userLogout();
-          window.location.href = '/login';
         }
       })
       .catch((error) => {
@@ -184,6 +186,17 @@ class Manage_address extends Component {
                 validators={['required']}
                 errorMessages={['this field is required']}
                 value={user.city}
+                className={classes.input}
+              />
+
+              <label className={classes.label}>Contact Number</label>
+              <TextValidator
+                onChange={this.handleChange}
+                name="contactNumber"
+                type="text"
+                validators={['required']}
+                errorMessages={['this field is required']}
+                value={user.contactNumber}
                 className={classes.input}
               />
 

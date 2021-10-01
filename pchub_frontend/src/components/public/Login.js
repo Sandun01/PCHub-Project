@@ -16,6 +16,7 @@ import Loader from '../common/Loader';
 import AuthService from '../../services/AuthService';
 import OrderServices from '../../services/OrderServices';
 import Utils from '../utils/Utils';
+import { Snackbar } from '@material-ui/core';
 
 const styles = (theme) => ({
   paper: {
@@ -55,6 +56,7 @@ const initialState = {
   variant: '',
   message: '',
   loading: false,
+  snackbar: false,
 };
 
 class Login extends Component {
@@ -64,6 +66,12 @@ class Login extends Component {
     this.formSubmit = this.formSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
+  closeSnackBar = (event, response) => {
+    this.setState({
+      snackbar: false,
+    });
+  };
 
   formSubmit = async (e) => {
     //console.log(this.state.email + this.state.password);
@@ -89,36 +97,39 @@ class Login extends Component {
         if (userData.isAdmin) {
           window.location.href = '/admin';
         } else {
-
           //check user's local cart
-          var orderedItems = OrderServices.getAllItemsInCart_Local()
+          var orderedItems = OrderServices.getAllItemsInCart_Local();
           var resOrders = Utils.isEmptyObject(orderedItems);
           // console.log(orderedItems)
 
-          if(resOrders){ //empty
-              window.location.href = '/account';
-          }
-          else{ //not empty
+          if (resOrders) {
+            //empty
+            window.location.href = '/account';
+          } else {
+            //not empty
             var uID = userData._id;
-            
+
             OrderServices.addLocalItemsToDBLogin(uID, orderedItems)
-            .then(res => {
-              console.log('Order Success');
-            })
-            .catch(error => {
-              console.log(error)
-              console.log('Error in orders');
-            })
-            .finally(() => {
+              .then((res) => {
+                console.log('Order Success');
+              })
+              .catch((error) => {
+                console.log(error);
+                console.log('Error in orders');
+              })
+              .finally(() => {
                 window.location.href = '/account';
-            })
+              });
           }
         }
       })
       .catch((error) => {
+        messageRes = 'Invalid User Name or Password!';
+        this.setState({
+          message: messageRes,
+          snackbar: true,
+        });
         console.log(error);
-        messageRes = error.message;
-        variantRes = 'error';
       });
 
     setTimeout(() => {
@@ -218,6 +229,18 @@ class Login extends Component {
               }
               label="Remember me"
             />
+            {this.state.message != '' && (
+              <Snackbar
+                open={this.state.snackbar}
+                // autoHideDuration={5000}
+                onClose={this.closeSnackBar}
+                name="snackBar"
+              >
+                <Alert severity="error" onClose={this.closeSnackBar}>
+                  {this.state.message}
+                </Alert>
+              </Snackbar>
+            )}
             <Button
               type="submit"
               fullWidth

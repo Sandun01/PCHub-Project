@@ -4,8 +4,8 @@ import ProductController from '../controllers/ProductController.js';
 const router = express.Router()
 
 //reports
-router.route('/fetchallproductsReport').get( ProductController.getAllProductsReport)
 router.route('/generateallproductsReport').post( ProductController.generateAllProductsReport)
+router.route('/fetchallproductsReport').get( ProductController.getAllProductsReport)
 
 // Home page - Sandun
 router.route('/latest').get( ProductController.getLatestProducts )

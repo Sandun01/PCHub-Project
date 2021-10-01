@@ -39,26 +39,30 @@ const UserSchema = new mongoose.Schema({
     default: false,
   },
 
-  payemtDetails: {
+  paymentDetails: {
     addressLine1: {
       type: String,
-      required: false,
+      default: null,
     },
     addressLine2: {
       type: String,
-      required: false,
+      default: null,
     },
     addressLine3: {
       type: String,
-      required: false,
+      default: null,
     },
     zipcode: {
       type: String,
-      required: false,
+      default: null,
     },
     city: {
       type: String,
-      required: false,
+      default: null,
+    },
+    contactNumber: {
+      type: String,
+      default: null,
     },
   },
 

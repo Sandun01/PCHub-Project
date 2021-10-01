@@ -813,7 +813,7 @@ class ViewOrder extends Component {
                                     Payment Method: { this.state.orderData.paymentMethod  }
                                 </Typography>
 
-                                {
+                                {/* {
                                     this.state.isActive &&
                                     <Typography variant="h6" className="mt-3">
                                         Change Payment Method: 
@@ -826,7 +826,7 @@ class ViewOrder extends Component {
                                         />
                                         { this.state.orderData.paymentMethod}
                                     </Typography>
-                                }
+                                } */}
 
                                 {/* Line 2 */}
                                 <hr />

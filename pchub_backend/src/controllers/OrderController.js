@@ -1,6 +1,7 @@
 import pdf from 'html-pdf';
 import finalBillTemplate from '../utils/orderReports/FinalOrderBill_Temp/FinalOrderBill.js';
 import Quotation_Template from '../utils/orderReports/Quotation/QuatationTemplate.js';
+import OrderReport_Template from '../utils/orderReports/AdminOrderReport/AdminOrderReport.js';
 import path from 'path';
 
 import Order from "../models/OrderModel.js";
@@ -317,6 +318,8 @@ const createNewOrder = async(req, res) => {
     })
     
 }
+
+
 
 
 // @desc get all orders
@@ -840,6 +843,8 @@ const updatePaymentDetails = async(req, res) => {
     
 }
 
+
+
 //delete order by id
 // @route put /api/orders/:id
 // @access User(Registered) 
@@ -932,6 +937,79 @@ const getPrintedQuotation = async(req, res) => {
     res.sendFile(`${__dirname}/files/Quotation.pdf`)
 }
 
+//update delivery status
+// @route PUT /api/orders/delivery/edit/:id
+// @access User(Registered) 
+const updateDeliveryDetails = async(req, res) => {
+
+    var isDataEmpty = UtilFunctions.isEmpty(req.body);
+
+    if(!isDataEmpty){
+
+        var data = req.body;
+        var deliveryStatus = data.deliveryStatus;
+        var paidStatus = data.paidStatus;
+
+        var find = { "_id": req.params.id };
+        var query = {
+            $set: { 
+               
+                    "isDelivered": deliveryStatus,
+                    "isPaid": paidStatus,
+                
+            } 
+        };
+
+        await Order.update(find, query)
+        .then(response => {
+            // console.log(response);
+            console.log('Delivery Status  Updated Success');
+            res.status(200).send({ success: true, 'count': response.nModified })
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(400).send({ success: false, 'message': 'Error'})
+        })
+
+    }
+    else{
+        res.status(200).send({ success: false, 'message': 'Not Found'}); //data not found
+    }
+
+}
+
+//Generate order report
+// @route post /api/orders/report
+// @access User(Registered) 
+const generateFinalOrderReport = async(req, res) => {
+    
+    const __dirname = path.resolve()
+    const data = req.body;
+    
+    // console.log(data)
+
+    //generate bill
+    pdf.create(OrderReport_Template(data), {}).toFile(`${__dirname}/files/OrderReport.pdf`, (err) => {
+        if(err) {
+            res.send(Promise.reject());
+        }
+        
+        res.send(Promise.resolve());
+    });
+    
+}
+
+//get order report
+// @route get /api/orders/report
+// @access User(Registered) 
+const getFinalOrderReport = async(req, res) => {
+
+    console.log("get Final Order Report");
+
+    const __dirname = path.resolve()
+
+    res.sendFile(`${__dirname}/files/OrderReport.pdf`)
+}
 
 
 export default{
@@ -949,6 +1027,7 @@ export default{
     changePaymentMethod,
     updatePaymentDetails,
     deleteOrderByID,
+    updateDeliveryDetails,
 
     checkFunction,
 
@@ -959,5 +1038,9 @@ export default{
     // report bill
     generateFinalOrderBill,
     getFinalOrderBill,
+
+    //order report
+    generateFinalOrderReport,
+    getFinalOrderReport,
 
 }

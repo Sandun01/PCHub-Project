@@ -22,10 +22,10 @@ const paymentMethods = [
         key: 1,
         value: 'Cash On Delivery'
     },
-    {
-        key: 2,
-        value: 'Credit Card /Paypal'
-    },
+    // {
+    //     key: 2,
+    //     value: 'Credit Card /Paypal'
+    // },
 
 ]
 
