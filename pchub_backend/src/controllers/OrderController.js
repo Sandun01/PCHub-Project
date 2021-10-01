@@ -1,6 +1,7 @@
 import pdf from 'html-pdf';
 import finalBillTemplate from '../utils/orderReports/FinalOrderBill_Temp/FinalOrderBill.js';
 import Quotation_Template from '../utils/orderReports/Quotation/QuatationTemplate.js';
+import OrderReport_Template from '../utils/orderReports/AdminOrderReport/AdminOrderReport.js';
 import path from 'path';
 
 import Order from "../models/OrderModel.js";
@@ -977,6 +978,39 @@ const updateDeliveryDetails = async(req, res) => {
 
 }
 
+//Generate order report
+// @route post /api/orders/report
+// @access User(Registered) 
+const generateFinalOrderReport = async(req, res) => {
+    
+    const __dirname = path.resolve()
+    const data = req.body;
+    
+    // console.log(data)
+
+    //generate bill
+    pdf.create(OrderReport_Template(data), {}).toFile(`${__dirname}/files/OrderReport.pdf`, (err) => {
+        if(err) {
+            res.send(Promise.reject());
+        }
+        
+        res.send(Promise.resolve());
+    });
+    
+}
+
+//get order report
+// @route get /api/orders/report
+// @access User(Registered) 
+const getFinalOrderReport = async(req, res) => {
+
+    console.log("get Final Order Report");
+
+    const __dirname = path.resolve()
+
+    res.sendFile(`${__dirname}/files/OrderReport.pdf`)
+}
+
 
 export default{
     createNewOrder,
@@ -1004,5 +1038,9 @@ export default{
     // report bill
     generateFinalOrderBill,
     getFinalOrderBill,
+
+    //order report
+    generateFinalOrderReport,
+    getFinalOrderReport,
 
 }

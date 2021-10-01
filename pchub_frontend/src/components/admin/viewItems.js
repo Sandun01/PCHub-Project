@@ -133,10 +133,6 @@ class ViewItems extends Component {
 
   //generate pdf
   generatePDF = async() => {
-        
-    this.setState({
-        loading: true,
-    })
 
     var data = {
         "items": this.state.products,

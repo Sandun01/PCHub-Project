@@ -2,6 +2,7 @@ import Product from "../models/ProductModel.js";
 import UtilFunctions from "../utils/UtilFunctions.js";
 import pdf from 'html-pdf';
 import finalReportTemplate from '../utils/productReports/allProductsReports.js';
+import path from 'path';
 
 // @desc  Create Product
 // @route POST /api/products/
@@ -209,22 +210,23 @@ const searchProductByName = async (req, res) => {
 // @access User(Registered) 
 const generateAllProductsReport = async(req, res) => {
 
-    // console.log("generate Final Order Bill");
-    
-    const __dirname = path.resolve()
-    
-    const data = req.body;
-    // console.log(data);
-    
-    //generate bill
-    pdf.create(finalReportTemplate(data), {}).toFile(`${__dirname}/files/allProductsReport.pdf`, (err) => {
-        if(err) {
-            res.send(Promise.reject());
-        }
-        
-        res.send(Promise.resolve());
-    });
-    
+  // console.log("generate Final Order Bill");
+  
+  const __dirname = path.resolve()
+  
+  const data = req.body;
+  // console.log(data);
+  
+  //generate bill
+  pdf.create(finalReportTemplate(data), {}).toFile(`${__dirname}/files/allProductsReport.pdf`, (err) => {
+      if(err) {
+          console.log(err)
+          res.send(Promise.reject());
+      }
+      
+      res.send(Promise.resolve());
+  });
+  
 }
 
 //get final order bill
@@ -232,11 +234,11 @@ const generateAllProductsReport = async(req, res) => {
 // @access User(Registered) 
 const getAllProductsReport = async(req, res) => {
 
-    console.log("get All Procuts report");
+  console.log("get All Procuts report");
 
-    const __dirname = path.resolve()
+  const __dirname = path.resolve()
 
-    res.sendFile(`${__dirname}/files/allProductsReport.pdf`)
+  res.sendFile(`${__dirname}/files/allProductsReport.pdf`)
 }
 
 
