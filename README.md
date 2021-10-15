@@ -1,10 +1,25 @@
  
-<h1>Group ID - 2021S2_REG_WE_09</h1>
 
-IT19216874 - R.Y Senevirathne <br>
-IT19217796 - M.A.A.H Rathnayake<br>
-IT19362854 - S.L Abeygunawardana<br>
-IT19105826 - N.D Meegoda<br>
+Group ID - 2021S2_REG_WE_09 
+-------------------------------------------------
+Project Name - PCHub
+-------------------------------------------------
+Group Details
+--------------------------------------------------
+Member Details:-
+
+| Name  | Student ID | Username|
+| ------------- | ------------- | -------------|
+| R.Y Senevirathne  | IT19216874 | rasitha11 |
+| M.A.A.H Rathnayake | IT19217796   | kaveenakash |
+| S.L Abeygunawardana | IT19362854   | Sandun01 |
+| N.D Meegoda | IT19105826 | nilanmeegoda99 |
+
+Project Description
+------------------------------------------------------
+This is a computer parts selling shop. In the home page user can view items and create quotations according to the items. Also users can order items and all items will be delivered to theri doorsteps.
+
+--------------------------------------------------------------------------------------------------------------
 
 <h1>PC HUB</h1>
 
