@@ -11,7 +11,7 @@ Member Details:-
 | Name  | Student ID | Username|
 | ------------- | ------------- | -------------|
 | R.Y Senevirathne  | IT19216874 | rasitha11 |
-| M.A.A.H Rathnayake | IT19217796   | kaveenakash |
+| M.A.A.H Rathnayake | IT19217796   | drex7001 |
 | S.L Abeygunawardana | IT19362854   | Sandun01 |
 | N.D Meegoda | IT19105826 | nilanmeegoda99 |
 
