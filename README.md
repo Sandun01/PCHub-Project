@@ -17,7 +17,7 @@ Member Details:-
 
 Project Description
 ------------------------------------------------------
-This is a computer parts selling shop. In the home page user can view items and create quotations according to the items. Also users can order items and all items will be delivered to theri doorsteps.
+This is a computer parts selling shop. In the home page user can view items and create quotations according to the items. Also users can order items and all items will be delivered to their doorsteps.
 
 --------------------------------------------------------------------------------------------------------------
 
