@@ -104,10 +104,10 @@ class App extends Component {
           <Switch>
             {/* Guest user Routes */}
             <Route exact path="/" component={Home} />
-            <Route exact path="/aboutUs" component={PrivacyPolicy} />
+            <Route exact path="/aboutUs" component={AboutUs} />
             <Route exact path="/contactUs" component={ContactUs} />
             <Route exact path="/services" component={Services} />
-            <Route exact path="/privacyPolicy" component={AboutUs} />
+            <Route exact path="/privacyPolicy" component={PrivacyPolicy} />
 
             <Route
               exact

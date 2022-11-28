@@ -154,7 +154,7 @@ class Order_history extends Component {
 
     // console.log(res.userData._id);
     await axios
-      .post('http://localhost:5000/api/orders/user/' + id)
+      .post('/api/orders/user/' + id)
       .then((res) => {
         // console.log(res.data.orders /*.orders[0].orderItems[0].name*/);
 

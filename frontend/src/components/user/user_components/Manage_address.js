@@ -82,7 +82,7 @@ class Manage_address extends Component {
     var variantRes = null;
     axios
       .put(
-        'http://localhost:5000/api/auth/updateUserAddress/' + this.state.userID,
+        '/api/auth/updateUserAddress/' + this.state.userID,
         this.state.user
       )
       .then((res) => {

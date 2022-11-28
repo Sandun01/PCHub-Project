@@ -96,7 +96,7 @@ class ViewUsers extends Component {
       var snackbarRes = true;
 
       axios
-        .delete('http://localhost:5000/api/users/' + id)
+        .delete('/api/users/' + id)
         .then((res) => {
           // console.log(res);
           if (res.status == 200) {
@@ -140,7 +140,7 @@ class ViewUsers extends Component {
 
     //get data from db
     await axios
-      .get('http://localhost:5000/api/users')
+      .get('/api/users')
       .then((res) => {
         // console.log(res);
 

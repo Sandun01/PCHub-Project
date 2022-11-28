@@ -20,7 +20,7 @@ export const LeftNavBarData = [
         path: '/products/Gaming PCs',
         category: 'Gaming PCs',
         iconPath:'/images/gamingPC.png',
-        icon: <img width="25px" height="25px" src="/images/gamingPC.png" alt="gamingPC" />,
+        icon: <img width="25px" height="25px" src="/images/gamingpc.png" alt="gamingPC" />,
         cName: 'nav-text',
     },
     {

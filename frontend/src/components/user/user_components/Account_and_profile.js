@@ -112,7 +112,7 @@ class Account_and_profile extends Component {
     //console.log('button clicked');
     axios
       .delete(
-        'http://localhost:5000/api/auth/delete/' + this.state.user._id,
+        '/api/auth/delete/' + this.state.user._id,
         this.state.user
       )
       .then((res) => {
