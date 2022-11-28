@@ -4,7 +4,6 @@
   "description": "pc hub",
   "main": "server.js",
   "type": "module",
-  "proxy": "http://127.0.0.1:5000",
   "scripts": {
     "start": "node backend/server",
     "server": "nodemon backend/server",
