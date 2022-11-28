@@ -2,7 +2,9 @@
 
 # dependencies
 /node_modules
+node_modules
 /.pnp
+.pnp
 .pnp.js
 
 # testing
@@ -22,12 +24,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-/files/
-/files
-UserReport.pdf
-OrderBill.pdf
-Quotation.pdf
-allProductsReport.pdf
-
 
